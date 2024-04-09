@@ -1,4 +1,4 @@
-package banzzac.dto;
+package banzzac.controll;
 
 public class Delete {
 
