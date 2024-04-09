@@ -1,25 +1,34 @@
 package banzzac.mapper;
 
+import java.util.ArrayList;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import banzzac.dto.LocationDTO;
 import banzzac.dto.MatchingDTO;
 
 @Mapper
 public interface MatchingMapper {
 
-	/** 회원가입 시 insertMachingCondition이 기본 값으로 설정 될 수 있도록 만들어야 합니다.*/
+	/** 회원가입 시 insertMachingCondition이 기본 값으로 설정 될 수 있도록 만들어야 합니다.
+	 * no = 회원 넘버
+	 * */
 	@Insert("insert into matching_conditions (no) values (#{no})")
 	public int insertMatchingCondition(MatchingDTO dto);
 	
-	
+	/**회원이 산책 조건을 설정할 때 불러올 값입니다.
+	 * no = 회원 넘버
+	 * */
 	@Select("select * from matching_conditions where no = #{no}")
 	public MatchingDTO showMatchingCondition(MatchingDTO dto);
 	
 	
-	/***/
+	/**회원이 설정한 매칭 조건을 업데이트 합니다.
+	 * no = 회원 넘버
+	 * */
 	@Update("Update matching_conditions set"
 			+ "stlye = #{style},"
 			+ " age_range_start = #{ageRangeStart},"
@@ -43,7 +52,7 @@ public interface MatchingMapper {
 	public int updateWantMatching(MatchingDTO dto);
 	
 	
-	
+	public ArrayList<LocationDTO> showMembersLocation(LocationDTO dto);
 	
 }
 
