@@ -3,6 +3,7 @@ package banzzac.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -12,13 +13,18 @@ import banzzac.dto.ReviewDTO;
 @Mapper
 public interface ReviewMapper {
 
-	/** 최근 리뷰리스트 -> where my_id : session id 의 list select 
-	 => 약속잡기의 my_id 와 your_id 가 같아야함
-	 */ 
-	@Select("select * from review where my_id='aaa' order by reg_date desc") 
-	List<ReviewDTO> list();
+
+	@Select("select * from review where my_id = #{id} order by reg_date desc") 
+	List<ReviewDTO> list(String id);
 	
-	/** 리뷰 수정 */
+	/** 
+	 수정 필요
+	 산책 완료! -> 약속 잡기의 my_id, your_id을 받아오기 -> review 의 my_id, your_id에 insert
+	 */
+	@Insert("insert into review (my_id, your_id,review_score,content,reg_date) values (#{myId}, #{yourID}, #{reviewScore}, #{content}, sysdate())")
+	int insert(ReviewDTO dto);
+	
+	/** 리뷰 수정 후 내용만 수정 */
 	@Update("update review set review_score=#{reviewScore}, content=#{content} where no = #{no}")
 	int modify(ReviewDTO dto);
 	
