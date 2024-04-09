@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Data
 @Component
 public class MatchingDTO {
