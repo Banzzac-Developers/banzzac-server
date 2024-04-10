@@ -2,19 +2,21 @@ package banzzac.dto;
 
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
+
 import lombok.Data;
 
 @Data
 @Component
 public class LocationDTO {
-	@Resource
-	private DogDTO dogDTO;
+	
+	private MemberDTO member;
 	//현재 내 위치를 가져옵니다.
 	private Double longitude, latitude;
 	//북동쪽 범위
-	private Double [] rangeNorthEast;
+	private Double rangeNorth;
+	private Double rangeEast;
 	//남서쪽 범위
-	private Double [] rangeSouthWest;
+	private Double rangeSouth;
+	private Double rangeWest;
 	
 }
