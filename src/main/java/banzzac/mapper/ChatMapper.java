@@ -18,11 +18,13 @@ public interface ChatMapper {
 	
 	@Insert("insert into chat_message "
 			+ "(sender_id, receiver_id, message, send_time, send_img, chatroom_no) values "
-			+ "(#{senderId},#{receiverId},#{message}, sysdate()), #{sendImg}, #{chatroomNo} ")
-	int insert(ChatDTO dto);
+			+ "(#{senderId},#{receiverId},#{message}, sysdate(), #{sendImg}, #{chatroomNo} ) ")
+	int insertChat(ChatDTO dto);
 	
 	
 	@Select("select * from chatroom where room_member_1 = #{userId} or room_member_2 = #{userId} order by last_message_sendtime desc" )
 	ArrayList<ChatroomDTO> getChatroomList(String userId); 
+	
+	
 	
 }
