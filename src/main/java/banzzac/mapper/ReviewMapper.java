@@ -17,9 +17,11 @@ public interface ReviewMapper {
 	@Select("select * from review where my_id = #{id} order by reg_date desc") 
 	List<ReviewDTO> list(String id);
 	
+	/** 리뷰 상세보기 */
+	
 	/** 
 	 수정 필요
-	 산책 완료! -> 약속 잡기의 my_id, your_id을 받아오기 -> review 의 my_id, your_id에 insert
+	 약속 테이블의 end_walk_time < sysdate() 찾기 -> my_id, your_id, no을 받아오기 -> no 당 my_id <-> your_id , 2개 insert 가능 -> 기본키로
 	 */
 	@Insert("insert into review (my_id, your_id,review_score,content,reg_date) values (#{myId}, #{yourID}, #{reviewScore}, #{content}, sysdate())")
 	int insert(ReviewDTO dto);
@@ -31,12 +33,5 @@ public interface ReviewMapper {
 	/** 리뷰 삭제 */
 	@Delete("delete from review where no=#{no}")
 	int delete(ReviewDTO dto);
-	
-	/* 
-	 온도 계산 
-	 
-	 1. review , member table join / where your_id = id
-	 2. select reviewScore review table 
-	 3. reviewScore*20 / cnt +1 => member table Temperature / cnt 에 insert	  
-	 */
+
 }
