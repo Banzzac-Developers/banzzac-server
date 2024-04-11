@@ -11,6 +11,6 @@ import lombok.Data;
 public class MemberDTO {
 
 	private int no,gender,age,Temperrature,cnt,isGrant;
-	private String id,pwd,img,walkingStyle,nickName;
+	private String id,pwd,img,walkingStyle,nickName,phone;
 	private Date date;
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 
 
-@Component
+
 @Data
 @Component
 public class DogDTO {

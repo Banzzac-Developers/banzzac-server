@@ -15,8 +15,9 @@ public interface MemberMapper {
 
 	
 	@Insert("insert into member"
-			+"(id,pwd,gender,age,date,img,walkingstyle,nickname)values "
-			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingstyle},#{nickname})")
+			+"(id,pwd,gender,age,date,img,walkingstyle,nickname,phone)values "
+			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingstyle},#{nickname},#{phone})")
 	int createMember(MemberDTO dto);
+
 }
 		
