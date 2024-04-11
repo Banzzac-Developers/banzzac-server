@@ -19,13 +19,21 @@ public interface MemberMapper {
 			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingstyle},#{nickname},#{phone})")
 	int createMember(MemberDTO dto);
 
+	
+	/** 모든 회원 리스트 */
+	@Select("select * from member")
+	List<MemberDTO> memberList();
+	
 	/** 로그인한 회원의 정보 불러오기 */
 	@Select("select * from member where id = #{id}")
-	List<MemberDTO> memberInfo(String id);
+	List<MemberDTO> myInfo(String id);
 	
 	/** 회원 개인정보 수정 */
 	@Update("update `member` set pwd=#{pwd}, age=#{age}, img=#{img} ,walking_style=#{walkingStyle}, nickname=#{nickname}")
 	int ModifyMember(MemberDTO dto);
+	
+	/** 결제하면 수량 늘어남, 사용하면 줄어듦 */
+	int ModifyMatchingQuantity();
 	
 	/** 리뷰 받은 후 온도, 리뷰 받은 수 변경 
 	  Temperature = Temperature + review_score*20 / cnt = cnt+review insert 갯수
