@@ -15,9 +15,10 @@ import banzzac.dto.MemberDTO;
 public interface MemberMapper {
 
 	@Insert("insert into member"
-			+"(id,pwd,gender,age,date,img,walkingstyle,nickname)values "
-			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingstyle},#{nickname})")
+			+"(id,pwd,gender,age,date,img,walkingstyle,nickname,phone)values "
+			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingstyle},#{nickname},#{phone})")
 	int createMember(MemberDTO dto);
+
 	
 	/** 모든 회원 리스트 */
 	@Select("select * from member")
@@ -43,5 +44,6 @@ public interface MemberMapper {
 	/** 회원탈퇴 시 권한 0으로 변경 */
 	@Update("update `member` set isGrant = 0 where id = #{id}")
 	int withdrawMember(MemberDTO dto);
+
 }
 		
