@@ -25,6 +25,9 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    
+kakaopay : 
+  admin-key : 45f5d9e931d03368700d096309d522d7
 #
 #custom:
 #  path:

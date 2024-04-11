@@ -3,12 +3,16 @@ package banzzac.mapper;
 import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import banzzac.dto.LocationDTO;
+import banzzac.dto.DogDTO;
 import banzzac.dto.MatchingDTO;
+import banzzac.dto.MemberDTO;
 
 @Mapper
 public interface MatchingMapper {
@@ -51,8 +55,69 @@ public interface MatchingMapper {
 			+ " want_matching = #{wantMatching} where no=#{no}")
 	public int updateWantMatching(MatchingDTO dto);
 	
+	/**
+	 * 회원 조건에 부합하는 사람을 뽑아오는 sql 문입니다.
+	 * 넘어오는 값은 null이 없어야 하며, 반환되는 결과 값은 memberDTO에 연결됩니다.
+	 * 결과 처리 후, result에서 getMatchingConditionsDogs를 반환합니다.
+	 * 반환된 값은 dogDTOs에 자동 결합됩니다.
+	 * 참고 ) 한 번 검색된 회원은 중복하여 나타나지 않는 쿼리입니다.
+	 * 나중에는 회원이 위치한 곳의 범위를 가져야 할 수 있습니다.
+	 * 변경 예상 => Matching DTO에 범위 설정용 Location DTO 추가.
+	 * Location 테이블과 Join.
+	 * */
+	@Select("<script>"
+		    + "SELECT m.no, m.gender, m.age, m.temperature, m.cnt, m.id, m.img, m.walking_style, m.nickname,"
+		    + " d.*"
+		    + " FROM member m"
+		    + " JOIN dog d"
+		    + " ON m.id = d.id"
+		    + " JOIN matching_conditions mc"
+		    + " ON m.no = mc.no"
+		    + " WHERE m.age BETWEEN #{ageRangeStart} AND #{ageRangeEnd}"
+		    + " <if test='gender != null'>"
+		     	+" AND m.gender = #{gender}"
+		    + " </if>"
+		    + " <if test='size != null'>"
+		     	+" AND d.size = #{size}"
+		    + " </if>"
+		    + " <if test='dogNature != null'>"
+		     	+" AND d.personality IN"
+		    + " <foreach item='nature' collection='dogNature' open='(' separator=',' close=')'>"
+		     	+" #{nature}"
+		    + " </foreach>"
+		    + " </if>"
+		    + " AND m.isGrant = 1"
+		    + " AND m.id NOT IN (SELECT searched_member_id"
+		    					+ " FROM matching_search_history"
+		    					+ " WHERE member_id = #{userId})"
+		    + " </script>")
+	 @Results({
+	        @Result(property = "memberDTO.no", column = "m.no"),
+	        @Result(property = "memberDTO.gender", column = "m.gender"),
+	        @Result(property = "memberDTO.age", column = "m.age"),
+	        @Result(property = "memberDTO.temperature", column = "m.temperature"),
+	        @Result(property = "memberDTO.cnt", column = "m.cnt"),
+	        @Result(property = "memberDTO.id", column = "m.id"),
+	        @Result(property = "memberDTO.img", column = "m.img"),
+	        @Result(property = "memberDTO.walkingStyle", column = "m.walking_style"),
+	        @Result(property = "memberDTO.nickname", column = "m.nickname"),
+	        @Result(property = "dogDTOs", column = "md.id",
+	            javaType = ArrayList.class,
+	            many = @Many(select = "getMatchingConditionsDogs"))
+	    })
+	public ArrayList<MemberDTO> searchMatchingMembers(MatchingDTO matchingDTO);
 	
-	public ArrayList<LocationDTO> showMembersLocation(LocationDTO dto);
+	/**
+	 * searchMatchingMembers(MatchingDTO matchingDTO) 가 실행되고 결과값으로 실행되는 메소드입니다.*/
+	@Select("SELECT * FROM dog WHERE id = #{memberId}")
+    ArrayList<DogDTO> getMatchingConditionsDogs(String memberId);
 	
+	/**
+	 * 매칭 검색이 끝나면 실행 해야하는 메소드입니다.
+	 * 매칭 검색이 없었을 경우를 유효성 검사하여 이 메소드를 실행 해야 합니다.
+	 * 이 메소드는 한 번 검색된 회원은 추천하지 않게 하는 메소드입니다.
+	 * */
+	@Insert("INSERT INTO matching_search_history (member_id, searched_member_id) VALUES (#{memberId}, #{searchedMemberId})")
+	public int insertSearchedHistory(String memberId, String searchedMemberId);
 }
 

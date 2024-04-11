@@ -9,18 +9,29 @@ import org.apache.ibatis.annotations.Select;
 
 import banzzac.dto.DogDTO;
 import banzzac.dto.MemberDTO;
+import banzzac.dto.PayApproveDTO;
+import banzzac.dto.PayInfoDTO;
 
 @Mapper
 public interface ProfileMapper {
 	
-	/** 내 목록 불러오기 */
-	//@Select("select * from member where id = 세션아이디")
-	List<MemberDTO> memberList();
 	
+	/*
+	 최근 산책 목록
+	 # select * from 약속테이블 
+	 where end_walk_time < sysdate() && my_id=sessionID || your_id=sessionID order by start_walk_titme desc
+	 */
 	
-	int modify();
+	/**/
 	
+	/** 결제 승인 된 회원 리스트 */
+	@Select("select * from paymentApprove")
+	List<PayApproveDTO> payList();
 	
-	
+	@Insert("insert into paymentRequest "
+			+ "(partner_order_id,partner_user_id,quantity,total_amount) "
+			+ "values "
+			+ "(#{partner_order_id},#{partner_user_id},#{quantity},#{total_amount})")
+	int payInfoInsert(PayInfoDTO dto);
 
 }
