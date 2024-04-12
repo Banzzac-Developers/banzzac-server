@@ -15,11 +15,13 @@ import banzzac.dto.ReportDTO;
 @Mapper
 public interface MemberMapper {
 	
+	
+	/** 신규 회원가입*/
 	@Insert("insert into member"
-			+"(id,pwd,gender,age,date,img,walking_style,nickname)values "
-			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingStyleStr},#{nickname})")
+			+"(id,pwd,gender,age,img,walking_style,nickname,phone)values "
+			+"(#{id},#{pwd},#{gender},#{age},#{img},#{walkingStyleStr},#{nickname},#{phone})")
 	int createMember(MemberDTO dto);
-
+ 
 	
 	/** 모든 회원 리스트 */
 	@Select("select * from member")

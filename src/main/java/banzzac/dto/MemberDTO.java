@@ -13,7 +13,7 @@ public class MemberDTO {
 
 
 	private int no,gender,age,Temperature,cnt,isGrant, quantity;
-	private String id,pwd,img,walkingStyleStr,nickName,phone,statusMessage;
+	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage;
 
 	private Date date;
 	private ArrayList<String> walkingStyle;
