@@ -19,6 +19,13 @@ public interface DogMapper {
 			)
 	int createDog(DogDTO dto);
 	
+	/** 로그인 후 반려견 추가 등록 */
+	@Insert("insert into dog"
+			+"(id,name,age,img,gender,weight,neutrification,size,kind,personality,activity)"
+			+ "values"
+			+"(#{id},#{name},#{age},#{img},#{gender},#{weight},#{neutrification},#{size},#{kind},#{personality},#{activity}) "
+			)
+	int addDog(DogDTO dto);
 	
 	/** 내 반려견 전체 리스트 불러오기  -> id = sessionID */
 	@Select("select * from dog where id = #{id}")
@@ -27,7 +34,7 @@ public interface DogMapper {
 	
 	/** 내 반려견 상세 정보 */
 	@Select("select * from dog where id = #{id} && name = #{name}")
-	DogDTO detail(String id, String name);
+	DogDTO dogInfo(String id, String name);
 	
 	
 	/** 반려견 수정 -> id = sessionID && name = #{name} */
