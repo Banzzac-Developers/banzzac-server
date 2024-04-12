@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class PaymentSuccessDTO {
 	
-	private long partnerOrderId; // 회원 주문 고유 번호
+	private int partnerOrderId; // 회원 주문 고유 번호
 	private String partnerUserId; // 결제 한 회원
 	private String tid; // 결제 고유 번호 ( 승인 = 취소 )
 	private String aid; // 결제 고유 번호 ( 승인 != 취소 )

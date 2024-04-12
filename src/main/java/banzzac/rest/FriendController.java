@@ -3,6 +3,7 @@ package banzzac.rest;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,7 @@ public class FriendController {
 	}
 	
 	//** 친구프로필 */
+	
 	@GetMapping("friendProfile/{friendId}")
 	public MemberDTO friendProfile(@PathVariable String friendId){
 		MemberDTO res = mapper.friendProfile(friendId);
