@@ -66,30 +66,42 @@ public interface MatchingMapper {
 	 * Location 테이블과 Join.
 	 * */
 	@Select("<script>"
-		    + "SELECT m.no, m.gender, m.age, m.temperature, m.cnt, m.id, m.img, m.walking_style, m.nickname,"
+		    + "SELECT m.no, m.gender, m.walking_style, m.age, m.temperature, m.cnt, m.id, m.img, m.walking_style, m.nickname,"
 		    + " d.*"
 		    + " FROM member m"
 		    + " JOIN dog d"
 		    + " ON m.id = d.id"
 		    + " JOIN matching_conditions mc"
 		    + " ON m.no = mc.no"
-		    + " WHERE m.age BETWEEN #{ageRangeStart} AND #{ageRangeEnd}"
+		    + " WHERE"
+		    + " m.age BETWEEN #{ageRangeStart} AND #{ageRangeEnd}"
 		    + " <if test='gender != null'>"
 		     	+" AND m.gender = #{gender}"
+		    + " </if>"
+		    + " <if test='walkingStyle != null and walkingStyle.size() > 0'>"
+		    	+" AND ("
+		    + " <foreach item='style' collection='walkingStyle' separator=' or '>"
+		    	+"  m.walking_style LIKE CONCAT('%', #{style}, '%') "
+		    + " </foreach>"
+		    	+")"
 		    + " </if>"
 		    + " <if test='size != null'>"
 		     	+" AND d.size = #{size}"
 		    + " </if>"
-		    + " <if test='dogNature != null'>"
-		     	+" AND d.personality IN"
-		    + " <foreach item='nature' collection='dogNature' open='(' separator=',' close=')'>"
-		     	+" #{nature}"
+		    + " <if test='dogNature != null and dogNature.size() > 0'>"
+		     	+" AND ("
+		    + " <foreach item='nature' collection='dogNature' separator=' or '>"
+		     	+" d.personality LIKE CONCAT('%', #{nature}, '%')"
 		    + " </foreach>"
+		    + " )"
+		    + " </if>"
+		    + " <if test='amountOfActivity != null'>"
+		    	+ " AND d.activity = #{amountOfActivity}"
 		    + " </if>"
 		    + " AND m.isGrant = 1"
 		    + " AND m.id NOT IN (SELECT searched_member_id"
 		    					+ " FROM matching_search_history"
-		    					+ " WHERE member_id = #{userId})"
+		    					+ " WHERE member_id = #{memberId})"
 		    + " </script>")
 	 @Results({
 	        @Result(property = "memberDTO.no", column = "m.no"),
@@ -99,13 +111,13 @@ public interface MatchingMapper {
 	        @Result(property = "memberDTO.cnt", column = "m.cnt"),
 	        @Result(property = "memberDTO.id", column = "m.id"),
 	        @Result(property = "memberDTO.img", column = "m.img"),
-	        @Result(property = "memberDTO.walkingStyle", column = "m.walking_style"),
+	        @Result(property = "memberDTO.walkingStyleStr", column = "m.walking_style"),
 	        @Result(property = "memberDTO.nickname", column = "m.nickname"),
 	        @Result(property = "dogDTOs", column = "md.id",
 	            javaType = ArrayList.class,
-	            many = @Many(select = "getMatchingConditionsDogs"))
+	            many = @Many(select = "banzzac.mapper.MatchingMapper.getMatchingConditionsDogs"))
 	    })
-	public ArrayList<MemberDTO> searchMatchingMembers(MatchingDTO matchingDTO);
+	public ArrayList<MatchingDTO> searchMatchingMembers(MatchingDTO matchingDTO);
 	
 	/**
 	 * searchMatchingMembers(MatchingDTO matchingDTO) 가 실행되고 결과값으로 실행되는 메소드입니다.*/

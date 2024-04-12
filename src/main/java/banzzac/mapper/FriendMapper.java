@@ -16,13 +16,27 @@ import banzzac.dto.MemberDTO;
 @Mapper
 public interface FriendMapper {
 	//* 친구리스트*/
-	@Select("select * from friend where id=#{id} and block=1 or block=2 ")
+	@Select("SELECT m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+			+ " FROM member m "
+			+ " JOIN friend f ON m.id = f.friend_id "
+			+ " join dog d on m.id = d.id "
+			+ " WHERE f.id = #{id} AND (f.block = 1 OR f.block = 2) ")
 	List<FriendDTO> list(String id);
+	
 	//* 차단 친구 리스트 */
-	@Select("select * from friend where id=#{id}  and block=0")
+	@Select("SELECT m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+			+ " FROM member m "
+			+ " JOIN friend f ON m.id = f.friend_id "
+			+ " join dog d on m.id = d.id "
+			+ " WHERE f.id = #{id} AND f.block = 0 ")
 	List<FriendDTO> blockList(String id);
+	
 	//* 즐겨찾기 친구 리스트*/
-	@Select("select * from friend where id=#{id}  and block=2")
+	@Select("SELECT m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+			+ " FROM member m "
+			+ " JOIN friend f ON m.id = f.friend_id "
+			+ " join dog d on m.id = d.id "
+			+ " WHERE f.id = #{id} AND f.block = 2 ")
 	List<FriendDTO> favoriteList(String id);
 	
 	//* 친구차단 */

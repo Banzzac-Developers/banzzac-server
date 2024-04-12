@@ -29,6 +29,20 @@ public class FriendController {
 		return res;
 	}
 	
+	/** 차단친구리스트*/
+	@GetMapping("blockList/{id}")
+	public List<FriendDTO> friendblockList(@PathVariable String id) {
+		List<FriendDTO> res = mapper.blockList(id);
+		return res;
+	}
+	
+	/** 즐겨찾기 친구리스트*/
+	@GetMapping("favoriteList/{id}")
+	public List<FriendDTO> favoriteList(@PathVariable String id) {
+		List<FriendDTO> res = mapper.favoriteList(id);
+		return res;
+	}
+	
 	/** 친구 삭제  */
 	@GetMapping("{id}/delete/{friendId}")
 	Object delete(FriendDTO dto,@PathVariable String id,@PathVariable String friendId) {
@@ -38,7 +52,7 @@ public class FriendController {
 	}
 	
 	//** 친구프로필 */
-	@GetMapping("friendprofile/{friendId}")
+	@GetMapping("friendProfile/{friendId}")
 	public MemberDTO friendProfile(@PathVariable String friendId){
 		MemberDTO res = mapper.friendProfile(friendId);
 		return res;
