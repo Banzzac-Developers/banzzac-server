@@ -39,10 +39,15 @@ public class PayController {
 	// kakao 에 결제 준비 요청
 	 @PostMapping("/ready")
 	 public Object readyToKakaoPay(@RequestBody PaymentSuccessDTO paymentSuccessDto) {
-		 	HttpHeaders headers = new HttpHeaders(); 
-		 	System.out.println("2111111111111111");
-		 	PaymentSuccessDTO dto = mapper.checkOrderId(orderId);
-		 	while(true) {	 		
+		 	
+		 HttpHeaders headers = new HttpHeaders(); 
+		 	
+		 orderId = (int) (Math.random() * Integer.MAX_VALUE);
+		 	
+		 PaymentSuccessDTO dto = mapper.checkOrderId(orderId);
+		 	
+		 	// dto.getPartnerOrderId()==orderId 경우
+		 	while(dto!=null) {	 		
 		 		// orderId 만들기		 	
 		 		orderId = (int) (Math.random() * Integer.MAX_VALUE);
 		 		// db에 같은 값이 없을 때 까지 생성
@@ -50,11 +55,9 @@ public class PayController {
 		 			break;
 		 		}
 		 	}
-		 	System.out.println("orderId : "+orderId);
-		 	System.out.println("dto orderID : " + dto.getPartnerOrderId());
 		 	
 		 	
-			// secret key 숨기기
+		 	// secret key 숨기기
 	        headers.set("Authorization", "SECRET_KEY DEV363D27AC1786201E1E1E880CD565F7F19A499");
 			headers.set("Content-Type", "application/json"); //jason 형태로 보내기
 			
@@ -77,9 +80,10 @@ public class PayController {
 			HttpEntity<Map<String, String>> transform = new HttpEntity<>(params, headers);
 			// kakao 로 준비 요청하기
 			payInfoApprove = restTemplate.postForObject("https://open-api.kakaopay.com/online/v1/payment/ready", transform, PayInfoApprove.class);
-			
-			mapper.paymentInsert(orderId,paymentSuccessDto); 
-			
+			System.out.println(payInfoApprove);
+			paymentSuccessDto.setPartnerOrderId(orderId);
+			//mapper.paymentInsert(orderId,paymentSuccessDto); 
+			System.out.println("몇개 인서트"+mapper.paymentInsert(paymentSuccessDto));
 			return payInfoApprove; //react -> 결제페이지로	redirect
 		}
 	 
@@ -112,8 +116,10 @@ public class PayController {
 		
 		// 결제 요청 후 받은 값 -> payApprove db에 update sql문 작성하기
 		mapper.paySuccess(paySuccessInfo.getTid(),paySuccessInfo.getAid(),paySuccessInfo.getPayment_method_type(),paySuccessInfo.getApproved_at(),partnerOrderId);
-			
-		System.out.println("성공 데이터  : "+paySuccessInfo);
+		
+		// 결제 성공 후 매칭권 갯수 변경
+		mapper.modifyMatchingQuantity(dto);
+
 		
 		// 결제 성공 후 redirect 페이지
 		String address = "http://localhost:5173/profile";
@@ -137,7 +143,7 @@ public class PayController {
 	 
 	 /** 결제 내역 보기 */
 	 //@GetMapping("/paies")
-	 @GetMapping("/{partnerUserId}")
+	 @GetMapping("/list/{partnerUserId}")
 	 public ArrayList<PaymentSuccessDTO> paymentHistory(@PathVariable String partnerUserId){
 		 System.out.println();
 		 return mapper.myPayList(partnerUserId);

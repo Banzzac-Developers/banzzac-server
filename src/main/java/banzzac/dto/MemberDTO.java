@@ -12,7 +12,7 @@ import lombok.Data;
 public class MemberDTO {
 
 
-	private int no,gender,age,Temperature,cnt,isGrant;
+	private int no,gender,age,Temperature,cnt,isGrant, quantity;
 	private String id,pwd,img,walkingStyleStr,nickName,phone,statusMessage;
 
 	private Date date;
@@ -26,7 +26,7 @@ public class MemberDTO {
 	
 	public void setWalkingStyle(ArrayList<String> walkingStyle) {
 		this.walkingStyle = walkingStyle;
-		this.walkingStyleStr = walkingStyle.toString();
+		this.walkingStyleStr =String.join(",",walkingStyle);
 	}
 	
 	
