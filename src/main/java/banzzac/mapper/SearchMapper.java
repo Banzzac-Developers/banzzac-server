@@ -27,7 +27,7 @@ public interface SearchMapper {
 	        @Result(property = "member.id", column = "member_id"),
 	        @Result(property = "member.gender", column = "member_gender"),
 	        @Result(property = "member.img", column = "member_img"),
-	        @Result(property = "member.walkingStyle", column = "member_walking_style"),
+	        @Result(property = "member.walkingStyleStr", column = "member_walking_style"),
 	        @Result(property = "member.nickname", column = "member_nickname"),
 	        @Result(property = "member.temperature", column = "member_Temperature"),
 	        @Result(property = "member.cnt", column = "member_cnt")

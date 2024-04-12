@@ -19,7 +19,7 @@ public class SearchController {
 	@Resource
 	SearchMapper mapper;
 	
-	@PostMapping
+	@PostMapping("members")
 	public ArrayList<LocationDTO> getLocations(@RequestBody LocationDTO dto){
 		System.out.println(dto);
 		ArrayList<LocationDTO> res = mapper.getMemberLocations(dto);
