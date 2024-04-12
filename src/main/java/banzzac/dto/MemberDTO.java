@@ -13,7 +13,7 @@ public class MemberDTO {
 
 
 	private int no,gender,age,Temperature,cnt,isGrant;
-	private String id,pwd,img,walkingStyleStr,nickName,phone,statusMessage;
+	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage;
 
 	private Date date;
 	private ArrayList<String> walkingStyle;
@@ -26,7 +26,7 @@ public class MemberDTO {
 	
 	public void setWalkingStyle(ArrayList<String> walkingStyle) {
 		this.walkingStyle = walkingStyle;
-		this.walkingStyleStr = walkingStyle.toString();
+		this.walkingStyleStr = String.join(",", walkingStyle);
 	}
 	
 	
