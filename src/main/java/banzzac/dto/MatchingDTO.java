@@ -13,10 +13,12 @@ public class MatchingDTO {
 	
 	//화면에서 받아온 조건들 ==> 디비에서 결과값 추출용
 	private Integer no;
-	private String stlye;
+	private String memberId;
+	private ArrayList<String> walkingStyle;
+	private String walkingStyleStr;
 	private Integer ageRangeStart;
 	private Integer ageRangeEnd;
-	private String gender;
+	private Integer gender;
 	private String size;
 	private String dogNatureStr;
 	private ArrayList<String> dogNature;
@@ -26,6 +28,16 @@ public class MatchingDTO {
 	//디비에서 받아온 데이터들 ==> 화면으로 반환용
 	private MemberDTO memberDTO;
 	private ArrayList<DogDTO> dogDTOs;
+	
+	
+	public void setWalkingStyle(ArrayList<String> walkingStyle) {
+		this.walkingStyle = walkingStyle;
+		this.walkingStyleStr = walkingStyle.toString();
+	}
+	public void setWalkingStyleStr(String walkingStyleStr) {
+		this.walkingStyleStr = walkingStyleStr;
+		this.walkingStyle = new ArrayList<>(Arrays.asList(walkingStyleStr.split(",")));
+	}
 	
 	
 	public void setDogNatureStr(String dogNatureStr) {

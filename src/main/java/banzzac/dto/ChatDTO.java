@@ -13,6 +13,4 @@ public class ChatDTO {
 	private String senderId , receiverId , message , sendImg ;
 	private int isRead , chatroomNo;
 	private Date sendTime;
-	
-	
 }
