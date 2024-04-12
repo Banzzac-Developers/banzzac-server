@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class FriendDTO {
 
-	private String id,friendId;
+	private String id,friendId,dogImg, dogName,mImg,mNickname,mStatusMesaage;
 	private int block;
+	
+	
 }
