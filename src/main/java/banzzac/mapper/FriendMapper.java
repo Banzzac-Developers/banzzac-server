@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -62,6 +63,7 @@ public interface FriendMapper {
 	
 	//*친구프로필*/
 	@Select("select * from member where id=#{friendId}")
+	@Result(property = "walkingStyleStr",column = "walking_style" )
 	MemberDTO friendProfile(String friendId);
 	
 	
