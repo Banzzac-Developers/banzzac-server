@@ -2,7 +2,6 @@ package banzzac.mapper;
 
 import java.util.ArrayList;
 
-import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
