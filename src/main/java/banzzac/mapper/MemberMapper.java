@@ -11,10 +11,11 @@ import org.apache.ibatis.annotations.Update;
 
 import banzzac.dto.DogDTO;
 import banzzac.dto.MemberDTO;
+import banzzac.dto.ReportDTO;
 
 @Mapper
 public interface MemberMapper {
-
+	
 	@Insert("insert into member"
 			+"(id,pwd,gender,age,date,img,walking_style,nickname)values "
 			+"(#{id},#{pwd},#{gender},#{age},sysdate(),#{img},#{walkingStyleStr},#{nickname})")
@@ -47,5 +48,16 @@ public interface MemberMapper {
 	@Update("update `member` set isGrant = 0 where id = #{id}")
 	int withdrawMember(MemberDTO dto);
 
+	
+	/**
+	 * 멤버가 멤버를 신고하는 SQL 작성자 : 정운만
+	 * */
+	
+	@Insert("INSERT INTO report"
+			+ " (member_no, reported_no, report_reason)"
+			+ " VALUES"
+			+ " (#{memberNo},#{reportedNo},#{reportReason})")
+	public int reportMember(ReportDTO dto);
+	
 }
 		
