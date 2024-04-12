@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>관리자 페이지 - [[|${commonLayout.service}|]]</title>
+<title>관리자 페이지-[[${commonLayout.service}]]</title>
 <style>
 	html,body{
 		margin : 0;
@@ -37,10 +37,10 @@
 <body>
 	<main>
 		<aside>
-			<th:block th:replace="inc/aside"/>		
+			<th:block th:replace="~{inc/aside}"/>		
 		</aside>
 		<div class="container">
-			<th:block th:replace="|/${commonLayout.folder}/${commonLayout.service}|"/>
+			<th:block th:replace="~{|/${commonLayout.folder}/${commonLayout.service}|}"/>
 		</div>	
 	</main>
 </body>
