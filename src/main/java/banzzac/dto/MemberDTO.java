@@ -11,6 +11,7 @@ import lombok.Data;
 @Component
 public class MemberDTO {
 
+
 	private int no,gender,age,Temperature,cnt,isGrant;
 	private String id,pwd,img,walkingStyleStr,nickName,phone,statusMessage;
 
