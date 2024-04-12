@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class MemberDTO {
 
-	private int no,gender,age,Temperrature,cnt,isGrant;
+	private int no,gender,age,Temperrature,cnt,isGrant,quantity;
 	private String id,pwd,img,walkingStyle,nickName,phone;
 	private Date date;
 }

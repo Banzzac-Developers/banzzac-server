@@ -1,6 +1,6 @@
 package banzzac.mapper;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -22,7 +22,7 @@ public interface DogMapper {
 	
 	/** 내 반려견 전체 리스트 불러오기  -> id = sessionID */
 	@Select("select * from dog where id = #{id}")
-	List<DogDTO> list(String id);
+	ArrayList<DogDTO> list(String id);
 	
 	
 	/** 내 반려견 상세 정보 */

@@ -1,7 +1,7 @@
 package banzzac.mapper;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -25,17 +25,22 @@ public interface ProfileMapper {
 	
 	/** 결제 완료 한 모든 회원 리스트 */
 	@Select("select * from paymentSuccess")
-	List<PaymentSuccessDTO> payList();
+	ArrayList<PaymentSuccessDTO> payList();
 	
 	/** 내가 결제한 리스트 -> 세션아이디 넣기 */
-	@Select("select partner_order_id,payment_method_type,quantity,total_amount,approved_at from paymentSuccess where partner_user_id=#{partnerUserId} order by approved_at desc")
-	List<PaymentSuccessDTO> myPayList(String partnerUserId);
+	@Select("select payment_method_type,quantity,total_amount,approved_at from paymentSuccess where partner_user_id=#{partnerUserId} order by approved_at desc")
+	ArrayList<PaymentSuccessDTO> myPayList(String partnerUserId);
 	
+	/** 결제 요청 시 orderId 생성 -> db에 같은 값이 있는 지 확인 */
+	@Select("select partner_order_id from paymentSuccess where partner_order_id=#{partnerOrderId}")
+	PaymentSuccessDTO checkOrderId(int partnerOrderId);
+	
+	/** 결제 요청 시 db에 추가 */
 	@Insert("insert into paymentSuccess "
 			+ "(partner_order_id,partner_user_id,quantity,total_amount) "
 			+ "values "
 			+ "(#{partnerOrderId},#{partnerUserId},#{quantity},#{totalAmount})")
-	int paymentInsert(PaymentSuccessDTO dto);
+	int paymentInsert(int partnerOrderId, PaymentSuccessDTO dto);
 	
 	/** 결제 성공 시 db 추가 할 내용 */
 	@Update("update paymentSuccess set "
@@ -45,11 +50,11 @@ public interface ProfileMapper {
 	
 	/** 카카오에 결제 승인에 필요한 값 select */
 	@Select("select partner_order_id,partner_user_id from paymentSuccess where partner_order_id = #{partnerOrderId}")
-	PaymentSuccessDTO detail(long partnerOrderId);
+	PaymentSuccessDTO detail(int partnerOrderId);
 	
 	/** 결제 : 취소/수정 시 db에서 삭제 */
 	@Delete("delete from paymentsuccess where partner_order_id= #{partnerOrderId}")
-	int delete(long partnerOrderId);
+	int delete(PaymentSuccessDTO dto);
 
 
 }
