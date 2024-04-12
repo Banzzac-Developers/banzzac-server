@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -66,7 +67,15 @@ public interface MatchingMapper {
 	 * Location 테이블과 Join.
 	 * */
 	@Select("<script>"
-		    + "SELECT m.no, m.gender, m.walking_style, m.age, m.temperature, m.cnt, m.id, m.img, m.walking_style, m.nickname,"
+		    + "SELECT m.no as no,"
+		    + " m.gender as gender,"
+		    + " m.walking_style as walking_style,"
+		    + " m.age as age,"
+		    + " m.temperature as temperature,"
+		    + " m.cnt as cnt,"
+		    + " m.id as id,"
+		    + " m.img as img,"
+		    + " m.nickname as nickname,"
 		    + " d.*"
 		    + " FROM member m"
 		    + " JOIN dog d"
@@ -99,29 +108,32 @@ public interface MatchingMapper {
 		    	+ " AND d.activity = #{amountOfActivity}"
 		    + " </if>"
 		    + " AND m.isGrant = 1"
+		    //+ " AND mc.want_matching = 1 "
 		    + " AND m.id NOT IN (SELECT searched_member_id"
 		    					+ " FROM matching_search_history"
 		    					+ " WHERE member_id = #{memberId})"
 		    + " </script>")
 	 @Results({
-	        @Result(property = "memberDTO.no", column = "m.no"),
-	        @Result(property = "memberDTO.gender", column = "m.gender"),
-	        @Result(property = "memberDTO.age", column = "m.age"),
-	        @Result(property = "memberDTO.temperature", column = "m.temperature"),
-	        @Result(property = "memberDTO.cnt", column = "m.cnt"),
-	        @Result(property = "memberDTO.id", column = "m.id"),
-	        @Result(property = "memberDTO.img", column = "m.img"),
-	        @Result(property = "memberDTO.walkingStyleStr", column = "m.walking_style"),
-	        @Result(property = "memberDTO.nickname", column = "m.nickname"),
-	        @Result(property = "dogDTOs", column = "md.id",
+	        @Result(property = "memberDTO.no", column = "no"),
+	        @Result(property = "memberDTO.gender", column = "gender"),
+	        @Result(property = "memberDTO.age", column = "age"),
+	        @Result(property = "memberDTO.temperature", column = "temperature"),
+	        @Result(property = "memberDTO.cnt", column = "cnt"),
+	        @Result(property = "memberDTO.id", column = "id"),
+	        @Result(property = "memberDTO.img", column = "img"),
+	        @Result(property = "memberDTO.walkingStyleStr", column = "walking_style"),
+	        @Result(property = "memberDTO.nickname", column = "nickname"),
+	        @Result(property = "dogDTOs", column = "id",
 	            javaType = ArrayList.class,
 	            many = @Many(select = "banzzac.mapper.MatchingMapper.getMatchingConditionsDogs"))
 	    })
 	public ArrayList<MatchingDTO> searchMatchingMembers(MatchingDTO matchingDTO);
 	
+	
 	/**
 	 * searchMatchingMembers(MatchingDTO matchingDTO) 가 실행되고 결과값으로 실행되는 메소드입니다.*/
 	@Select("SELECT * FROM dog WHERE id = #{memberId}")
+	
     ArrayList<DogDTO> getMatchingConditionsDogs(String memberId);
 	
 	/**

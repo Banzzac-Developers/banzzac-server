@@ -32,7 +32,7 @@ public class MatchingDTO {
 	
 	public void setWalkingStyle(ArrayList<String> walkingStyle) {
 		this.walkingStyle = walkingStyle;
-		this.walkingStyleStr = walkingStyle.toString();
+		this.walkingStyleStr = String.join(",", walkingStyle);
 	}
 	public void setWalkingStyleStr(String walkingStyleStr) {
 		this.walkingStyleStr = walkingStyleStr;
@@ -46,7 +46,8 @@ public class MatchingDTO {
 	}
 	public void setDogNature(ArrayList<String> dogNature) {
 		this.dogNature = dogNature;
-		this.dogNatureStr = dogNature.toString();
+		this.dogNatureStr = String.join(",", dogNature);
 	}
+	
 	
 }

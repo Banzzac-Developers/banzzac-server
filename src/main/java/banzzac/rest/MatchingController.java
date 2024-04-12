@@ -1,7 +1,9 @@
 package banzzac.rest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,11 +28,14 @@ public class MatchingController {
 		return dto;
 	}
 	
+	
 	@PostMapping("members")
-	public ArrayList<MatchingDTO> getMatchedMembers(@RequestBody MatchingDTO dto) {
-		System.out.println("dto 값 ===>\n\n\n"+dto+"\n\n");
+	public ResponseEntity<ArrayList<MatchingDTO>> getMatchedMembers(@RequestBody MatchingDTO dto) {
+		
+		//디비에서 뽑아온 값
 		ArrayList<MatchingDTO> dtos = mapper.searchMatchingMembers(dto);
-		System.out.println("dtos 값 ===>\n\n\n"+dtos+"\n\n");
-		return dtos;
+		
+		
+		return ResponseEntity.ok(dtos);
 	}
 }

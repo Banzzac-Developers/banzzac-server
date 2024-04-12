@@ -26,7 +26,7 @@ public class MemberDTO {
 	
 	public void setWalkingStyle(ArrayList<String> walkingStyle) {
 		this.walkingStyle = walkingStyle;
-		this.walkingStyleStr =String.join(",",walkingStyle);
+		this.walkingStyleStr = String.join(",", walkingStyle);
 	}
 	
 	
