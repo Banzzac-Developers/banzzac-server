@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>관리자 페이지 - [[|${commonLayout.service}|]]</title>
+<style>
+	html,body{
+		margin : 0;
+		padding :0;
+		height: 100%;
+	}
+	main{
+		display : flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 100%;
+	}
+	main > aside{
+		width: 10%;
+		height : 100%;
+		background-color: #000;
+		color:#fff ;
+	}
+	
+	main > aside > .logoBox {
+		width: 50px;
+	}
+	
+	main > aside > .logoBox > img{
+		object-fit : cover;
+	}
+	main > .container{
+		width:90%;
+	}
+</style>
+</head>
+<body>
+	<main>
+		<aside>
+			<th:block th:replace="inc/aside"/>		
+		</aside>
+		<div class="container">
+			<th:block th:replace="|/${commonLayout.folder}/${commonLayout.service}|"/>
+		</div>	
+	</main>
+</body>
+</html>
