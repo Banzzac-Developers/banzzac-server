@@ -35,7 +35,7 @@ public interface MemberMapper {
 	
 	
 	/** 회원 개인정보 수정 */
-	@Update("update `member` set pwd=#{pwd}, age=#{age}, img=#{img} ,"
+	@Update("update `member` set pwd=#{pwd}, img=#{img} ,"
 			+ "walking_style=#{walkingStyleStr}, nickname=#{nickName}, phone=#{phone} where id = #{id}")
 	int modifyMember(MemberDTO dto);
 		
