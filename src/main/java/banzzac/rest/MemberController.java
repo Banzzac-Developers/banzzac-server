@@ -24,28 +24,28 @@ public class MemberController {
 	MemberMapper mapper;
 	DogMapper domapper;
 	
-	
+	//*회원가입폼*/
 	@GetMapping("createMember")
 	void createMemberForm() {
 		System.out.println("createMemberForm 진입");
 	}
 	
-	
+	//*회원가입레그*/
 	@PostMapping("createMember")
-	String createMemberReg(MemberDTO dto) {
+	ResponseEntity<CommonResponse<MemberDTO>> createMemberReg(@RequestBody MemberDTO dto) {
 		mapper.createMember(dto);
 		System.out.println("createMemberReg 진입");
-		return "login";
+		return CommonResponse.success(dto);
 	}
 	
-	
+	//*반려견정보 입력 폼*/
 	@GetMapping("createDog")
 	void createDogForm() {
 		System.out.println("createDogForm 진입");
 	}
-	
+	//*반려견정보 입력레그*/
 	@PostMapping("createDog")
-	ResponseEntity<CommonResponse<DogDTO>> createDogReg(DogDTO dto) {
+	ResponseEntity<CommonResponse<DogDTO>> createDogReg(@RequestBody DogDTO dto) {
 		domapper.createDog(dto);
 		System.out.println("createDogReg 진입");
 		return CommonResponse.success(dto);
