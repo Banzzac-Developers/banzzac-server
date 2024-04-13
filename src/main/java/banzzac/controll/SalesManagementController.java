@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,12 +52,13 @@ public class SalesManagementController {
 	 * */
 	//리스트
 	@RequestMapping("")
-	public String getNewMember(MemberDTO dto, @PathVariable String service) {
+	public String getNewMember(Model mm, MemberDTO dto, @PathVariable String service) {
 		
 		System.out.println("SalesController 진입");
 		
 		SalesListService sls = (SalesListService) applicationContext.getBean(service);
-		ArrayList<MemberDTO> res = sls.execute(dto);
+		
+		mm.addAttribute("mainData",sls.execute(dto));
 		
 		System.out.println("Sales Controller : "+dto);
 		
@@ -65,24 +67,24 @@ public class SalesManagementController {
 	
 	//상세 조회
 	@RequestMapping("{id}")
-	public String detailMember(MemberDTO dto ,@PathVariable String action) {
+	public String detailMember(Model mm, MemberDTO dto ,@PathVariable String action) {
 		System.out.println("Sales Controller : "+dto);
 		
 		SalesService ss = (SalesService) applicationContext.getBean(action);
 		dto = ss.execute(dto);
-		
+		mm.addAttribute("mainData",ss.execute(dto));
 		return "template";
 	}
 	
 	
 	//수정 삭제
 	@RequestMapping("{id}/{action}")
-	public String actionMember(MemberDTO dto ,@PathVariable String action) {
+	public String actionMember(Model mm, MemberDTO dto ,@PathVariable String action) {
 		System.out.println("Sales Controller : "+dto);
 		
 		SalesService ss = (SalesService) applicationContext.getBean(action);
 		dto = ss.execute(dto);
-		
+		mm.addAttribute("mainData",ss.execute(dto));
 		return "template";
 	}
 	
