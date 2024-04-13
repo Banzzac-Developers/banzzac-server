@@ -21,12 +21,12 @@ public interface DogMapper {
 	
 	
 	/** 내 반려견 전체 리스트 불러오기  -> id = sessionID */
-	@Select("select * from dog where id = '5391nks@example.com'")
+	@Select("select * from dog where id = 'zkdlwjsxm@example.com'")
 	ArrayList<DogDTO> list(DogDTO dto);
 	
 	/** 반려견 추가 시 같은 정보가 있는지 확인 */
 	@Select("select id,name from dog where id = #{id} && name = #{name}")
-	DogDTO dogChk(DogDTO dto);
+	DogDTO checkDog(DogDTO dto);
 	
 	/** 내 반려견 상세 정보 */
 	@Select("select * from dog where id = #{id} && name = #{name}")
@@ -39,12 +39,12 @@ public interface DogMapper {
 			+ "neutrification=#{neutrification}, size=#{size}, "
 			+ "personality=#{personality}, activity=#{activity} "
 			+ "where id = #{id} && name = #{name}")
-	int modify(DogDTO dto);
+	int modifyDog(DogDTO dto);
 
 	
 	/** 반려견 삭제 -> id = sessionID && name = #{name} */
 	@Delete("delete from dog where id = #{id} && name = #{name}")
-	int delete(DogDTO dto);
+	int deleteDog(DogDTO dto);
 	
 }
 		
