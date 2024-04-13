@@ -12,7 +12,16 @@ import banzzac.dto.ReportDTO;
 @Mapper
 public interface AdminMapper {
 
-	@Select("select * from report limit #{serachNo}, #{listCnt}")
+	@Select(" <script>"
+			+ "select * from report "
+			+ " order by report_time desc"
+			+ " <if test='searchNo != null' >"
+				+ " limit #{searchNo}, #{listCnt} "
+			+ " </if>"
+			+ " <if test='searchNo == null' >"
+				+ " limit 0,#{listCnt}"
+			+ " </if>"
+			+ " </script>")
 	public ArrayList<ReportDTO> getReportMemberList(PageDTO dto);
 	
 	

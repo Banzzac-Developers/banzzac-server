@@ -2,37 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>관리자 페이지-[[${commonLayout.service}]]</title>
-<style>
-	html,body{
-		margin : 0;
-		padding :0;
-		height: 100%;
-	}
-	main{
-		display : flex;
-		align-items: center;
-		justify-content: space-between;
-		height: 100%;
-	}
-	main > aside{
-		width: 10%;
-		height : 100%;
-		background-color: #000;
-		color:#fff ;
-	}
-	
-	main > aside > .logoBox {
-		width: 50px;
-	}
-	
-	main > aside > .logoBox > img{
-		object-fit : cover;
-	}
-	main > .container{
-		width:90%;
-	}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[[${selectTitle.title}]]</title>
+<link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
 	<main>

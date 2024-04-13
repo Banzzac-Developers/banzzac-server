@@ -8,13 +8,13 @@ import lombok.Data;
 @Component
 public class PageDTO {
 	private Integer listCnt = 20; //기본 갯수 30개
-	private Integer currentPage;
+	private Integer currentPage = 1;
 	//전체 페이지 수
 	private Integer block = 10;
-	private Integer currentBlock;
-	private Integer serachNo;
+	private Integer currentBlock = 1;
+	private Integer searchNo = 0;
 	private Integer totalPage;
-	private Integer minPage;
+	private Integer minPage = 1;
 	private Integer maxPage;
 	private boolean isNextBtn;
 	private Integer prevBlock;
@@ -22,15 +22,16 @@ public class PageDTO {
 	
 	
 	public void setCurrentPage(Integer currentPage) {
-		this.currentPage = currentPage;
-		if(this.currentPage <= 0) {
-			this.currentPage = 1;
+		if(currentPage != null) {			
+			this.currentPage = currentPage;
+			if(this.currentPage <= 0) {
+				this.currentPage = 1;
+			}
+			this.searchNo = (this.currentPage-1) * listCnt;
 		}
-		this.serachNo = (this.currentPage-1) * listCnt;
 	}
 	
 	public void setTotalPage(Integer totalPage) {
-		
 		this.totalPage = totalPage % listCnt == 0 ?
 						totalPage/listCnt :
 						totalPage /listCnt + 1;
@@ -48,7 +49,7 @@ public class PageDTO {
 		if(this.currentPage > this.maxPage) {
 			this.currentPage = this.maxPage;
 			this.minPage = (this.currentPage - 1) / block * block + 1;
-			this.serachNo = (this.currentPage-1) * listCnt;
+			this.searchNo = (this.currentPage-1) * listCnt;
 		}
 		
 		if(this.totalPage < nextBlock) {
@@ -57,6 +58,7 @@ public class PageDTO {
 		if(this.currentPage > this.maxPage) {
 			this.currentPage = this.maxPage;
 		}
+		
 	}
 	
 }
