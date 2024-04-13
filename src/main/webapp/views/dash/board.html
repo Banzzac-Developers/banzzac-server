@@ -1,0 +1,15 @@
+<table border="1">
+	<tbody>
+		<tr th:each="report : ${data}">
+			<td th:text="${report.reportNo}"></td>
+			<td th:text="${report.memberNo}"></td>
+			<td th:text="${report.reportedNo}"></td>
+			<td th:text="${report.reportReason}"></td>
+			<td th:text="${report.reportTime}"></td>
+			<td th:text="${report.reportStatus}"></td>
+			<td th:text="${report.reportAdminAnswer}"></td>
+		</tr>
+	 </tbdoy>
+</table>
+<!-- 
+<div th:replace="~{inc/paging(${pageDTO.currentPage}, ${pageDTO.prevBlock}, ${pageDTO.nextBlock}, ${pageDTO.minPage}, ${pageDTO.maxPage}, ${pageDTO.isNextBtn} )}"></div> -->
