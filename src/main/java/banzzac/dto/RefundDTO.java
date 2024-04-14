@@ -9,10 +9,12 @@ import lombok.Data;
 @Data
 public class RefundDTO {
 
-	private int partnerOrderId, aprrove;
+	private int partnerOrderId, approve;
 	private String reason;
 	private Date refundRequestDate, approveTime; //환불 신청시간, 환불 승인시간
 	private String refundRequestDateStr, approveTimeStr;
+	private int quantity,totalAmount;
+	private String sessionId;
 	
 	public void setRefundRequestDate(Date refundRequestDate) {
 		this.refundRequestDate = refundRequestDate;
@@ -31,7 +33,7 @@ public class RefundDTO {
 	
 	public void setApproveTime(Date approveTime) {
 		this.approveTime = approveTime;
-		this.refundRequestDateStr = new SimpleDateFormat("yyyy-MM-dd hh:mm").format(approveTime);
+		this.approveTimeStr = new SimpleDateFormat("yyyy-MM-dd hh:mm").format(approveTime);
 	}
 
 	public void setApproveTimeStr(String approveTimeStr) {

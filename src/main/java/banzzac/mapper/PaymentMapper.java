@@ -61,54 +61,71 @@ public interface PaymentMapper {
 	int delete(PaymentSuccessDTO dto);
 	
 	
-	
-	/** 환불 신청 가능 조건 : 7일 이내 , sessionId, 구매한 매칭권 <= 남아있는 매칭권 */
-	@Select("select p.partner_order_id,p.quantity,total_amount,p.approved_at , m.quantity, m.id "
-			+ "from paymentsuccess p "
-			+ "join `member` m "
-			+ "on p.partner_user_id = m.id "
-			+ "where  datediff(sysdate(),p.approved_at)<=7 "
-			+ "&& partner_user_id ='zkdlwjsxm@example.com' "
-			+ "&& p.quantity <= m.quantity ")
-	ArrayList<PaymentSuccessDTO> refundPossible(PaymentSuccessDTO dto);
-
-	
-	/** 환불 신청하기 */
-	@Insert("insert into refund (partner_order_id,reason,refund_request_date) "
-			+ "values"
-			+ "(#{partner_order_id},#{reason},sysdate())")
-	int refundRequest(RefundDTO dto);
-	
+	/** 환불 신청 가능 조건 
+	 	: 결제내역 존재, 현재로부터 7일 이내, 구매id = login id, 남아있는 매칭권 >= 구매한 매칭권, 환불신청하지 않은 주문건 */
+	@Insert("INSERT INTO refund (partner_order_id, reason, refund_request_date) "
+			+ "    SELECT #{partnerOrderId}, #{reason}, sysdate() "
+			+ "    FROM paymentsuccess p "
+			+ "    JOIN `member`  m "
+			+ "    on p.partner_user_id = m.id "
+			+ "    WHERE DATEDIFF(sysdate(), p.approved_at) <= 7 "
+			+ "    AND p.partner_user_id = 'zkdlwjsxm@example.com' "
+			+ "    AND m.quantity >= p.quantity  "
+			+ "	   AND NOT EXISTS ("
+			+ "    	SELECT #{partnerOrderId}"
+			+ "    	FROM refund r"
+			+ "    	WHERE r.partner_order_id = p.partner_order_id)")
+	int insertRefund(RefundDTO dto);
 	
 	/** 환불 신청 시 member 테이블의 quantity 수량 빼기 */
-	@Update("update `member` m  set "
-			+ "m.quantity = m.quantity - "
-			+ "(select p.quantity  from paymentsuccess p "
+	@Update("update `member` m  "
+			+ "join paymentsuccess p "
+			+ "on m.id = p.partner_user_id "
+			+ "set m.quantity = m.quantity -("
+			+ "select p.quantity "
+			+ "from paymentsuccess p "
 			+ "join refund r "
 			+ "on p.partner_order_id = r.partner_order_id "
-			+ "where p.partner_order_id=3)"
-			+ "where m.id = 'zkdlwjsxm@example.com'")
-	int minusQuantity(MemberDTO dto);
+			+ "where r.partner_order_id = #{partnerOrderId}) "
+			+ "where p.partner_user_id =  'zkdlwjsxm@example.com'")
+	int minusQuantity(RefundDTO dto);
 	
 	
-	/** 환불 사유 수정 */
-	@Update("update refund set "
-			+ "reason = #{reason} "
-			+ "where partner_order_id = #{partnerOrderId};")
+	/** 환불 사유 수정 : 환불 대기 중인 건에 한해 */
+	@Update("update refund r "
+			+ "join paymentsuccess p "
+			+ "on r.partner_order_id  = p.partner_order_id "
+			+ "set r.reason = #{reason} "
+			+ "where "
+			+ "r.partner_order_id = #{partnerOrderId} && "
+			+ "p.partner_user_id = 'zkdlwjsxm@example.com' && "
+			+ "r.approve = 2")
 	int modifyRefund(RefundDTO dto);
 	
 	
 	/** 내가 신청한 환불 리스트 */
-	@Select("select r.reason,r.refund_request_date ,r.approve, p.quantity, p.total_amount  "
+	@Select("select "
+			+ "r.partner_order_id,r.reason,r.refund_request_date ,r.approve,p.quantity, p.total_amount, r.approve_time "		
 			+ "from refund r "
 			+ "join paymentsuccess p "
 			+ "on r.partner_order_id = p.partner_order_id "
-			+ "where p.partner_user_id = 'zkdlwjsxm@example.com'"
-			+ "order by r.refund_request_date desc")
-	ArrayList<RefundDTO> myRefundList(PaymentSuccessDTO dto);
+			+ "where "
+			+ "p.partner_user_id = 'zkdlwjsxm@example.com'"
+			+ "order by r.refund_request_date desc" )
+	ArrayList<RefundDTO> myRefundList(RefundDTO dto);
 
 	
 	/** 환불 취소 */
-	@Delete("delete from refund where partner_order_id = #{partner_order_id}")
-	int withdrawRefund(RefundDTO dto);
+	@Delete("delete from refund where partner_order_id = #{partnerOrderId}")
+	int cancelRefund(RefundDTO dto);
+	
+	@Update("update `member` m  "
+			+ "join paymentsuccess p "
+			+ "on m.id = p.partner_user_id "
+			+ "set m.quantity = m.quantity + ("
+			+ "select p.quantity "
+			+ "from paymentsuccess p "
+			+ "where p.partner_order_id = #{partnerOrderId}) "
+			+ "where p.partner_user_id =  'zkdlwjsxm@example.com'")
+	int plusQuantity(PaymentSuccessDTO dto);
 }
