@@ -12,6 +12,8 @@ import banzzac.dto.LocationDTO;
 @Mapper
 public interface SearchMapper {
 
+	
+	/** 내 현재 위치한 멤버들의 정보를 불러옵니다. 이것으로 회원의 프로필 보기를 구성하면 됨.*/
 	  @Select("select l.*, "
 	            + "m.no as member_no, m.id as member_id, m.gender as member_gender, m.img as member_img, "
 	            + "m.walking_style as member_walking_style, m.nickname as member_nickname, "

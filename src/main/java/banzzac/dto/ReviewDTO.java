@@ -16,7 +16,4 @@ public class ReviewDTO {
 		this.regDate = regDate;
 		this.regDateStr = new SimpleDateFormat("yyyy-MM-dd").format(regDate);
 	}
-	
-	
-	
 }

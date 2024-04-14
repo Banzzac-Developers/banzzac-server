@@ -8,7 +8,7 @@ public class SuperPathController {
 	
 	@GetMapping("/")
 	public String goToDashBoard() {
-		return "redirect:/admin/dash/board";
+		return "redirect:/dashboard";
 	}
 	
 	
