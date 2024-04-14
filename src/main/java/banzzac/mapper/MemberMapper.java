@@ -57,5 +57,9 @@ public interface MemberMapper {
 			+ " (#{memberNo},#{reportedNo},#{reportReason})")
 	public int reportMember(ReportDTO dto);
 	
+	/**
+	 * 상대 멤버 상세 프로필 보기
+	 * */
+	
 }
 		
