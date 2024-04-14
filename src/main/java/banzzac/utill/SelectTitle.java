@@ -18,11 +18,11 @@ public class SelectTitle {
 		String sales = "매출 관리 - ";
 		Map<String, String> titles = new LinkedHashMap<>();
 		titles.put("board", "대시보드");
-		titles.put("newMembers", members+"신규 회원 검수");
-		titles.put("chart", sales+"매출");
-		
-		
-		
+		titles.put("newMembers", members+"신규 회원 검수");		
+		titles.put("daily", sales+"일별 매출");
+		titles.put("weekly", sales+"주간 매출");
+		titles.put("monthly", sales+"월간 매출");
+				
 		
 		this.title = titles.get(serviceName);
 		
