@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
 @RequestMapping("/api/payment")
 public class PayController {
@@ -38,7 +37,7 @@ public class PayController {
 	private PaySuccessInfo paySuccessInfo;
 	private int orderId;
 	
-	@PostMapping("/ready")
+	@PostMapping("ready")
 	public ResponseEntity<CommonResponse<Object>> readyToPay(@RequestBody PaymentSuccessDTO paymentSuccessDto){
 		System.out.println("카카오페이 결제 준비 요청");
 		
@@ -89,7 +88,7 @@ public class PayController {
 	
 	 
 	 // 결제 성공 시 pgToken 값 받아오기
-	 @GetMapping("/success/{partnerOrderId}")
+	 @GetMapping("success/{partnerOrderId}")
 	 public ResponseEntity<CommonResponse<Object>> paySuccess(@RequestParam("pg_token") String pgToken, @PathVariable int partnerOrderId) {		 
 		System.out.println("결제 준비 성공 -> 승인 요청"); 
 		
@@ -133,7 +132,7 @@ public class PayController {
 	 }
 	 
 	 
-	 @GetMapping(path = {"/fail/{partnerOrderId}","/cancel/{partnerOrderId}"})
+	 @GetMapping(path = {"fail/{partnerOrderId}","/cancel/{partnerOrderId}"})
 	 public ResponseEntity<Object> payFail(PaymentSuccessDTO dto){
 		 System.out.println("결제 요청 실패 or 취소");
 		
@@ -148,23 +147,62 @@ public class PayController {
 	 }
 	 
 	 /** 결제 내역 보기 */
-	 @GetMapping("/{partnerUserId}")
+	 @GetMapping("{partnerUserId}")
 	 public ResponseEntity<CommonResponse<ArrayList<PaymentSuccessDTO>>> payList(@PathVariable String partnerUserId){
 		 System.out.println("결제 내역");
 		 return CommonResponse.success(mapper.myPayList(partnerUserId));
 	 }
 
+	 /** 환불 신청 */
+	 @PostMapping("refund/insert")
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> insertRefund(@RequestBody RefundDTO dto){		
+		 //dto.setSessionId();
+		 if(mapper.insertRefund(dto)>=1) {
+			mapper.minusQuantity(dto);
+			 return CommonResponse.success(mapper.myRefundList(dto));	
+		 }else {
+			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Insert Failed", "환불 신청 실패");
+		 }
+	 }
 	 
 	 /** 환불 신청 내역 */
-	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> myRefundList(PaymentSuccessDTO dto){
+	 @GetMapping("refund")
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> myRefundList(RefundDTO dto){
 		 System.out.println("환불 신청 내역 ");
-		 // 구매 내역이 있는 사람에 한해?
-		 if(dto!=null) {
+		 //dto.setSessionId();
+		 ArrayList<RefundDTO> res = mapper.myRefundList(dto);
+		 System.out.println(res);
+		 return CommonResponse.success(res);
+	 }
+ 
+	 /** 환불 신청 사유 수정 */
+	 @PostMapping("refund")
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> modifyRefund(@RequestBody RefundDTO dto){
+		 System.out.println("환불 사유 수정");
+		 //dto.setSessionId();
+		 if(dto.getApprove()==2) {
+			 System.out.println("승인 대기 중");
+			if(mapper.modifyRefund(dto)>=1) {
+				return CommonResponse.success(mapper.myRefundList(dto));				
+			}else {
+				return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Reason Modify Failed", "환불사유 수정 실패");
+			} 
+		 }else {
+			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Approve Finish", "환불 대기 상태 아님");
+		 } 
+	 }
+	 
+	 /** 환불 취소 */
+	 @GetMapping("refund/cancel/{partnerOrderId}")
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> cancelRefund(RefundDTO dto,PaymentSuccessDTO pdto, @PathVariable String partnerOrderId){
+		 System.out.println("refund : "+dto);
+		 System.out.println("payOK : "+pdto);
+		 if(mapper.cancelRefund(dto)>=1) {
+			 mapper.plusQuantity(pdto);
 			 return CommonResponse.success(mapper.myRefundList(dto));
 		 }else {
-			 return CommonResponse.error(HttpStatus.BAD_REQUEST,"Pay List Empty","구매이력이 없습니다");
+			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Cancel Failed", "환불 취소 실패");
 		 }
-		
 	 }
 	
 }

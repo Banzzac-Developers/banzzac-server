@@ -70,41 +70,27 @@ public class ProfileController {
 		return CommonResponse.success(res);
 	}
 
-	
-	@GetMapping("dog/{id}/{name}")
-	ResponseEntity<CommonResponse<DogDTO>> dogDetailInfo(@PathVariable String id, @PathVariable String name, DogDTO dto){		
-		DogDTO res = dogMapper.dogInfo(dto);
-		System.out.println("반려견 상세보기" + res);
-		if(res != null) {
-			return CommonResponse.success(res);
-		}else {
-			return CommonResponse.error(HttpStatus.BAD_REQUEST, "Dog Detail Failed", "반려견 정보 없음");
-		}		
-	}
-	
-	
+		
 	@PostMapping("dog/{id}")
-	ResponseEntity<CommonResponse<DogDTO>> addDog(@RequestBody DogDTO dto, @PathVariable String id){
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> addDog(@RequestBody DogDTO dto, @PathVariable String id){
 		dto.setId(id);	
 		DogDTO res = dogMapper.checkDog(dto);
 		
 		if(res==null) {
 			dogMapper.createDog(dto);
-			return CommonResponse.success(dogMapper.dogInfo(dto));	
+			return CommonResponse.success(dogMapper.list(dto));	
 		}else {
 			return CommonResponse.error(HttpStatus.BAD_REQUEST, "Dog Add Failed", "같은 정보 반려견 존재");
 		}	
 	}
 
-	
-	
 	@PostMapping("dog/{id}/{name}")
-	ResponseEntity<CommonResponse<DogDTO>> modifyDog(@RequestBody DogDTO dto, @PathVariable String id, @PathVariable String name){
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> modifyDog(@RequestBody DogDTO dto, @PathVariable String id, @PathVariable String name){
 		dto.setId(id);
 		dto.setName(name);
 		System.out.println("반려견 수정");
 		if (dogMapper.modifyDog(dto)>=1) {			
-			return CommonResponse.success(dogMapper.dogInfo(dto));
+			return CommonResponse.success(dogMapper.list(dto));
 		}else {
 			return CommonResponse.error(HttpStatus.BAD_REQUEST, "Dog Modify Failed", "반려견 수정 실패");
 		}
