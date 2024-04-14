@@ -33,9 +33,7 @@ public class KakaoProfile {
 
         JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
         this.nickname = properties.getAsJsonObject().get("nickname").getAsString();
-        System.out.println("properties : "+ properties);
         JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
-        System.out.println("kakaoAccount : "+ kakaoAccount);
         this.email = kakaoAccount.getAsJsonObject().get("email").getAsString();
         this.phoneNumber = kakaoAccount.getAsJsonObject().get("phone_number").getAsString();
         this.ageRange = kakaoAccount.getAsJsonObject().get("age_range").getAsString();
