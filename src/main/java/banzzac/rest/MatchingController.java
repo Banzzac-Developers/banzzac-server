@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import banzzac.dto.MatchingDTO;
 import banzzac.mapper.MatchingMapper;
+import banzzac.utill.CommonResponse;
 import jakarta.annotation.Resource;
 
 @RestController
@@ -30,12 +31,12 @@ public class MatchingController {
 	
 	
 	@PostMapping("members")
-	public ResponseEntity<ArrayList<MatchingDTO>> getMatchedMembers(@RequestBody MatchingDTO dto) {
+	public ResponseEntity<CommonResponse<ArrayList<MatchingDTO>>> getMatchedMembers(@RequestBody MatchingDTO dto) {
 		
 		//디비에서 뽑아온 값
 		ArrayList<MatchingDTO> dtos = mapper.searchMatchingMembers(dto);
 		
 		
-		return ResponseEntity.ok(dtos);
+		return CommonResponse.success(dtos);
 	}
 }
