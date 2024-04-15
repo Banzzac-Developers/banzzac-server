@@ -22,6 +22,7 @@ public class ChatroomDTO {
 		   SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 	      return sdf.format(lastMessageSendtime);
 	   }
+	   
 //	   public void setLastMessageSendtimeStr(String lastMessageSendtimeStr) {
 //	      try {
 //	         this.lastMessageSendtime = sdf.parse(lastMessageSendtimeStr);

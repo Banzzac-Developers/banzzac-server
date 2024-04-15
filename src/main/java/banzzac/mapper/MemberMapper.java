@@ -56,6 +56,10 @@ public interface MemberMapper {
 			+ " VALUES"
 			+ " (#{memberNo},#{reportedNo},#{reportReason})")
 	public int reportMember(ReportDTO dto);
+
 	
+	
+	
+
 }
 		
