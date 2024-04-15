@@ -11,6 +11,7 @@ import banzzac.dto.MemberDTO;
 import banzzac.dto.PageDTO;
 import banzzac.dto.PaymentSuccessDTO;
 import banzzac.dto.ReportDTO;
+import banzzac.dto.SalesManagementDTO;
 
 
 @Mapper
@@ -39,12 +40,14 @@ public interface AdminMapper {
 	
 	
 	/***************** 어매성 ************************/
-	@Select("select "
-			+ "DATE(approved_at), count(*),"
-			+ "sum(quantity),sum(total_amount) "
-			+ "from paymentsuccess p "
-			+ "group by  DATE(approved_at)")
-	public ArrayList<PaymentSuccessDTO> dailySales(); 
+	@Select("select COUNT(partner_order_id) as daily_order_num,"
+			+ "SUM(quantity) as daily_quantity,"
+			+ "SUM(total_amount) as daily_amount "
+			+ "from paymentsuccess "
+			+ "where datediff(curdate(),approved_at) <=8 "
+			+ "GROUP BY approved_at "
+			+ "order by approved_at desc;")
+	public ArrayList<SalesManagementDTO> dailySales(); 
 	
 	/** 월별 결제 건수 */
 	@Select("SELECT m.month_number, "

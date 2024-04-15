@@ -1,5 +1,7 @@
 package banzzac.controll;
 
+import java.util.ArrayList;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import banzzac.dto.PageDTO;
 import banzzac.dto.PaymentSuccessDTO;
+import banzzac.dto.SalesManagementDTO;
 import banzzac.mapper.AdminMapper;
 import banzzac.utill.CommonLayout;
 import banzzac.utill.SelectTitle;
@@ -37,16 +40,18 @@ public class SalesManagementController {
 	}
 	
 	@GetMapping("daily")
-	public String dailySales(CommonLayout cl,SelectTitle title, PaymentSuccessDTO dto) {
+	public String dailySales(CommonLayout cl,SelectTitle title,Model mm, SalesManagementDTO dto) {
 		cl.setFolder(folder);
 		cl.setService("daily");
 		title.selectTitle(cl.getService());
-		
+		ArrayList<SalesManagementDTO> res = mapper.dailySales();
+		System.out.println(res);
+		mm.addAttribute("data",res);		
 		return "template";
 	}
 	
 	@GetMapping("weekly")
-	public String weeklySales (CommonLayout cl,SelectTitle title, PaymentSuccessDTO dto) {
+	public String weeklySales (CommonLayout cl,SelectTitle title) {
 		cl.setFolder(folder);
 		cl.setService("weekly");
 		title.selectTitle(cl.getService());
@@ -55,7 +60,7 @@ public class SalesManagementController {
 	}
 	
 	@GetMapping("monthly")
-	public String monthlySales (CommonLayout cl,SelectTitle title, PaymentSuccessDTO dto) {
+	public String monthlySales (CommonLayout cl,SelectTitle title) {
 		cl.setFolder(folder);
 		cl.setService("monthly");
 		title.selectTitle(cl.getService());
