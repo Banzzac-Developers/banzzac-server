@@ -1,5 +1,6 @@
 package banzzac.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,7 +14,7 @@ public class MemberDTO {
 
 
 	private int no,gender,age,Temperature,cnt,isGrant, quantity;
-	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage;
+	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage,dateStr;
 
 	private Date date;
 	private ArrayList<String> walkingStyle;
@@ -27,6 +28,11 @@ public class MemberDTO {
 	public void setWalkingStyle(ArrayList<String> walkingStyle) {
 		this.walkingStyle = walkingStyle;
 		this.walkingStyleStr = String.join(",", walkingStyle);
+	}
+	
+	public String getDateStr() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    return sdf.format(date);
 	}
 	
 	
