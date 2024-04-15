@@ -32,10 +32,16 @@ public interface MemberMapper {
 	
 	
 	/** 회원 개인정보 수정 */
-	@Update("update `member` set pwd=#{pwd}, img=#{img} ,"
+	@Update("update `member` set pwd=#{pwd}, img=#{img},status_message = #{statusMessage}, "
 			+ "walking_style=#{walkingStyleStr}, nickname=#{nickname}, phone=#{phone} where id = #{id}")
 	int modifyMember(MemberDTO dto);
-		
+	
+	/** 상태 메시지 수정 */
+	@Update("update `member` "
+			+ "set status_message = #{statusMessage} "
+			+ "where id = 'zkdlwjsxm@example.com'")
+	int modifyStatus(MemberDTO dto);
+	
 	/** 리뷰 받은 후 온도, 리뷰 받은 수 변경 
 	  Temperature = Temperature + review_score*20 / cnt = cnt+review insert 갯수
 	 */
