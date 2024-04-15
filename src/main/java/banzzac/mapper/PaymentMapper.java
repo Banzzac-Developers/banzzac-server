@@ -17,7 +17,11 @@ import banzzac.dto.RefundDTO;
 public interface PaymentMapper {
 	
 	/** 내가 결제한 리스트 -> 세션아이디 넣기 */
-	@Select("select partner_order_id,payment_method_type,quantity,total_amount,approved_at from paymentSuccess where partner_user_id=#{partnerUserId} order by approved_at desc")
+	@Select("select "
+			+ "partner_order_id,payment_method_type,quantity,total_amount,approved_at "
+			+ "from paymentSuccess "
+			+ "where partner_user_id=#{partnerUserId} "
+			+ "order by approved_at desc")
 	ArrayList<PaymentSuccessDTO> myPayList(String partnerUserId);
 	
 	/** 결제 시 매칭권 갯수 변경
