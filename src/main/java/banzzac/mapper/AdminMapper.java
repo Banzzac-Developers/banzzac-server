@@ -35,10 +35,7 @@ public interface AdminMapper {
 	
 	@Select("select count(*) from report")
 	public int getTotalReportCount();
-	
-<<<<<<< Updated upstream
-	
-	
+
 	/***************** 어매성 ************************/
 	@Select("select COUNT(partner_order_id) as daily_order_num,"
 			+ "SUM(quantity) as daily_quantity,"
@@ -72,8 +69,7 @@ public interface AdminMapper {
 			+ ") AS p ON m.month_number = p.month_number "
 			+ "GROUP BY m.month_number;")
 	public int montlySalesCount(); 
-	
-=======
+
 	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
 	public int suspendMember(String id);
 	
@@ -106,11 +102,5 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
-	
-	
-	
-	
 
-
->>>>>>> Stashed changes
 }
