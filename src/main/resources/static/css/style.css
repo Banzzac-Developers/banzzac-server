@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import "./reset.css";
 @import "./inc/aside.css";
-
+@import "./screen/sales.css";
 *{
 	box-sizing : content-box;
 	margin : 0;
@@ -31,5 +31,10 @@ main > aside > .logoBox > img{
 }
 main > .container{
 	width:85%;
+}
+
+.salesTitle{
+	font-weight: bold;
+	font-size: x-large;
 }
 

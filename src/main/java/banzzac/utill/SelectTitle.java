@@ -23,6 +23,10 @@ public class SelectTitle {
 		titles.put("daily", sales+"일별 매출");
 		titles.put("weekly", sales+"주간 매출");
 		titles.put("monthly", sales+"월간 매출");
+		titles.put("paymentList", sales+"결제회원 리스트");
+		titles.put("refundList", sales+"환불신청 리스트");
+		titles.put("refuse", sales+"환불 거절 리스트");
+		titles.put("approve", sales+"환불 승인 리스트");
 
 		titles.put("chart", sales+"매출");
 		titles.put("report", "신고");
