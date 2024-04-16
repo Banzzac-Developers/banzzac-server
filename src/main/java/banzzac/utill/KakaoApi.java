@@ -28,12 +28,14 @@ public class KakaoApi {
 
 	
 	
-	private final String kakaoApiKey = "e09ad0168c41380f4ce7f8565f79f0cd";
+//	private final String kakaoApiKey = "e09ad0168c41380f4ce7f8565f79f0cd";//운만
+	private final String kakaoApiKey = "d1c29661caeadbbfdf7dfb03de5a298a";//성재
 	private final String kakaoRedirectUri = "http://localhost/api/login/oauth2/code/kakao";
 
 	
 	
 	public String getAccessToken(String code) {
+		System.out.println("222222222222222222222222222222222222222222222222");
 		 String accessToken = "";
 		 String refreshToken = "";
 		 String reqUrl = "https://kauth.kakao.com/oauth/token";
@@ -45,7 +47,7 @@ public class KakaoApi {
 		        //필수 헤더 세팅
 		        conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 		        conn.setDoOutput(true); //OutputStream으로 POST 데이터를 넘겨주겠다는 옵션.
-
+		        System.out.println("33333333333333333333333333333333333");
 		        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 		        StringBuilder sb = new StringBuilder();
 		       
@@ -54,10 +56,10 @@ public class KakaoApi {
 		        sb.append("&client_id=").append(kakaoApiKey);
 		        sb.append("&redirect_uri=").append(kakaoRedirectUri);
 		        sb.append("&code=").append(code);
-
+		        System.out.println("4444444444444444444444444444444444");
 		        bw.write(sb.toString());
 		        bw.flush();
-
+		        System.out.println("555555555555555555555555555555555");
 		        int responseCode = conn.getResponseCode();
 		        log.info("[KakaoApi.getAccessToken] responseCode = {}", responseCode);
 
@@ -75,12 +77,13 @@ public class KakaoApi {
 		        }
 		        String result = responseSb.toString();
 		        log.info("responseBody = {}", result);
-
+		        System.out.println("666666666666666666666666666666666");
 		        JsonParser parser = new JsonParser();
 		        JsonElement element = parser.parse(result);
 		        accessToken = element.getAsJsonObject().get("access_token").getAsString();
 		        refreshToken = element.getAsJsonObject().get("refresh_token").getAsString();
-
+		        
+		        System.out.println(accessToken);
 		        br.close();
 		        bw.close(); 
 		    }catch (Exception e){
