@@ -37,10 +37,7 @@ public interface AdminMapper {
 	
 	@Select("select count(*) from report")
 	public int getTotalReportCount();
-	
-<<<<<<< Updated upstream
-	
-	
+
 	/***************** 어매성 ************************/
 	/** 환불 테이블도 같이 읽어오기 */
 	/** 7일 전까지 결제 내역 */
@@ -85,10 +82,8 @@ public interface AdminMapper {
 			+ ") AS p ON m.month_number = p.month_number "
 			+ "GROUP BY m.month_number;")
 	public ArrayList<SalesManagementDTO> montlySales();
-	
-	
-	
-=======
+
+  
 	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
 	public int suspendMember(String id);
 	
@@ -121,11 +116,5 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
-	
-	
-	
-	
 
-
->>>>>>> Stashed changes
 }
