@@ -2,6 +2,7 @@ package banzzac.dto;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import lombok.Data;
@@ -62,6 +63,11 @@ public class SalesManagementDTO {
 	
 	
 	
+	
+	public String getDailyRangeStr() {
+		String dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
+		return dailyRangeStr;
+	}
 	
 	/*
 	 * public void daily(){ LocalDate today = LocalDate.now(); ArrayList<LocalDate>
