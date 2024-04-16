@@ -48,7 +48,19 @@ public class ProfileController {
 			return CommonResponse.success(res);
 		}
 		return CommonResponse.error(HttpStatus.BAD_REQUEST,"MyProfile Modify Failed", "개인정보 수정 실패");
-	}	
+	}
+	
+	@PostMapping("status")
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto){
+		System.out.println();
+		//dto.setId("session id");
+		if(memMapper.modifyStatus(dto)>=1) {
+			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
+			System.out.println("상태메세지 수정 성공" + dto.getStatusMessage());
+			return CommonResponse.success(res);
+		}
+		return CommonResponse.error(HttpStatus.BAD_REQUEST,"StatusMessage Modify Failed", "상태메시지 수정 실패");
+	}
 	
 	@PostMapping("/withdraw/{id}")
 	ResponseEntity<CommonResponse<Object>> withdrawMember(@PathVariable String id, @RequestBody MemberDTO dto){
