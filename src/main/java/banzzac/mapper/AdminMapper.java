@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -40,18 +42,25 @@ public interface AdminMapper {
 	
 	
 	/***************** 어매성 ************************/
-	@Select("select COUNT(partner_order_id) as daily_order_num,"
-			+ "SUM(quantity) as daily_quantity,"
-			+ "SUM(total_amount) as daily_amount "
+	/** 환불 테이블도 같이 읽어오기 */
+	/** 7일 전까지 결제 내역 */
+	@Select("select "
+			+ "COUNT(partner_order_id) as order_cnt,"
+			+ "SUM(quantity) as quantity,"
+			+ "SUM(total_amount) as total_amount "
 			+ "from paymentsuccess "
-			+ "where datediff(curdate(),approved_at) <=8 "
+			+ "where datediff(curdate(),approved_at) <=7 "
 			+ "GROUP BY approved_at "
 			+ "order by approved_at desc;")
 	public ArrayList<SalesManagementDTO> dailySales(); 
 	
-	/** 월별 결제 건수 */
-	@Select("SELECT m.month_number, "
-			+ "       COALESCE(COUNT(p.month_number), 0) AS montlySaleCnt "
+	/** 주간 결제 내역 */
+	
+	/** 월별 결제 내역 */
+	@Select("SELECT m.month_number as `month`, "
+			+ "       COALESCE(p.order_num, 0) AS order_cnt, "
+			+ "       COALESCE(sum(p.quantity), 0) AS quantity, "
+			+ "       COALESCE(sum(p.total_amount), 0) AS total_amount "
 			+ "FROM ("
 			+ "    SELECT 1 AS month_number UNION ALL"
 			+ "    SELECT 2 UNION ALL"
@@ -67,11 +76,17 @@ public interface AdminMapper {
 			+ "    SELECT 12"
 			+ ") AS m "
 			+ "LEFT JOIN ("
-			+ "    SELECT MONTH(approved_at) AS month_number"
-			+ "    FROM paymentsuccess"
+			+ "    SELECT MONTH(approved_at) AS month_number, "
+			+ "    count(partner_order_id) as order_num, "
+			+ "    sum(quantity) as quantity, "
+			+ "    sum(total_amount) as total_amount "
+			+ "    FROM paymentsuccess "
+			+ "	   group by month_number"
 			+ ") AS p ON m.month_number = p.month_number "
 			+ "GROUP BY m.month_number;")
-	public int montlySalesCount(); 
+	public ArrayList<SalesManagementDTO> montlySales();
+	
+	
 	
 =======
 	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
