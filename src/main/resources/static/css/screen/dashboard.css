@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+.text-center{
+	text-align: center;
+}
+
+.border-right{
+	border-right: 1px solid #000;
+}
+
+.text-right{
+	text-align: right;
+}
+.today-work{
+	margin-top : 20px;
+	border : 1px solid #000;
+	padding : 5px 10px;
+}
+
+.work__row{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.work__row > a{
+	color : #000;
+	font-weight: 600;
+	text-decoration: none;
+}
+.work__row > a:hover{
+	color : red;
+}
+
+.dash__profile--img{
+	width: 50px;
+	border-radius: 25px;
+	object-fit : cover;
+}
+
+.dash-box > table{
+	width: 50%;
+}

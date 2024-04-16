@@ -72,6 +72,7 @@ public class SalesManagementController {
 		cl.setService("monthly");
 		title.selectTitle(cl.getService());
 		
+
 		ArrayList<SalesManagementDTO> res = mapper.montlySales(year);
 		mm.addAttribute("selectedYear",year);
 		mm.addAttribute("year",mapper.selectYear());
