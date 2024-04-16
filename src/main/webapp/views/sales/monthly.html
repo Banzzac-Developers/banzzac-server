@@ -1,6 +1,12 @@
-<table class="table table-bordered">
-	<p>	월간 매출내역</p>
-		  
+<select name="selectedYear" id = "year" onchange="select()">
+       <option th:each="selectYear : ${year}" 
+               th:value="${selectYear.year}" 
+               th:text="${selectYear.year}"
+			   th:selected="${selectYear.year} == ${selectedYear}">
+       </option>
+</select>
+<p>월별 매출내역</p>	
+<table class="table table-bordered">	  
 	<thead>
 	    <tr>
 	      <th scope="col" rowspan="2">월</th>
@@ -15,13 +21,20 @@
 		</tr>
 	  </thead>
 	  <tbody>
-	    <tr	th:each="montly:${data}">
-	      <th th:text="${montlyStat.count}"></th>
-	      <td th:text="${montly.orderCnt}"></td>
-	      <td th:text="${montly.quantity}"></td>
-	      <td th:text="${montly.totalAmount}"></td>
+	    <tr	th:each="monthly:${data}">
+	      <th th:text="${monthly.month}"></th>
+	      <td th:text="${monthly.orderCnt}"></td>
+	      <td th:text="${monthly.quantity}"></td>
+	      <td th:text="${monthly.totalAmount}"></td>
 		  <td></td>
+		  <td th:text="${monthly.totalAmount - monthly.totalAmount/11}"></td>
 	    </tr>
-
 	  </tbody>
 	</table>
+<script>
+	function select(){
+		const year = document.querySelector("#year");
+		var option = year.options[year.selectedIndex];			
+		location.href = "?year="+option.value
+	}	
+</script>

@@ -10,8 +10,8 @@ public class SalesManagementDTO {
 	private int orderCnt,totalAmount, quantity;
 	private int refundQuantity,refundCnt,refundAmount;
 	private Date dailyRange;
-	private ArrayList<Integer> month;
-	
+	private int month;
+	private int year;
 	
 	/*
 	 * public void daily(){ LocalDate today = LocalDate.now(); ArrayList<LocalDate>

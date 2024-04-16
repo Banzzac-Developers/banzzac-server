@@ -42,6 +42,7 @@ public class PayController {
 		System.out.println("카카오페이 결제 준비 요청");
 		
 		 PaymentSuccessDTO dto = mapper.checkOrderId(orderId); // 동일한 주문번호 check
+		 
 		 orderId = (int) (Math.random() * Integer.MAX_VALUE);
 		
 		 while(dto!=null) {	 // 동일한 주문번호가 있을 경우
