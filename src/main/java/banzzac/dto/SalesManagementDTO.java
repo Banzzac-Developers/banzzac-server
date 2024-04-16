@@ -1,5 +1,6 @@
 package banzzac.dto;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,6 +13,11 @@ public class SalesManagementDTO {
 	private Date dailyRange;
 	private ArrayList<Integer> month;
 	
+	
+	public String getDailyRangeStr() {
+		String dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
+		return dailyRangeStr;
+	}
 	
 	/*
 	 * public void daily(){ LocalDate today = LocalDate.now(); ArrayList<LocalDate>

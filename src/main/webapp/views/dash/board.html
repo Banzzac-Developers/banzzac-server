@@ -1,34 +1,92 @@
+<!-- 오늘 일정 -->
+<div class="today-work" >
+	<h5># TO DO LIST</h5>
+	<div class="work__row">
+		<a th:href="@{/dashboard}" class="work__col">신규 회원 미검수 (<span th:text="${event.todayRegister}"></span>)</a>
+		<a th:href="@{/dashboard}" class="work__col">신고 (<span th:text="${event.reportCount}"></span>)</a>
+		<a th:href="@{/dashboard}" class="work__col">환불 요청 (<span th:text="${event.todayWithdrawnMember}"></span>)</a>
+		<a th:href="@{/dashboard}" class="work__col">탈퇴한 회원 (<span th:text="${event.refundCount}"></span>)</a>
+	</div>
+</div>
 
-<table class="table">
+<!-- 그래프 -->
+<canvas id="salesChart" width="100%" height="30px"></canvas>
+<!-- 매출 표 -->
+<table class="table table-bordered" style="margin-top:20px;">
   <thead>
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
+      <th scope="col" class="text-center">일자</th>
+      <th scope="col" class="text-center">매출액</th>
+      <th scope="col" class="text-center">부가세</th>
+      <th scope="col" class="text-center">순수익</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
+    <tr th:each="summary : ${sales}">
+      <th scope="row" th:text="${summary.dailyRangeStr}" class="text-right"></th>
+      <td th:text="${#numbers.formatDecimal(summary.totalAmount, 0, 'COMMA', -1, 'POINT')}" class="text-right"></td>
+      <td th:text="${#numbers.formatDecimal(summary.totalAmount*0.11, 0, 'COMMA', -1, 'POINT')} " class="text-right"></td>
+      <td class="text-right"><span th:text="${#numbers.formatDecimal(summary.totalAmount - (summary.totalAmount*0.11) , 0, 'COMMA', -1, 'POINT')}"></span> 원</td>
     </tr>
   </tbody>
 </table>
 
+<div class="dash-box">
+	<table class="table table-bordered" style="margin-top:20px;">
+	  <thead>
+	    <tr>
+	      <th scope="col" class="text-center">아이디</th>
+	      <th scope="col" class="text-center">닉네임</th>
+	      <th scope="col" class="text-center">강아지 이름</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr>
+	      <td><img class="dash__profile--img" th:src="@{/logo/logo.png}" alt="" /></td>
+	      <td>zkdlwjsxm@gmail.com</td>
+	      <td>카이전트</td>
+	      <td>최고봉</td>
+	    </tr>
+	  </tbody>
+	</table>
+</div>
+
 
 <!-- 
 <div th:replace="~{inc/paging(${pageDTO.currentPage}, ${pageDTO.prevBlock}, ${pageDTO.nextBlock}, ${pageDTO.minPage}, ${pageDTO.maxPage}, ${pageDTO.isNextBtn} )}"></div> -->
+<script th:inline="javascript">
+const ctx = document.getElementById('salesChart').getContext('2d');
+const sales = /*[[ ${sales} ]]*/[]	
+sales.reverse();
+
+const myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: sales.map(item => item.dailyRangeStr),
+        datasets: [{
+            label: '총매출',
+            data: sales.map(item => item.totalAmount),
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.2)'
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                	stepSize: 1000,
+                    callback: function(value, index, values) {
+                        return value + ' 원'; // 각 눈금 레이블에 '원'을 추가하여 표시
+                    }
+                }
+            }
+        }
+    }
+});
+</script>

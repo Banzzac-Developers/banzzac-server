@@ -68,7 +68,7 @@ public class SalesManagementController {
 		cl.setService("monthly");
 		title.selectTitle(cl.getService());
 		
-		ArrayList<SalesManagementDTO> res = mapper.montlySalesCount();
+		ArrayList<SalesManagementDTO> res = mapper.montlySales();
 		mm.addAttribute("data",res);
 		System.out.println(res);
 		

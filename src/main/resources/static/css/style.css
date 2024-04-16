@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import "./reset.css";
 @import "./inc/aside.css";
-
+@import "./screen/dashboard.css";
 *{
 	box-sizing : content-box;
 	margin : 0;
@@ -13,8 +13,7 @@ html,body{
 }
 main{
 	display : flex;
-	align-items: center;
-	justify-content: space-between;
+	align-items: flex-start;
 	height: 100%;
 }
 main > aside{
@@ -22,6 +21,7 @@ main > aside{
 	height : 100%;
 	background-color: #000;
 	color:#fff ;
+	position: fixed;
 }
 
 main > aside > .logoBox > img{
@@ -31,5 +31,7 @@ main > aside > .logoBox > img{
 }
 main > .container{
 	width:85%;
+	margin-left: 17%;
+	margin-right: 0;
 }
 

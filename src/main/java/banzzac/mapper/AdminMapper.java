@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import banzzac.dto.DashBoardDTO;
 import banzzac.dto.MemberDTO;
 import banzzac.dto.PageDTO;
 import banzzac.dto.PaymentSuccessDTO;
@@ -116,5 +117,32 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
-
+	// 정운만 시작#############################################
+	
+	@Select("SELECT date_range.date AS daily_range, "
+			+ "COALESCE(SUM(ps.total_amount), 0) AS total_amount "
+			+ "FROM ( "
+			+ "SELECT DATE_SUB(CURRENT_DATE(), INTERVAL (t*10 + u) DAY) AS date "
+			+ "FROM "
+				+ "(SELECT 0 AS t "
+				+ "UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL "
+				+ "SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9)"
+			+ " AS tens, "
+				+ "(SELECT 0 AS u UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL "
+				+ "SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS units "
+				+ "WHERE DATE_SUB(CURRENT_DATE(), INTERVAL (t*10 + u) DAY) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY) "
+				+ ")"
+			+ " AS date_range "
+			+ "LEFT JOIN paymentSuccess ps"
+			+ " ON DATE(ps.approved_at) = date_range.date "
+			+ "GROUP BY date_range.date"
+			+ " ORDER BY date_range.date DESC")
+	public ArrayList<SalesManagementDTO> calculateDailyPay();
+	
+	@Select("select (select count(*) from member where Date(date) = curdate() and isGrant = 2) as today_register, "
+				+ "	(select count(*) from report where report_status != 2 ) as report_count, "
+				+ "	(select count(*) from member where Date(date) = curdate() and isGrant = 0) as today_withdrawn_member, "
+				+ "	(select count(*) from refund where approve = 2) as refund_count")
+	public DashBoardDTO getTodayEvent();
+	// 정운만 끝 ##############################################
 }
