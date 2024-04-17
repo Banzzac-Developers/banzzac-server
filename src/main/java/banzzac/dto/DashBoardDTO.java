@@ -17,7 +17,8 @@ public class DashBoardDTO {
 	private Integer refundCount;
 	private Integer reportNo;
 	private String memberId;
-	private String reportedId;	
+	private String reportedId;
+	private String reportReason;
 	private String nickname;
 	private String dogName;
 }

@@ -44,126 +44,119 @@ public interface AdminMapper {
 	/** 환불 테이블도 같이 읽어오기 */
 	/** 7일 전까지 결제 내역 */
 	@Select("select "
-			+ "COUNT(partner_order_id) as order_cnt,"
-			+ "SUM(quantity) as quantity,"
-			+ "SUM(total_amount) as total_amount "
-			+ "from paymentsuccess "
-			+ "where datediff(curdate(),approved_at) <=7 "
-			+ "GROUP BY approved_at "
-			+ "order by approved_at desc;")
-	public ArrayList<SalesManagementDTO> dailySales(); 
-	
-	/** 주간 결제 내역 */
-	
-	/** 월별 결제 내역 */
-	@Select("SELECT  "
-			+ "    p.year_num AS year, "
-			+ "    m.month_number AS month, "
-			+ "    COALESCE(p.order_num, 0) AS order_cnt, "
-			+ "    COALESCE(SUM(p.quantity), 0) AS quantity, "
-			+ "    COALESCE(SUM(p.total_amount), 0) AS total_amount "
-			+ "FROM ( "
-			+ "    SELECT DISTINCT YEAR(approved_at) AS year_num  "
-			+ "    FROM paymentSuccess "
-			+ "    WHERE YEAR(approved_at) = #{year} "
-			+ ") AS years "
-			+ "CROSS JOIN ( "
-			+ "    SELECT 1 AS month_number UNION ALL "
-			+ "    SELECT 2 UNION ALL "
-			+ "    SELECT 3 UNION ALL "
-			+ "    SELECT 4 UNION ALL "
-			+ "    SELECT 5 UNION ALL "
-			+ "    SELECT 6 UNION ALL "
-			+ "    SELECT 7 UNION ALL "
-			+ "    SELECT 8 UNION ALL "
-			+ "    SELECT 9 UNION ALL "
-			+ "    SELECT 10 UNION ALL "
-			+ "    SELECT 11 UNION ALL "
-			+ "    SELECT 12 "
-			+ ") AS m "
-			+ "LEFT JOIN ("
-			+ "    SELECT MONTH(approved_at) AS month_number"
-			+ "    FROM paymentsuccess"
-			+ ") AS p ON m.month_number = p.month_number "
-			+ "GROUP BY m.month_number;")
-	public int montlySalesCount(); 
-
-			+ "LEFT JOIN ( "
-			+ "    SELECT  "
-			+ "        MONTH(approved_at) AS month_number, "
-			+ "        YEAR(approved_at) AS year_num, "
-			+ "        COUNT(partner_order_id) AS order_num, "
-			+ "        SUM(quantity) AS quantity, "
-			+ "        SUM(total_amount) AS total_amount "
-			+ "    FROM paymentSuccess   "
-			+ "    WHERE YEAR(approved_at) = #{year} "
-			+ "    GROUP BY month_number "
-			+ ") AS p ON years.year_num = p.year_num AND m.month_number = p.month_number "
-			+ "WHERE (years.year_num = YEAR(CURDATE()) AND m.month_number <= MONTH(CURDATE())) "
-			+ "   OR (years.year_num < YEAR(CURDATE())) "
-			+ "GROUP BY p.year_num, m.month_number "
-			+ "ORDER BY p.year_num DESC, m.month_number DESC;")
-	public ArrayList<SalesManagementDTO> montlySales(int year);
-	
-	@Select("select year(p.approved_at) as year "
-			+ "from paymentsuccess p "
-			+ "group by year "
-			+ "order by p.approved_at desc	")
-	public ArrayList<SalesManagementDTO> selectYear();
-	
-	@Select("SELECT YEAR(approved_at) AS year,"
-			+ "       SUM(quantity) AS total_quantity,"
-			+ "       SUM(total_amount) AS total_amount,"
-			+ "       COUNT(partner_order_id) AS order_count "
-			+ "FROM paymentSuccess "
-			+ "GROUP BY YEAR(approved_at); ")
-	public ArrayList<SalesManagementDTO> yearSales();
-	
-	
-	@Select("SELECT  "
-			+ "  partner_user_id as user_id, "
-			+ "  ranking as ranking, "
-			+ "  month_num as month, "
-			+ "  year_num as year"
-			+ "FROM ( "
-			+ "    SELECT  "
-			+ "        p.partner_user_id, "
-			+ "        MONTH(approved_at) as month_num, "
-			+ "        year(approved_at) as year_num, "
-			+ "        RANK() OVER (PARTITION by month(p.approved_at) ORDER BY SUM(p.total_amount) DESC) AS ranking "
-			+ "    FROM  "
-			+ "        paymentsuccess p "
-			+ "	   where not exists ( "
-			+ "			select partner_order_id  "
-			+ "			from refund r "
-			+ "			where r.partner_order_id = p.partner_order_id  "
-			+ "			)"
-			+ "    GROUP BY  "
-			+ "        p.partner_user_id,month_num "
-			+ "     having year_num = #{year} and month_num=#{month} "
-			+ "    order by month_num,year_num desc,ranking asc "
-			+ ") AS ranked_table "
-			+ "where ranking<=3")
-	public ArrayList<SalesManagementDTO> ranking(int year, int month);
-	
-	@Select("select "
-			+ "r.partner_order_id as order_id,"
-			+ "r.reason as reason,"
-			+ "r.approve as refund_status,"
-			+ "r.refund_request_date as refund_request,"
-			+ "r.approve_time as refund_approve,"
-			+ "p.quantity as quantity,"
-			+ "p.total_amount as total_amount,"
-			+ "p.tid as tid,"
-			+ "p.partner_user_id as user_id,"
-			+ "p.approved_at as pay_date "
-			+ "from refund r "
-			+ "join paymentsuccess p  "
-			+ "on r.partner_order_id = p.partner_order_id  "
-			+ "where r.approve = #{refundStatus} "
-			+ "order by r.refund_request_date desc")
-	public ArrayList<SalesManagementDTO> refund(int refundStatus);
-	
+	         + "COUNT(partner_order_id) as order_cnt,"
+	         + "SUM(quantity) as quantity,"
+	         + "SUM(total_amount) as total_amount "
+	         + "from paymentsuccess "
+	         + "where datediff(curdate(),approved_at) <=7 "
+	         + "GROUP BY approved_at "
+	         + "order by approved_at desc;")
+	   public ArrayList<SalesManagementDTO> dailySales(); 
+	   
+	   /** 주간 결제 내역 */
+	   
+	   /** 월별 결제 내역 */
+	   @Select("SELECT  "
+	         + "    p.year_num AS year, "
+	         + "    m.month_number AS month, "
+	         + "    COALESCE(p.order_num, 0) AS order_cnt, "
+	         + "    COALESCE(SUM(p.quantity), 0) AS quantity, "
+	         + "    COALESCE(SUM(p.total_amount), 0) AS total_amount "
+	         + "FROM ( "
+	         + "    SELECT DISTINCT YEAR(approved_at) AS year_num  "
+	         + "    FROM paymentSuccess "
+	         + "    WHERE YEAR(approved_at) = #{year} "
+	         + ") AS years "
+	         + "CROSS JOIN ( "
+	         + "    SELECT 1 AS month_number UNION ALL "
+	         + "    SELECT 2 UNION ALL "
+	         + "    SELECT 3 UNION ALL "
+	         + "    SELECT 4 UNION ALL "
+	         + "    SELECT 5 UNION ALL "
+	         + "    SELECT 6 UNION ALL "
+	         + "    SELECT 7 UNION ALL "
+	         + "    SELECT 8 UNION ALL "
+	         + "    SELECT 9 UNION ALL "
+	         + "    SELECT 10 UNION ALL "
+	         + "    SELECT 11 UNION ALL "
+	         + "    SELECT 12 "
+	         + ") AS m "
+	         + "LEFT JOIN ( "
+	         + "    SELECT  "
+	         + "        MONTH(approved_at) AS month_number, "
+	         + "        YEAR(approved_at) AS year_num, "
+	         + "        COUNT(partner_order_id) AS order_num, "
+	         + "        SUM(quantity) AS quantity, "
+	         + "        SUM(total_amount) AS total_amount "
+	         + "    FROM paymentSuccess   "
+	         + "    WHERE YEAR(approved_at) = #{year} "
+	         + "    GROUP BY month_number "
+	         + ") AS p ON years.year_num = p.year_num AND m.month_number = p.month_number "
+	         + "WHERE (years.year_num = YEAR(CURDATE()) AND m.month_number <= MONTH(CURDATE())) "
+	         + "   OR (years.year_num < YEAR(CURDATE())) "
+	         + "GROUP BY p.year_num, m.month_number "
+	         + "ORDER BY p.year_num DESC, m.month_number DESC;")
+	   public ArrayList<SalesManagementDTO> montlySales(int year);
+	   
+	   @Select("select year(p.approved_at) as year "
+	         + "from paymentsuccess p "
+	         + "group by year "
+	         + "order by p.approved_at desc   ")
+	   public ArrayList<SalesManagementDTO> selectYear();
+	   
+	   @Select("SELECT YEAR(approved_at) AS year,"
+	         + "       SUM(quantity) AS total_quantity,"
+	         + "       SUM(total_amount) AS total_amount,"
+	         + "       COUNT(partner_order_id) AS order_count "
+	         + "FROM paymentSuccess "
+	         + "GROUP BY YEAR(approved_at); ")
+	   public ArrayList<SalesManagementDTO> yearSales();
+	   
+	   
+	   @Select("SELECT  "
+	         + "  partner_user_id as user_id, "
+	         + "  ranking as ranking, "
+	         + "  month_num as month, "
+	         + "  year_num as year"
+	         + "FROM ( "
+	         + "    SELECT  "
+	         + "        p.partner_user_id, "
+	         + "        MONTH(approved_at) as month_num, "
+	         + "        year(approved_at) as year_num, "
+	         + "        RANK() OVER (PARTITION by month(p.approved_at) ORDER BY SUM(p.total_amount) DESC) AS ranking "
+	         + "    FROM  "
+	         + "        paymentsuccess p "
+	         + "      where not exists ( "
+	         + "         select partner_order_id  "
+	         + "         from refund r "
+	         + "         where r.partner_order_id = p.partner_order_id  "
+	         + "         )"
+	         + "    GROUP BY  "
+	         + "        p.partner_user_id,month_num "
+	         + "     having year_num = #{year} and month_num=#{month} "
+	         + "    order by month_num,year_num desc,ranking asc "
+	         + ") AS ranked_table "
+	         + "where ranking<=3")
+	   public ArrayList<SalesManagementDTO> ranking(int year, int month);
+	   
+	   @Select("select "
+	         + "r.partner_order_id as order_id,"
+	         + "r.reason as reason,"
+	         + "r.approve as refund_status,"
+	         + "r.refund_request_date as refund_request,"
+	         + "r.approve_time as refund_approve,"
+	         + "p.quantity as quantity,"
+	         + "p.total_amount as total_amount,"
+	         + "p.tid as tid,"
+	         + "p.partner_user_id as user_id,"
+	         + "p.approved_at as pay_date "
+	         + "from refund r "
+	         + "join paymentsuccess p  "
+	         + "on r.partner_order_id = p.partner_order_id  "
+	         + "where r.approve = #{refundStatus} "
+	         + "order by r.refund_request_date desc")
+	   public ArrayList<SalesManagementDTO> refund(int refundStatus);
+	   
 	
 	/************************ 어매성 ************************/
   
@@ -259,7 +252,10 @@ public interface AdminMapper {
 			+ "where Date(date) = curdate() and isGrant = 2 limit 1")
 	public ArrayList<DashBoardDTO> getTodayRegister();
 	
-	@Select("select r.report_no as report_no, m.id as member_id, m2.id as reported_id"
+	@Select("select r.report_no as report_no,"
+			+ " m.id as member_id,"
+			+ " m2.id as reported_id"
+			+ " r.report_reason as report_reason"
 			+ " from report r"
 			+ " join `member` m "
 			+ " on r.member_no = m.`no` "

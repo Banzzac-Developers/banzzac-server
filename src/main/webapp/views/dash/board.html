@@ -65,16 +65,21 @@
 		<table class="table table-bordered">
 		  <thead>
 		    <tr>
+		      <th scope="col" class="text-center">신고 번호</th>
 		      <th scope="col" class="text-center">신고자</th>
 		      <th scope="col" class="text-center">신고 대상</th>
 		      <th scope="col" class="text-center">신고 사유</th>
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr>
-		      <td>zkdlwjsxm@gmail.com</td>
-		      <td>카이전트</td>
-		      <td>최고봉최고봉최고봉최고봉최고봉최고봉봉최고봉최고봉최고봉최고봉최고봉최고봉최고봉최고봉최고</td>
+		  	<tr th:if="${report.size() == 0}">
+		  		<td colspan="4" align="center">신고한 사람이 없습니다.</td>
+		  	</tr>
+		    <tr th:each=" data:${report}">
+		      <td th:text="${data.reportNo}"></td>
+		      <td th:text="${data.memberId}"></td>
+		      <td th:text="${data.reportedId}"></td>
+		      <td th:text="${data.reportReason}"></td>
 		    </tr>
 		  </tbody>
 		</table>
@@ -161,7 +166,6 @@ const myChart = new Chart(ctx, {
             y: {
                 beginAtZero: true,
                 ticks: {
-                	stepSize: 1000,
                     callback: function(value, index, values) {
                         return value + ' 원'; // 각 눈금 레이블에 '원'을 추가하여 표시
                     }
