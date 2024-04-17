@@ -254,7 +254,7 @@ public interface AdminMapper {
 	
 	@Select("select r.report_no as report_no,"
 			+ " m.id as member_id,"
-			+ " m2.id as reported_id"
+			+ " m2.id as reported_id ,"
 			+ " r.report_reason as report_reason"
 			+ " from report r"
 			+ " join `member` m "
