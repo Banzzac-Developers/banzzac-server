@@ -270,23 +270,55 @@ public interface AdminMapper {
 				+ "	(select count(*) from refund where approve = 2) as refund_count")
 	public DashBoardDTO getTodayEvent();
 	
-	@Select("select m.id as member_id, m.nickname as nickname , d.name as dog_name  from member m "
-			+ "join dog d "
-			+ "on d.id = m.id "
-			+ "where Date(date) = curdate() and isGrant = 2 limit 1")
+	@Select(" SELECT m.id AS member_id, m.nickname AS nickname, MAX(d.name) AS dog_name"
+			+ " FROM member m"
+			+ " JOIN dog d ON d.id = m.id"
+			+ " WHERE DATE_FORMAT(`date`, '%Y-%m-%d') = CURDATE() AND m.isGrant = 2"
+			+ " GROUP BY m.id, m.nickname"
+			+ " limit 0,5")
 	public ArrayList<DashBoardDTO> getTodayRegister();
 	
 	@Select("select r.report_no as report_no,"
 			+ " m.id as member_id,"
 			+ " m2.id as reported_id ,"
-			+ " r.report_reason as report_reason"
+			+ " r.report_reason as reason"
 			+ " from report r"
 			+ " join `member` m "
 			+ " on r.member_no = m.`no` "
 			+ " join `member` m2 "
 			+ " on r.reported_no = m2.`no` "
-			+ " where DATE(r.report_time) = curdate()")
-	public ArrayList<DashBoardDTO> getTodayReport();
+			+ " where r.report_status != 2"
+			+ " order by report_time desc "
+			+ " limit 0,5")
+	public ArrayList<DashBoardDTO> getOutstandingReport();
+	
+	
+	@Select("select r.partner_order_id as partner_order_id,"
+			+ "p.total_amount  as total_amount ,"
+			+ "m.id as member_id,"
+			+ "r.reason as reason "
+			+ " from refund r"
+			+ " join paymentsuccess p "
+			+ " on r.partner_order_id = p.partner_order_id "
+			+ " join `member` m "
+			+ " on m.id = p.partner_user_id "
+			+ " where Date(refund_request_date) = curdate() and approve = 2"
+			+ " limit 0,5")
+	public ArrayList<DashBoardDTO> getTodayRefund();
+	
+	
+	@Select("select sum(p.total_amount) as total_amount, "
+			+ "p.partner_user_id as member_id , "
+			+ "m.nickname as nickname "
+			+ "from paymentsuccess p "
+			+ "join `member` m "
+			+ "on p.partner_user_id = m.id "
+			+ "where p.approved_at  >= date_sub(curdate(),interval 1 week) "
+			+ "group by partner_user_id "
+			+ "order by total_amount desc "
+			+ "limit 0,5")
+	public ArrayList<DashBoardDTO> getWeekPaymentRank();
+	
 	// 정운만 끝 ##############################################
 
 
