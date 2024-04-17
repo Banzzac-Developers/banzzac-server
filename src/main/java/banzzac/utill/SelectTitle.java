@@ -17,7 +17,6 @@ public class SelectTitle {
 		String members = "회원 관리 - ";
 		String sales = "매출 관리 - ";
 		Map<String, String> titles = new LinkedHashMap<>();
-		titles.put("board", "대시보드");
 
 		titles.put("newMembers", members+"신규 회원 검수");		
 		titles.put("daily", sales+"일별 매출");
@@ -28,6 +27,12 @@ public class SelectTitle {
 		titles.put("refuse", sales+"환불 거절 리스트");
 		titles.put("approve", sales+"환불 승인 리스트");
 
+		titles.put("board", "대시보드");	
+		titles.put("daily", sales+"일별 매출");
+		titles.put("weekly", sales+"주간 매출");
+		titles.put("monthly", sales+"월간 매출");
+		titles.put("newMembers", members+"신규 회원 검수");
+
 		titles.put("chart", sales+"매출");
 		titles.put("report", "신고");
 		titles.put("suspend", "정지");
@@ -37,8 +42,6 @@ public class SelectTitle {
 		titles.put("newMember", "신규회원");
 		titles.put("periodMember", "기간별회원");
 		
-		
-
 		this.title = titles.get(serviceName);
 		
 	}
