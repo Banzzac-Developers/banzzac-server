@@ -16,7 +16,7 @@ public class SalesManagementDTO {
 	private int refundStatus, orderId;
 	private String reason, userId, tid;
 	private Date refundRequest, refundApprove, payDate;
-	private String refundRequestStr, refundApproveStr, payDateStr;
+	private String refundRequestStr, refundApproveStr, payDateStr,dailyRangeStr;
 	private int ranking;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -58,21 +58,18 @@ public class SalesManagementDTO {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	
-	
-	
-	public String getDailyRangeStr() {
-		String dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
-		return dailyRangeStr;
+	public void setDailyRange(Date dailyRange) {
+		this.dailyRange = dailyRange;
+		this.dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
 	}
 	
-	/*
-	 * public void daily(){ LocalDate today = LocalDate.now(); ArrayList<LocalDate>
-	 * sevenDays = new ArrayList<>(); for (int i = 0; i < 7; i++) { LocalDate
-	 * dateBefore = today.minusDays(i); sevenDays.add(dateBefore); } this.dailyRange
-	 * = sevenDays; }
-	 */
+	public void setDailyRangeStr(String dailyRangeStr) {
+		this.dailyRangeStr = dailyRangeStr;
+		try {
+			this.dailyRange = new SimpleDateFormat("yyyy-MM-dd").parse(dailyRangeStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
