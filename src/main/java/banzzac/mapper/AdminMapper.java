@@ -40,6 +40,7 @@ public interface AdminMapper {
 	@Select("select count(*) from report")
 	public int getTotalReportCount();
 
+	
 	/***************** 어매성 ************************/
 	/** 환불 테이블도 같이 읽어오기 */
 	/** 7일 전까지 결제 내역 */
@@ -157,10 +158,32 @@ public interface AdminMapper {
 	         + "order by r.refund_request_date desc")
 	   public ArrayList<SalesManagementDTO> refund(int refundStatus);
 	   
-	
-	/************************ 어매성 ************************/
-  
-	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
+
+	/** 월별 결제 건수 */
+	@Select("SELECT m.month_number, "
+			+ "       COALESCE(COUNT(p.month_number), 0) AS montlySaleCnt "
+			+ "FROM ("
+			+ "    SELECT 1 AS month_number UNION ALL"
+			+ "    SELECT 2 UNION ALL"
+			+ "    SELECT 3 UNION ALL"
+			+ "    SELECT 4 UNION ALL"
+			+ "    SELECT 5 UNION ALL"
+			+ "    SELECT 6 UNION ALL"
+			+ "    SELECT 7 UNION ALL"
+			+ "    SELECT 8 UNION ALL"
+			+ "    SELECT 9 UNION ALL"
+			+ "    SELECT 10 UNION ALL"
+			+ "    SELECT 11 UNION ALL"
+			+ "    SELECT 12"
+			+ ") AS m "
+			+ "LEFT JOIN ("
+			+ "    SELECT MONTH(approved_at) AS month_number"
+			+ "    FROM paymentsuccess"
+			+ ") AS p ON m.month_number = p.month_number "
+			+ "GROUP BY m.month_number;")
+	public int montlySalesCount(); 
+
+	@Update("UPDATE member SET isGrant = 1 WHERE id = #{id}")
 	public int suspendMember(String id);
 	
 	@Select("SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
@@ -180,11 +203,11 @@ public interface AdminMapper {
 			+ "WHERE report_no = #{no} ")
 	public int modifyReportStatus(int no);
 	
-	@Select("select * from member where isGrant = 2")
+	@Select("select * from member where isGrant = 1")
 	public ArrayList<MemberDTO> getSuspendMemberList(PageDTO dto);
 	
 	@Update("UPDATE member "
-			+ "SET isGrant = 1 "
+			+ "SET isGrant = 2 "
 			+ "WHERE id = #{id} "
 			+ "ORDER BY date")
 	public int changeSuspendMember(String id);
@@ -201,6 +224,7 @@ public interface AdminMapper {
 	@Select("select * from member where no =#{no}")
 	public MemberDTO memberDetail(int no);
 	
+
 	//** 검수 멤버 리스트*/
 	@Select("select * from member where isGrant = 2 ")
 	public ArrayList<MemberDTO> newmember(PageDTO dto);
@@ -264,5 +288,6 @@ public interface AdminMapper {
 			+ " where DATE(r.report_time) = curdate()")
 	public ArrayList<DashBoardDTO> getTodayReport();
 	// 정운만 끝 ##############################################
+
 
 }
