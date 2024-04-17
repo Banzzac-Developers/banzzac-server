@@ -1,5 +1,10 @@
+<select name="selectedYear">
+       <option th:each="selectYear : ${year}" 
+               th:value="${selectYear.year}" 
+               th:text="${selectYear.year}">
+       </option>
+   </select>
 <table class="table table-bordered">
-
 	<p>일별 매출내역</p>
 	  <thead>
 	    <tr>
@@ -16,28 +21,12 @@
 	  </thead>
 	  <tbody>
 	    <tr th:each="daily : ${data}">
-	      <th scope="row" ></th><!--			th:text:"${data.app}-->
-	      <td>Mark</td>
-		  <td>Mark</td>
-	      <td>Otto</td>
+	      <th ></th>
+	      <td th:text="${daily.orderCnt}"></td>
+		  <td th:text="${daily.quantity}"></td>
+	      <td th:text="${daily.totalAmount}"></td>
 	      <td>@mdo</td>
 		  <td>@mdo</td>
-	    </tr>
-	    <tr>
-	      <th scope="row">2</th>
-	      <td>Jacob</td>
-	      <td>Thornton</td>
-		  <td>Mark</td>
-	      <td>@fat</td>
-		  <td>@fat</td>
-	    </tr>
-	    <tr>
-	      <th scope="row">3</th>
-	      <td>Larry the Bird</td>
-	      <td>@twitter</td>
-		  <td>Mark</td>
-		  <td>Mark</td>
-		  <td>@twitter</td>
 	    </tr>
 	  </tbody>
 	</table>

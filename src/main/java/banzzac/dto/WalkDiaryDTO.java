@@ -31,7 +31,7 @@ public class WalkDiaryDTO {
 	public void setStartWalkTimeStr(String startWalkTimeStr) {
 		this.startWalkTimeStr = startWalkTimeStr;
 		try {
-			this.startWalkTime = new SimpleDateFormat().parse(startWalkTimeStr);
+			this.startWalkTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(startWalkTimeStr);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -45,7 +45,7 @@ public class WalkDiaryDTO {
 	public void setEndWalkTimeStr(String endWalkTimeStr) {
 		this.endWalkTimeStr = endWalkTimeStr;
 		try {
-			this.endWalkTime = new SimpleDateFormat().parse(endWalkTimeStr);
+			this.endWalkTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(endWalkTimeStr);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

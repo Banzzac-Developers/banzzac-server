@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import banzzac.dto.DashBoardDTO;
 import banzzac.dto.MemberDTO;
 import banzzac.dto.PageDTO;
 import banzzac.mapper.AdminMapper;
@@ -40,6 +41,8 @@ public class DashBoradController {
 	@Resource
 	private PageDTO pageDTO;
 	@Resource
+	private DashBoardDTO dashBoardDTO;
+	@Resource
 	private AdminMapper mapper;
 	
 	@ModelAttribute
@@ -57,8 +60,9 @@ public class DashBoradController {
 	}
 	
 	@GetMapping("")
-	public String getList() {
-		
+	public String goToDashBoard(Model mm) {
+		mm.addAttribute("sales", mapper.calculateDailyPay());
+		mm.addAttribute("event", mapper.getTodayEvent());
 		return "template";
 	}
 	

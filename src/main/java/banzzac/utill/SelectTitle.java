@@ -23,17 +23,15 @@ public class SelectTitle {
 		titles.put("daily", sales+"일별 매출");
 		titles.put("weekly", sales+"주간 매출");
 		titles.put("monthly", sales+"월간 매출");
-				
 
-		
 		titles.put("chart", sales+"매출");
 		titles.put("report", "신고");
 		titles.put("suspend", "정지");
 		titles.put("withdrawal", "탈퇴");
+
 		titles.put("member", "기존회원");
 		titles.put("newMember", "신규회원");
 		titles.put("periodMember", "기간별회원");
-		
 		
 		
 

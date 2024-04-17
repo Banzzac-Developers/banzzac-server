@@ -9,10 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import banzzac.dto.PageDTO;
-import banzzac.dto.PaymentSuccessDTO;
 import banzzac.dto.SalesManagementDTO;
 import banzzac.mapper.AdminMapper;
 import banzzac.utill.CommonLayout;
@@ -44,9 +44,13 @@ public class SalesManagementController {
 		cl.setFolder(folder);
 		cl.setService("daily");
 		title.selectTitle(cl.getService());
-		ArrayList<SalesManagementDTO> res = mapper.dailySales();
-		System.out.println(res);
-		mm.addAttribute("data",res);		
+		
+		//dto.daily();
+		
+		mm.addAttribute("day",dto.getDailyRange());
+		mm.addAttribute("data",mapper.dailySales());	
+		//System.out.println(mapper.dailySales());
+		
 		return "template";
 	}
 	
@@ -59,11 +63,20 @@ public class SalesManagementController {
 		return "template";
 	}
 	
-	@GetMapping("monthly")
-	public String monthlySales (CommonLayout cl,SelectTitle title) {
+	@GetMapping(path = {"monthly"})
+	public String monthlySales (CommonLayout cl,SelectTitle title, Model mm,SalesManagementDTO dto, @Param("year") Integer year) {
+		if(year == null) {
+			year = 2024;
+		}
 		cl.setFolder(folder);
 		cl.setService("monthly");
 		title.selectTitle(cl.getService());
+		
+
+		ArrayList<SalesManagementDTO> res = mapper.montlySales(year);
+		mm.addAttribute("selectedYear",year);
+		mm.addAttribute("year",mapper.selectYear());
+		mm.addAttribute("data",res);
 		
 		return "template";
 	}
