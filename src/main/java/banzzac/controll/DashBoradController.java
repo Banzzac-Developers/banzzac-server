@@ -64,7 +64,9 @@ public class DashBoradController {
 		mm.addAttribute("sales", mapper.calculateDailyPay());
 		mm.addAttribute("event", mapper.getTodayEvent());
 		mm.addAttribute("register", mapper.getTodayRegister());
-		mm.addAttribute("report", mapper.getTodayReport());
+		mm.addAttribute("report", mapper.getOutstandingReport());
+		mm.addAttribute("refund", mapper.getTodayRefund());
+		mm.addAttribute("rank", mapper.getWeekPaymentRank());
 		return "template";
 	}
 	

@@ -16,9 +16,11 @@ public class DashBoardDTO {
 	private Integer todayWithdrawnMember;
 	private Integer refundCount;
 	private Integer reportNo;
+	private Integer totalAmount;
+	private Integer partnerOrderId;
 	private String memberId;
 	private String reportedId;
-	private String reportReason;
+	private String reason;
 	private String nickname;
 	private String dogName;
 }
