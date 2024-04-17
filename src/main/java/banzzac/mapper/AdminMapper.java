@@ -2,6 +2,7 @@ package banzzac.mapper;
 
 import java.util.ArrayList;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
@@ -80,6 +81,13 @@ public interface AdminMapper {
 			+ "    SELECT 11 UNION ALL "
 			+ "    SELECT 12 "
 			+ ") AS m "
+			+ "LEFT JOIN ("
+			+ "    SELECT MONTH(approved_at) AS month_number"
+			+ "    FROM paymentsuccess"
+			+ ") AS p ON m.month_number = p.month_number "
+			+ "GROUP BY m.month_number;")
+	public int montlySalesCount(); 
+
 			+ "LEFT JOIN ( "
 			+ "    SELECT  "
 			+ "        MONTH(approved_at) AS month_number, "
@@ -144,6 +152,31 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
+	//** 일반 멤버 리스트*/
+	@Select("select * from member where isGrant = 1 ")
+	public ArrayList<MemberDTO> member(PageDTO dto);
+	
+	//** 멤버상세정보*/
+	@Select("select * from member where no =#{no}")
+	public MemberDTO memberDetail(int no);
+	
+	//** 검수 멤버 리스트*/
+	@Select("select * from member where isGrant = 2 ")
+	public ArrayList<MemberDTO> newmember(PageDTO dto);
+	
+	//** 검수 멤버 승인*/
+	@Update("UPDATE member "
+			+ "SET isGrant = 3 "
+			+ "WHERE id = #{id} "
+			+ "ORDER BY date")
+	public int approval(String id);
+	
+	//** 검수 멤버 거절*/
+	@Delete("delete from member where id = #{id}")
+	public int refuse(String id);
+	
+	
+
 	// 정운만 시작#############################################
 	
 	@Select("SELECT date_range.date AS daily_range, "
@@ -172,4 +205,5 @@ public interface AdminMapper {
 				+ "	(select count(*) from refund where approve = 2) as refund_count")
 	public DashBoardDTO getTodayEvent();
 	// 정운만 끝 ##############################################
+
 }

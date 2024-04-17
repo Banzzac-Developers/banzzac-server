@@ -28,18 +28,27 @@ public class LoginController {
 	
 	@GetMapping("oauth2/code/kakao")
 	public RedirectView kakaoLogin(@RequestParam String code, HttpSession session, MemberDTO dto) {
+		System.out.println("11111111------------");
 		RedirectView redirectView = new RedirectView();
 		
 		KakaoApi kakaoApi = new KakaoApi();
-		
+		System.out.println("11111111111111111222222222222");
 		String accessToken = kakaoApi.getAccessToken(code);
+		System.out.println("accessToken:"+accessToken);
+		System.out.println("11111111111111111222222222222333333333333333333");
 		KakaoProfile userInfo = kakaoApi.getUserInfo(accessToken);
 		
+		System.out.println(userInfo);
+		
+		System.out.println("222222222222-----------------------");
 		// 이걸로 mapper에 진입하여 회원 정보가 있는 지 확인 후에 있다면 그 정보를 session에 저장하고 redirectView에 friends 페이지로 이동 시키게 하면 되고,
 		// 만약 없다면 dto에 뽑아온 값들을 담아 redirectView.addStaticAttribute("data", dto); 하여 redirect 시 react에서 받을 수 있게 하시면 됩니다.
-		// 나머지는 형님이 잘하실 수 있을 거라 믿어 의심치 않고 맡기겠습니다! 화이팅!
+		//감사함미다
+		System.out.println(dto);
+		
 		dto.setId(userInfo.getEmail());
 		
+		System.out.println(userInfo.getEmail());
 		//뽑아올 수 있는 값들
 		System.out.println("email : "+ userInfo.getEmail());
 		System.out.println("nickname : "+ userInfo.getNickname());
@@ -48,11 +57,22 @@ public class LoginController {
 		System.out.println("getAgeRange : "+ userInfo.getAgeRange());
 		
 		//로그인 성공 시 보여줄 페이지는 friends 이고, 실패 시 미가입자인 것이니 회원가입페이지로 이동, 비밀번호가 틀렸으면 다시 login Page로 이동시켜주십시오.
-		redirectView.setUrl("http://localhost:5173/login");
-		return redirectView;
+		System.out.println("dto.id:"+dto.getId());
+		
+		MemberDTO userId = (MemberDTO) mapper.loginId(dto.getId());
+		
+		
+		System.out.println("userId:"+userId);
+		if(userId==null) {
+			redirectView.setUrl("http://localhost:5173/createMember");
+			return redirectView;
+		}else {
+			session.setAttribute("member", userId);
+			redirectView.setUrl("http://localhost:5173/friends");
+			return redirectView;
+		}
+		
 	}
-	
-
 	
 	//** 아이디찾기 */
 	@GetMapping("searchId")

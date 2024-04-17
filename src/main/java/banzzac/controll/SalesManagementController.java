@@ -59,7 +59,7 @@ public class SalesManagementController {
 		cl.setFolder(folder);
 		cl.setService("weekly");
 		title.selectTitle(cl.getService());
-		
+
 		return "template";
 	}
 	

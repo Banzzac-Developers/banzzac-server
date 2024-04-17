@@ -12,7 +12,7 @@ import banzzac.dto.DogDTO;
 
 @Mapper
 public interface DogMapper {
-	//** 반려견 추가 등록*/
+	//** 반려견  등록*/
 	@Insert("insert into dog"
 			+"(id,name,age,img,gender,weight,neutrification,size,kind,personality,activity)"
 			+ "values"
