@@ -2,6 +2,7 @@ package banzzac.mapper;
 
 import java.util.ArrayList;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
@@ -55,34 +56,68 @@ public interface AdminMapper {
 	/** 주간 결제 내역 */
 	
 	/** 월별 결제 내역 */
-	@Select("SELECT m.month_number as `month`, "
-			+ "       COALESCE(p.order_num, 0) AS order_cnt, "
-			+ "       COALESCE(sum(p.quantity), 0) AS quantity, "
-			+ "       COALESCE(sum(p.total_amount), 0) AS total_amount "
-			+ "FROM ("
-			+ "    SELECT 1 AS month_number UNION ALL"
-			+ "    SELECT 2 UNION ALL"
-			+ "    SELECT 3 UNION ALL"
-			+ "    SELECT 4 UNION ALL"
-			+ "    SELECT 5 UNION ALL"
-			+ "    SELECT 6 UNION ALL"
-			+ "    SELECT 7 UNION ALL"
-			+ "    SELECT 8 UNION ALL"
-			+ "    SELECT 9 UNION ALL"
-			+ "    SELECT 10 UNION ALL"
-			+ "    SELECT 11 UNION ALL"
-			+ "    SELECT 12"
+	@Select("SELECT  "
+			+ "    p.year_num AS year, "
+			+ "    m.month_number AS month, "
+			+ "    COALESCE(p.order_num, 0) AS order_cnt, "
+			+ "    COALESCE(SUM(p.quantity), 0) AS quantity, "
+			+ "    COALESCE(SUM(p.total_amount), 0) AS total_amount "
+			+ "FROM ( "
+			+ "    SELECT DISTINCT YEAR(approved_at) AS year_num  "
+			+ "    FROM paymentSuccess "
+			+ "    WHERE YEAR(approved_at) = #{year} "
+			+ ") AS years "
+			+ "CROSS JOIN ( "
+			+ "    SELECT 1 AS month_number UNION ALL "
+			+ "    SELECT 2 UNION ALL "
+			+ "    SELECT 3 UNION ALL "
+			+ "    SELECT 4 UNION ALL "
+			+ "    SELECT 5 UNION ALL "
+			+ "    SELECT 6 UNION ALL "
+			+ "    SELECT 7 UNION ALL "
+			+ "    SELECT 8 UNION ALL "
+			+ "    SELECT 9 UNION ALL "
+			+ "    SELECT 10 UNION ALL "
+			+ "    SELECT 11 UNION ALL "
+			+ "    SELECT 12 "
 			+ ") AS m "
 			+ "LEFT JOIN ("
-			+ "    SELECT MONTH(approved_at) AS month_number, "
-			+ "    count(partner_order_id) as order_num, "
-			+ "    sum(quantity) as quantity, "
-			+ "    sum(total_amount) as total_amount "
-			+ "    FROM paymentsuccess "
-			+ "	   group by month_number"
+			+ "    SELECT MONTH(approved_at) AS month_number"
+			+ "    FROM paymentsuccess"
 			+ ") AS p ON m.month_number = p.month_number "
 			+ "GROUP BY m.month_number;")
-	public ArrayList<SalesManagementDTO> montlySales();
+	public int montlySalesCount(); 
+
+			+ "LEFT JOIN ( "
+			+ "    SELECT  "
+			+ "        MONTH(approved_at) AS month_number, "
+			+ "        YEAR(approved_at) AS year_num, "
+			+ "        COUNT(partner_order_id) AS order_num, "
+			+ "        SUM(quantity) AS quantity, "
+			+ "        SUM(total_amount) AS total_amount "
+			+ "    FROM paymentSuccess   "
+			+ "    WHERE YEAR(approved_at) = #{year} "
+			+ "    GROUP BY month_number "
+			+ ") AS p ON years.year_num = p.year_num AND m.month_number = p.month_number "
+			+ "WHERE (years.year_num = YEAR(CURDATE()) AND m.month_number <= MONTH(CURDATE())) "
+			+ "   OR (years.year_num < YEAR(CURDATE())) "
+			+ "GROUP BY p.year_num, m.month_number "
+			+ "ORDER BY p.year_num DESC, m.month_number DESC;")
+	public ArrayList<SalesManagementDTO> montlySales(int year);
+	
+	@Select("select year(p.approved_at) as year "
+			+ "from paymentsuccess p "
+			+ "group by year "
+			+ "order by p.approved_at desc	")
+	public ArrayList<SalesManagementDTO> selectYear();
+	
+	@Select("SELECT YEAR(approved_at) AS year,"
+			+ "       SUM(quantity) AS total_quantity,"
+			+ "       SUM(total_amount) AS total_amount,"
+			+ "       COUNT(partner_order_id) AS order_count "
+			+ "FROM paymentSuccess "
+			+ "GROUP BY YEAR(approved_at); ")
+	public ArrayList<SalesManagementDTO> yearSales();
 
   
 	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
@@ -117,8 +152,34 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
-	// 정운만 시작 #############################################
+
+	//** 일반 멤버 리스트*/
+	@Select("select * from member where isGrant = 1 ")
+	public ArrayList<MemberDTO> member(PageDTO dto);
 	
+	//** 멤버상세정보*/
+	@Select("select * from member where no =#{no}")
+	public MemberDTO memberDetail(int no);
+	
+	//** 검수 멤버 리스트*/
+	@Select("select * from member where isGrant = 2 ")
+	public ArrayList<MemberDTO> newmember(PageDTO dto);
+	
+	//** 검수 멤버 승인*/
+	@Update("UPDATE member "
+			+ "SET isGrant = 3 "
+			+ "WHERE id = #{id} "
+			+ "ORDER BY date")
+	public int approval(String id);
+	
+	//** 검수 멤버 거절*/
+	@Delete("delete from member where id = #{id}")
+	public int refuse(String id);
+	
+	
+
+	// 정운만 시작#############################################
+
 	@Select("SELECT date_range.date AS daily_range, "
 			+ "COALESCE(SUM(ps.total_amount), 0) AS total_amount "
 			+ "FROM ( "
@@ -160,4 +221,5 @@ public interface AdminMapper {
 			+ " where DATE(r.report_time) = curdate()")
 	public ArrayList<DashBoardDTO> getTodayReport();
 	// 정운만 끝 ##############################################
+
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import banzzac.dto.PageDTO;
@@ -58,19 +59,24 @@ public class SalesManagementController {
 		cl.setFolder(folder);
 		cl.setService("weekly");
 		title.selectTitle(cl.getService());
-		
+
 		return "template";
 	}
 	
-	@GetMapping("monthly")
-	public String monthlySales (CommonLayout cl,SelectTitle title, Model mm) {
+	@GetMapping(path = {"monthly"})
+	public String monthlySales (CommonLayout cl,SelectTitle title, Model mm,SalesManagementDTO dto, @Param("year") Integer year) {
+		if(year == null) {
+			year = 2024;
+		}
 		cl.setFolder(folder);
 		cl.setService("monthly");
 		title.selectTitle(cl.getService());
 		
-		ArrayList<SalesManagementDTO> res = mapper.montlySales();
+
+		ArrayList<SalesManagementDTO> res = mapper.montlySales(year);
+		mm.addAttribute("selectedYear",year);
+		mm.addAttribute("year",mapper.selectYear());
 		mm.addAttribute("data",res);
-		System.out.println(res);
 		
 		return "template";
 	}

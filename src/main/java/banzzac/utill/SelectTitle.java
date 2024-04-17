@@ -29,7 +29,12 @@ public class SelectTitle {
 		titles.put("suspend", "정지");
 		titles.put("withdrawal", "탈퇴");
 
+		titles.put("member", "기존회원");
+		titles.put("newMember", "신규회원");
+		titles.put("periodMember", "기간별회원");
 		
+		
+
 		this.title = titles.get(serviceName);
 		
 	}

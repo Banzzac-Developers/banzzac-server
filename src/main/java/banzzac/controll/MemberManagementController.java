@@ -128,5 +128,80 @@ public class MemberManagementController {
 		mm.addAttribute("withdrawalList", res);
 		return "template";
 	}
+	//**회원리스트*/
+	@GetMapping("member")
+	public String memberList(Model mm, CommonLayout cl, SelectTitle title) {
+		cl.setFolder("member");
+		cl.setService("member");
+		title.selectTitle("member");
+		
+		ArrayList<MemberDTO> res = mapper.member(pageDTO);
+		mm.addAttribute("memberList", res);
+		
+		return "template";
+	}
+	//**회원정보상세보기*/
+	@GetMapping("memberDetail/{no}")
+	public String memberDetail(Model mm, CommonLayout cl, SelectTitle title, @PathVariable int no) {
+		cl.setFolder("member");
+		cl.setService("memberDetail");
+		title.selectTitle("member");
+		
+		System.out.println("memberDetail" + no);
+		MemberDTO dto = mapper.memberDetail(no);
+		System.out.println("memberDetail" + dto);
+		
+		mm.addAttribute("member", dto);
+		
+		return "template";
+	}
+	
+	//**신규멤버검수*/
+	@GetMapping("newMembers")
+	public String newmember(Model mm, CommonLayout cl, SelectTitle title) {
+		cl.setFolder("member");
+		cl.setService("newMembers");
+		title.selectTitle("newMember");
+		
+		ArrayList<MemberDTO> res = mapper.newmember(pageDTO);
+		mm.addAttribute("newMembers", res);
+		
+		return "template";
+	}
+	//*신규멤버검수승인*/
+	@GetMapping("approval/{id}")
+	public String approval(@PathVariable String id) {
+		System.out.println("신규유저승인" + id);
+		
+		mapper.approval(id);
+		
+		return "redirect:/management/newMembers";
+	}
+	
+	//*신규멤버검수거절*/
+	@GetMapping("refuse/{id}")
+	public String refuse(@PathVariable String id) {
+		System.out.println("신규유저거부" + id);
+			
+		mapper.refuse(id);
+			
+		return "redirect:/management/newMembers";
+	}
+	
+	
+	//**기간별 신규회원조회*/
+		@GetMapping("periodMember")
+		public String periodMemberList(Model mm, CommonLayout cl, SelectTitle title) {
+			cl.setFolder("member");
+			cl.setService("periodMember");
+			title.selectTitle("periodMember");
+			
+			ArrayList<MemberDTO> res = mapper.member(pageDTO);
+			mm.addAttribute("periodMemberList", res);
+			
+			return "template";
+		}
+	
+	
 		
 }
