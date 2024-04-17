@@ -152,6 +152,7 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
+
 	//** 일반 멤버 리스트*/
 	@Select("select * from member where isGrant = 1 ")
 	public ArrayList<MemberDTO> member(PageDTO dto);
@@ -178,7 +179,7 @@ public interface AdminMapper {
 	
 
 	// 정운만 시작#############################################
-	
+
 	@Select("SELECT date_range.date AS daily_range, "
 			+ "COALESCE(SUM(ps.total_amount), 0) AS total_amount "
 			+ "FROM ( "
@@ -204,6 +205,21 @@ public interface AdminMapper {
 				+ "	(select count(*) from member where Date(date) = curdate() and isGrant = 0) as today_withdrawn_member, "
 				+ "	(select count(*) from refund where approve = 2) as refund_count")
 	public DashBoardDTO getTodayEvent();
+	
+	@Select("select m.id as member_id, m.nickname as nickname , d.name as dog_name  from member m "
+			+ "join dog d "
+			+ "on d.id = m.id "
+			+ "where Date(date) = curdate() and isGrant = 2 limit 1")
+	public ArrayList<DashBoardDTO> getTodayRegister();
+	
+	@Select("select r.report_no as report_no, m.id as member_id, m2.id as reported_id"
+			+ " from report r"
+			+ " join `member` m "
+			+ " on r.member_no = m.`no` "
+			+ " join `member` m2 "
+			+ " on r.reported_no = m2.`no` "
+			+ " where DATE(r.report_time) = curdate()")
+	public ArrayList<DashBoardDTO> getTodayReport();
 	// 정운만 끝 ##############################################
 
 }

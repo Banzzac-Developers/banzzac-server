@@ -32,12 +32,32 @@
 	color : red;
 }
 
-.dash__profile--img{
-	width: 50px;
-	border-radius: 25px;
-	object-fit : cover;
+.dash-box{
+	display: flex;
+	align-items: center;
 }
 
-.dash-box > table{
+.dash-box__title{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;	
+}
+
+.dash-box__title > a{
+	color: #000;
+	text-decoration: none;
+}
+
+.dash-box > .dash-col{
 	width: 50%;
+}
+.dash-box > .dash-col:nth-child(2){
+	margin-left: 10px;
+}
+
+.dash-col >.table > tbody> tr> td {
+	max-width: 150px;
+    white-space: nowrap; /* 줄 바꿈 방지 */
+    overflow: hidden; /* 내용이 넘치는 경우 가려짐 */
+    text-overflow: ellipsis; /* 넘치는 내용에 대한 생략 부호 (...) */
 }

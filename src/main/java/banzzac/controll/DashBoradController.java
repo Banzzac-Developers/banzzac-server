@@ -63,6 +63,8 @@ public class DashBoradController {
 	public String goToDashBoard(Model mm) {
 		mm.addAttribute("sales", mapper.calculateDailyPay());
 		mm.addAttribute("event", mapper.getTodayEvent());
+		mm.addAttribute("register", mapper.getTodayRegister());
+		mm.addAttribute("report", mapper.getTodayReport());
 		return "template";
 	}
 	
