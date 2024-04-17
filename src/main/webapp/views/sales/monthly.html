@@ -1,3 +1,5 @@
+
+<canvas id="myChart" style="width: 100%; height: 40vh"></canvas>
 <select name="selectedYear" id = "year" onchange="select()">
        <option th:each="selectYear : ${year}" 
                th:value="${selectYear.year}" 
@@ -38,3 +40,32 @@
 		location.href = "?year="+option.value
 	}	
 </script>
+<script th:inline="javascript">
+	var sales = /*[[${data}]]*/[] 
+   var ctx = document.getElementById('myChart');
+   var myChart = new Chart(ctx, {
+     type: 'bar',
+     data: {
+       labels: sales.map((data)=>data.month+'월'),
+       datasets: [{
+         label: '순매출',
+         data: sales.map((data)=>(data.totalAmount - data.totalAmount/11).toFixed(0)),
+         backgroundColor: sales.map(()=> 'rgba(54, 162, 235, 0.2)')
+		,
+         borderColor:sales.map(()=>'rgba(54, 162, 235, 1)'),
+         borderWidth: 1
+       }]
+     },
+     options: {
+		responsive: false,
+       scales: {
+         yAxes: [{
+           ticks: {
+             beginAtZero: true
+           }
+         }]
+       }
+     }
+   });
+
+ </script>

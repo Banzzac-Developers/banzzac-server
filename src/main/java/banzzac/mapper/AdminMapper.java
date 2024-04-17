@@ -118,7 +118,54 @@ public interface AdminMapper {
 			+ "FROM paymentSuccess "
 			+ "GROUP BY YEAR(approved_at); ")
 	public ArrayList<SalesManagementDTO> yearSales();
-
+	
+	
+	@Select("SELECT  "
+			+ "  partner_user_id as user_id, "
+			+ "  ranking as ranking, "
+			+ "  month_num as month, "
+			+ "  year_num as year"
+			+ "FROM ( "
+			+ "    SELECT  "
+			+ "        p.partner_user_id, "
+			+ "        MONTH(approved_at) as month_num, "
+			+ "        year(approved_at) as year_num, "
+			+ "        RANK() OVER (PARTITION by month(p.approved_at) ORDER BY SUM(p.total_amount) DESC) AS ranking "
+			+ "    FROM  "
+			+ "        paymentsuccess p "
+			+ "	   where not exists ( "
+			+ "			select partner_order_id  "
+			+ "			from refund r "
+			+ "			where r.partner_order_id = p.partner_order_id  "
+			+ "			)"
+			+ "    GROUP BY  "
+			+ "        p.partner_user_id,month_num "
+			+ "     having year_num = #{year} and month_num=#{month} "
+			+ "    order by month_num,year_num desc,ranking asc "
+			+ ") AS ranked_table "
+			+ "where ranking<=3")
+	public ArrayList<SalesManagementDTO> ranking(int year, int month);
+	
+	@Select("select "
+			+ "r.partner_order_id as order_id,"
+			+ "r.reason as reason,"
+			+ "r.approve as refund_status,"
+			+ "r.refund_request_date as refund_request,"
+			+ "r.approve_time as refund_approve,"
+			+ "p.quantity as quantity,"
+			+ "p.total_amount as total_amount,"
+			+ "p.tid as tid,"
+			+ "p.partner_user_id as user_id,"
+			+ "p.approved_at as pay_date "
+			+ "from refund r "
+			+ "join paymentsuccess p  "
+			+ "on r.partner_order_id = p.partner_order_id  "
+			+ "where r.approve = #{refundStatus} "
+			+ "order by r.refund_request_date desc")
+	public ArrayList<SalesManagementDTO> refund(int refundStatus);
+	
+	
+	/************************ 어매성 ************************/
   
 	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
 	public int suspendMember(String id);

@@ -28,11 +28,7 @@ public class SalesManagementController {
 	
 	@Resource
 	private AdminMapper mapper;
-	
-	@Autowired
-	private ApplicationContext applicationContext;
-	
-	
+		
 	@ModelAttribute
 	public PageDTO getCommonData(@Param("currentPage") PageDTO paging) {
 		pageDTO = paging;
@@ -63,8 +59,8 @@ public class SalesManagementController {
 		return "template";
 	}
 	
-	@GetMapping(path = {"monthly"})
-	public String monthlySales (CommonLayout cl,SelectTitle title, Model mm,SalesManagementDTO dto, @Param("year") Integer year) {
+	@GetMapping("monthly")
+	public String monthlySales (CommonLayout cl,SelectTitle title, Model mm, @Param("year") Integer year) {
 		if(year == null) {
 			year = 2024;
 		}
@@ -77,6 +73,56 @@ public class SalesManagementController {
 		mm.addAttribute("selectedYear",year);
 		mm.addAttribute("year",mapper.selectYear());
 		mm.addAttribute("data",res);
+		
+		return "template";
+	}
+	
+	@GetMapping("payment")
+	/** 결제 회원 리스트 - 랭킹 위에 3위까지*/
+	public String paymentList (CommonLayout cl,SelectTitle title,Model mm,@Param("year") Integer year,@Param("month") Integer month) {
+		cl.setFolder(folder);
+		cl.setService("paymentList");
+		title.selectTitle(cl.getService());
+		
+		
+		mm.addAttribute("userRanking",mapper.ranking(year, month));
+		
+		return "template";
+	}
+	
+
+	/** 환불 신청 회원 */
+	@GetMapping("refund")
+	public String refundList (CommonLayout cl,SelectTitle title,Model mm) {
+		cl.setFolder(folder);
+		cl.setService("refundList");
+		title.selectTitle(cl.getService());
+		// 환불 대기상태
+		mm.addAttribute("data",mapper.refund(2));
+	
+		return "template";
+	}
+	
+	/** 환불 승인 회원 */
+	@GetMapping("refund/approve")
+	public String refundApprove (CommonLayout cl,SelectTitle title,Model mm) {
+		cl.setFolder(folder);
+		cl.setService("approve");
+		title.selectTitle(cl.getService());
+		// 환불 승인
+		mm.addAttribute("data",mapper.refund(1));
+		
+		return "template";
+	}
+	
+	/** 환불 거절 회원 */
+	@GetMapping("refund/refuse")
+	public String refundRefuse (CommonLayout cl,SelectTitle title,Model mm) {
+		cl.setFolder(folder);
+		cl.setService("refuse");
+		title.selectTitle(cl.getService());	
+		//환불 거절
+		mm.addAttribute("data",mapper.refund(0));
 		
 		return "template";
 	}

@@ -1,6 +1,7 @@
 @charset "UTF-8";
 @import "./reset.css";
 @import "./inc/aside.css";
+@import "./screen/sales.css";
 @import "./screen/dashboard.css";
 *{
 	box-sizing : content-box;
@@ -33,5 +34,10 @@ main > .container{
 	width:85%;
 	margin-left: 22%;
 	margin-right: 0;
+}
+
+.salesTitle{
+	font-weight: bold;
+	font-size: x-large;
 }
 
