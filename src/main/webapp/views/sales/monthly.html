@@ -26,9 +26,9 @@
 	      <th th:text="${monthly.month}"></th>
 	      <td th:text="${monthly.orderCnt}"></td>
 	      <td th:text="${monthly.quantity}"></td>
-	      <td th:text="${monthly.totalAmount}"></td>
-		  <td th:text="${monthly.refundStatus}"></td>
-		  <td th:text="${monthly.totalAmount - monthly.totalAmount/11}"></td>
+	      <td th:text="${#numbers.formatDecimal(monthly.totalAmount,0,'COMMA',-1,'POINT')}"></td>
+		  <td th:text="${#numbers.formatDecimal(monthly.refundStatus,0,'COMMA',-1,'POINT')}"></td>
+		  <td th:text="${#numbers.formatDecimal(monthly.totalAmount - monthly.refundStatus,0,'COMMA',-1,'POINT')}"></td>
 	    </tr>
 	  </tbody>
 	</table>
@@ -49,7 +49,7 @@
        labels: sales.map((data)=>data.month+'월'),
        datasets: [{
          label: '순매출',
-         data: sales.map((data)=>(data.totalAmount - data.totalAmount/11).toFixed(0)),
+         data: sales.map((data)=>(data.totalAmount - data.refundStatus)),
          backgroundColor: sales.map(()=> 'rgba(54, 162, 235, 0.2)')
 		,
          borderColor:sales.map(()=>'rgba(54, 162, 235, 1)'),

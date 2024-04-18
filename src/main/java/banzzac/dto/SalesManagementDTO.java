@@ -18,7 +18,6 @@ public class SalesManagementDTO {
 	private Date refundRequest, refundApprove, payDate;
 	private String refundRequestStr, refundApproveStr, payDateStr,dailyRangeStr;
 	private int ranking;
-	ArrayList<Date>week;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 	

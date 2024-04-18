@@ -60,11 +60,8 @@ public class SalesManagementController {
 			year = Integer.parseInt(yearStr);
 			month = Integer.parseInt(monthStr);
 		}
-
 		mm.addAttribute("data",mapper.weeklySales(year,month));
-		
-		System.out.println(mapper.weeklySales(year,month)+"\n");
-		
+
 		return "template";
 	}
 	
