@@ -19,24 +19,6 @@ import banzzac.dto.SalesManagementDTO;
 @Mapper
 public interface AdminMapper {
 
-	@Select(" <script>"
-			+ "SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
-			+ "FROM report r "
-			+ "JOIN member m1 ON r.member_no = m1.no "
-			+ "JOIN member m2 ON r.reported_no = m2.no "
-			+ "ORDER BY r.report_status, r.report_time DESC "
-			+ " <if test='searchNo != null' >"
-				+ " limit #{searchNo}, #{listCnt} "
-			+ " </if>"
-			+ " <if test='searchNo == null' >"
-				+ " limit 0,#{listCnt}"
-			+ " </if>"
-			+ " </script>")
-	public ArrayList<ReportDTO> getReportMemberList(PageDTO dto);
-	
-	
-	@Select("select count(*) from report")
-	public int getTotalReportCount();
 
 	
 	/***************** 어매성 ************************/
@@ -259,9 +241,30 @@ public interface AdminMapper {
 			+ "GROUP BY m.month_number;")
 	public int montlySalesCount(); 
 
-	@Update("UPDATE member SET isGrant = 1 WHERE id = #{id}")
-	public int suspendMember(String id);
 	
+	/*############ 건들면 ################### 리쌍훈 ################ 물어요 ################*/
+	
+	// 신고 받은 회원 리스트 가져오기
+	@Select(" <script>"
+			+ "SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
+			+ "FROM report r "
+			+ "JOIN member m1 ON r.member_no = m1.no "
+			+ "JOIN member m2 ON r.reported_no = m2.no "
+			+ "ORDER BY r.report_status, r.report_time DESC "
+			+ " <if test='searchNo != null' >"
+			+ " limit #{searchNo}, #{listCnt} "
+			+ " </if>"
+			+ " <if test='searchNo == null' >"
+			+ " limit 0,#{listCnt}"
+			+ " </if>"
+			+ " </script>")
+	public ArrayList<ReportDTO> getReportMemberList(PageDTO dto);
+	
+	// 신고 받은 회원 명수 가져오기
+	@Select("select count(*) from report")
+	public int getTotalReportCount();
+	
+	// 신고 회원 정보 상세보기
 	@Select("SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
 			+ "FROM report r "
 			+ "JOIN member m1 ON r.member_no = m1.no "
@@ -269,27 +272,44 @@ public interface AdminMapper {
 			+ "where report_no = #{no} ")
 	public ReportDTO reportDetail(int no);
 	
+	
+	// 회원 정지하기
+	@Update("UPDATE member SET isGrant = 1 WHERE id = #{id}")
+	public int suspendMember(String id);
+	
+	
+	// 신고받은 회원 정지시키기
 	@Update("UPDATE report "
 			+ "SET report_admin_answer = #{reportAdminAnswer} , report_status = 2 "
 			+ "WHERE report_no  = #{reportNo}")
 	public int modifyReportDetail(ReportDTO dto);
 	
+	
+	// 신고 처리 상태 처리 완료 변경
 	@Update("UPDATE report "
 			+ "SET report_status = 2 "
 			+ "WHERE report_no = #{no} ")
 	public int modifyReportStatus(int no);
 	
+	
+	// 정지 회원 목록 리스트
 	@Select("select * from member where isGrant = 1")
 	public ArrayList<MemberDTO> getSuspendMemberList(PageDTO dto);
 	
+	
+	// 정지 해제
 	@Update("UPDATE member "
 			+ "SET isGrant = 2 "
-			+ "WHERE id = #{id} "
-			+ "ORDER BY date")
+			+ "WHERE id = #{id} ")
 	public int changeSuspendMember(String id);
 	
+	// 탈퇴 회원 목록 리스트
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
+	
+	
+	//######################################   리쌍훈 끝
+	
 	
 
 	//** 일반 멤버 리스트*/
