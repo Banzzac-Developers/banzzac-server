@@ -66,7 +66,7 @@ public class LoginController {
 	    MemberDTO newUserId = new MemberDTO();
 	    newUserId.setId(userInfo.getEmail());
 	    newUserId.setNickname(userInfo.getNickname());
-	    newUserId.setPhone(userInfo.getPhoneNumber());
+	    newUserId.setPhone("0"+userInfo.getPhoneNumber().substring("+82 ".length()));
 	    if(userInfo.getGender().equals("male")) {
 	    	newUserId.setGender(1);
 	    }else {
@@ -80,9 +80,9 @@ public class LoginController {
 		
 		System.out.println("userId:"+userId);
 		if(userId==null) {
-			session.setAttribute("member", newUserId);
-			redirectView.setUrl("http://localhost:5173/createMember");
-			redirectView.addStaticAttribute("", userId);
+			
+			redirectView.setUrl("http://localhost:5173/signup/user?nickname="+newUserId.getNickname()+"&phone="+newUserId.getPhone()+"&id="+newUserId.getId()+"&gender="+newUserId.getGender());
+			redirectView.addStaticAttribute("userInfo", newUserId);
 			return redirectView;
 		}else {
 			session.setAttribute("member", userId);

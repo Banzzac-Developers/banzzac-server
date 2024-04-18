@@ -14,6 +14,7 @@ import banzzac.dto.FriendDTO;
 import banzzac.dto.MemberDTO;
 import banzzac.mapper.FriendMapper;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/friend")
@@ -25,7 +26,8 @@ public class FriendController {
 	
 	/** 친구리스트*/
 	@GetMapping("list/{id}")
-	public List<FriendDTO> friendList(@PathVariable String id) {
+	public List<FriendDTO> friendList(@PathVariable String id,HttpSession session) {
+//		System.out.println("session : "+(MemberDTO)session.getAttribute("member")); 운만세션확인
 		List<FriendDTO> res = mapper.list(id);
 		return res;
 	}
