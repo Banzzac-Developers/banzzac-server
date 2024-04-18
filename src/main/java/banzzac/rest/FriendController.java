@@ -60,6 +60,38 @@ public class FriendController {
 		return res;
 	}
 	
+	/** 친구차단  */
+	@GetMapping("{id}/friendBlock/{friendId}")
+	Object friendBlock(FriendDTO dto,@PathVariable String id,@PathVariable String friendId) {
+		System.out.println("왔냐"+dto);
+		mapper.friendBlock(dto);
+		return mapper.list(id);
+	}
+	
+	/** 친구차단해제  */
+	@GetMapping("{id}/friendUnBlock/{friendId}")
+	Object friendUnBlock(FriendDTO dto,@PathVariable String id,@PathVariable String friendId) {
+		System.out.println("왔냐"+dto);
+		mapper.friendUnBlock(dto);
+		return mapper.blockList(id);
+	}
+	
+	/** 친구즐겨찾기 추가  */
+	@GetMapping("{id}/friendFavorite/{friendId}")
+	Object friendFavorite(FriendDTO dto,@PathVariable String id,@PathVariable String friendId) {
+		System.out.println("왔냐"+dto);
+		mapper.friendFavorite(dto);
+		return mapper.list(id);
+	}
+	
+	/** 친구즐겨찾기 해제  */
+	@GetMapping("{id}/friendUnFavorite/{friendId}")
+	Object friendUnFavorite(FriendDTO dto,@PathVariable String id,@PathVariable String friendId) {
+		System.out.println("왔냐"+dto);
+		mapper.friendUnFavorite(dto);
+		return mapper.list(id);
+	}
+	
 	
 	
 	

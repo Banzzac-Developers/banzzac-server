@@ -26,7 +26,7 @@ public class MemberController {
 	@Resource
 	DogMapper domapper;
 	
-	//*회원가입폼*/
+	//*회원가입*/
 	@GetMapping("createMember")
 	void createMemberForm() {
 		System.out.println("createMemberForm 진입");
@@ -38,10 +38,11 @@ public class MemberController {
 		
 		mapper.createMember(dto);
 		System.out.println("createMemberReg 진입");
+		System.out.println(dto);
 		return CommonResponse.success(dto);
 	}
 	
-	//*반려견정보 입력 폼*/
+	//*반려견정보 입력 */
 	@GetMapping("createDog")
 	void createDogForm() {
 		System.out.println("createDogForm 진입");

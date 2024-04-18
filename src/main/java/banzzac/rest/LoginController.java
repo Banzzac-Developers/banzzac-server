@@ -41,9 +41,7 @@ public class LoginController {
 		System.out.println(userInfo);
 		
 		System.out.println("222222222222-----------------------");
-		// 이걸로 mapper에 진입하여 회원 정보가 있는 지 확인 후에 있다면 그 정보를 session에 저장하고 redirectView에 friends 페이지로 이동 시키게 하면 되고,
-		// 만약 없다면 dto에 뽑아온 값들을 담아 redirectView.addStaticAttribute("data", dto); 하여 redirect 시 react에서 받을 수 있게 하시면 됩니다.
-		//감사함미다
+		
 		System.out.println(dto);
 		
 		dto.setId(userInfo.getEmail());
@@ -54,16 +52,35 @@ public class LoginController {
 		System.out.println("nickname : "+ userInfo.getNickname());
 		System.out.println("getGender : "+ userInfo.getGender());
 		System.out.println("getPhoneNumber : "+ userInfo.getPhoneNumber());
-		System.out.println("getAgeRange : "+ userInfo.getAgeRange());
+		
+		
+		
 		
 		//로그인 성공 시 보여줄 페이지는 friends 이고, 실패 시 미가입자인 것이니 회원가입페이지로 이동, 비밀번호가 틀렸으면 다시 login Page로 이동시켜주십시오.
 		System.out.println("dto.id:"+dto.getId());
 		
+		
+		
 		MemberDTO userId = (MemberDTO) mapper.loginId(dto.getId());
 		
+	    MemberDTO newUserId = new MemberDTO();
+	    newUserId.setId(userInfo.getEmail());
+	    newUserId.setNickname(userInfo.getNickname());
+	    newUserId.setPhone(userInfo.getPhoneNumber());
+	    if(userInfo.getGender().equals("male")) {
+	    	newUserId.setGender(1);
+	    }else {
+	    	newUserId.setGender(2);
+	    }
+	    
+	    
+	    
+	    
+	    System.out.println("newUserIdㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ:"+newUserId);
 		
 		System.out.println("userId:"+userId);
 		if(userId==null) {
+			session.setAttribute("member", newUserId);
 			redirectView.setUrl("http://localhost:5173/createMember");
 			redirectView.addStaticAttribute("", userId);
 			return redirectView;
