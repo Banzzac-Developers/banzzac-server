@@ -19,9 +19,9 @@
 	      <td th:text="${daily.dailyRangeStr}"></td>
 		  <td th:text="${daily.orderCnt}"></td>
 		  <td th:text="${daily.quantity}"></td>	
-		  <td th:text="${daily.totalAmount}"></td>	    
-		  <td th:text="${daily.refundStatus}"></td>	
-		  <td th:text="${daily.totalAmount - daily.refundStatus}"></td>	 
+		  <td th:text="${#numbers.formatDecimal(daily.totalAmount,0,'COMMA',-1,'POINT')}"></td>	    
+		  <td th:text="${#numbers.formatDecimal(daily.refundStatus,0,'COMMA',-1,'POINT')}"></td>	
+		  <td th:text="${#numbers.formatDecimal(daily.totalAmount - daily.refundStatus,0,'COMMA',-1,'POINT')}"></td>	 
 	    </tr>
 	  </tbody>
 	</table>

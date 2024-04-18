@@ -1,2 +1,17 @@
 @charset "UTF-8";
 
+.payRank{
+	display: flex;
+	justify-content: space-evenly;
+	padding: 3% 0 4%;
+}
+.rankWrap{
+	width: max-content;
+	border: 1px solid black;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.ranking{
+	font-weight: bold;
+}
