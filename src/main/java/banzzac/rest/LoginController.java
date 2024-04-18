@@ -65,6 +65,7 @@ public class LoginController {
 		System.out.println("userId:"+userId);
 		if(userId==null) {
 			redirectView.setUrl("http://localhost:5173/createMember");
+			redirectView.addStaticAttribute("", userId);
 			return redirectView;
 		}else {
 			session.setAttribute("member", userId);

@@ -1,3 +1,8 @@
+ <div class="d-flex flex-column flex-shrink-0 p-3 text-white" style="width: 100%; height: 100%;">
+
+    <div class="logoBox">
+		<img th:src="@{/logo/logo.png}" alt="" />
+</div>
  <hr>
     <ul id="dashboard-title" class="nav nav-pills flex-column mb-auto list-unstyled ps-0">
     	<li>
@@ -22,9 +27,60 @@
         </button>
         <div class="collapse" id="sales-collapse" style="">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="@{/sales/daily}" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">매출</a></li>
-            <li><a href="@{/sales/payment}" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">결제</a></li>
-            <li><a href="@{/sales/refund}" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">환불</a></li>
+            <li>
+            	<button class="nav-link text-white btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#sub-sales-collapse" aria-expanded="true">
+		          결제
+        		</button>
+        		<div class="collapse" id="sub-sales-collapse">
+        			<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">기간별 매출 조회</a>
+        				</li>
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">읏흥 모르겠다!</a>
+        				</li>
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">더 필요해??</a>
+        				</li>
+        			</ul>
+        		</div>
+            </li>
+            <li>
+            	<button class="nav-link text-white btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#sub-payment-collapse" aria-expanded="true">
+		          결제
+        		</button>
+        		<div class="collapse" id="sub-payment-collapse">
+        			<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">기간별 매출 조회</a>
+        				</li>
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">읏흥 모르겠다!</a>
+        				</li>
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">더 필요해??</a>
+        				</li>
+        			</ul>
+        		</div>
+            </li>
+            <li>
+            	<button class="nav-link text-white btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#sub-reund-collapse" aria-expanded="true">
+		          띠용?
+        		</button>
+        		<div class="collapse" id="sub-reund-collapse">
+        			<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">기간별 매출 조회</a>
+        				</li>
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">읏흥 모르겠다!</a>
+        				</li>
+        				<li>
+	        				<a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">더 필요해??</a>
+        				</li>
+        			</ul>
+        		</div>
+            </li>
           </ul>
         </div>
       </li>
