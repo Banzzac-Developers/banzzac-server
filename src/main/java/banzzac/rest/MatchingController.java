@@ -2,6 +2,7 @@ package banzzac.rest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import banzzac.dto.MatchingDTO;
+import banzzac.dto.MemberDTO;
 import banzzac.mapper.MatchingMapper;
 import banzzac.utill.CommonResponse;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/matching")
@@ -23,10 +26,10 @@ public class MatchingController {
 	private MatchingMapper mapper;
 	
 	@GetMapping("condition")
-	public MatchingDTO getCondition(MatchingDTO dto) {
-		
-		
-		return dto;
+	public MatchingDTO getCondition(HttpSession session, MatchingDTO dto) {
+		MemberDTO info = (MemberDTO)session.getAttribute("member");
+		dto.setNo(1);
+		return mapper.showMatchingCondition(dto);
 	}
 	
 	

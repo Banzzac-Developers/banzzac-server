@@ -27,7 +27,7 @@ public interface MatchingMapper {
 	/**회원이 산책 조건을 설정할 때 불러올 값입니다.
 	 * no = 회원 넘버
 	 * */
-	@Select("select * from matching_conditions where no = #{no}")
+	@Select("select style as walking_style_str, no, dog_nature as dog_nature_str, size, amount_of_activity, want_matching from matching_conditions where no = #{no}")
 	public MatchingDTO showMatchingCondition(MatchingDTO dto);
 	
 	

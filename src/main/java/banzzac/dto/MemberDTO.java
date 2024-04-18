@@ -1,5 +1,6 @@
 package banzzac.dto;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class MemberDTO {
 
 
 	private int no,gender,age,Temperature,cnt,isGrant, quantity;
-	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage;
+	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage,dateStr;
 
 	private Date date;
 	private ArrayList<String> walkingStyle;
@@ -29,11 +30,23 @@ public class MemberDTO {
 		this.walkingStyle = walkingStyle;
 		this.walkingStyleStr = String.join(",", walkingStyle);
 	}
-	
-	public String getDateStr() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	    return sdf.format(date);
+
+	public void setDateStr(String dateStr) {
+		this.dateStr = dateStr;
+		try {
+			this.date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(dateStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+
+	public void setDate(Date date) {
+		this.date = date;
+		this.dateStr = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
+	}
+	
+	
 	
 	
 }
