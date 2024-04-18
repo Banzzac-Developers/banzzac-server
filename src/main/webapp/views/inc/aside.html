@@ -1,9 +1,4 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white" style="width: 100%; height: 100%;">
-    
-    <div class="logoBox">
-		<img th:src="@{/logo/logo.png}" alt="" />
-	</div>
-    <hr>
+ <hr>
     <ul id="dashboard-title" class="nav nav-pills flex-column mb-auto list-unstyled ps-0">
     	<li>
         <a th:href="@{/dashboard}" class="nav-link text-white btn btn-toggle d-inline-flex align-items-center rounded border-0">
@@ -27,9 +22,9 @@
         </button>
         <div class="collapse" id="sales-collapse" style="">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">매출</a></li>
-            <li><a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">결제</a></li>
-            <li><a href="#" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">환불</a></li>
+            <li><a href="@{/sales/daily}" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">매출</a></li>
+            <li><a href="@{/sales/payment}" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">결제</a></li>
+            <li><a href="@{/sales/refund}" class="text-white link-body-emphasis d-inline-flex text-decoration-none rounded">환불</a></li>
           </ul>
         </div>
       </li>
@@ -54,3 +49,4 @@
 	    <hr>
     </ul>
   </div>
+

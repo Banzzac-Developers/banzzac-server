@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -42,27 +40,67 @@ public interface AdminMapper {
 
 	
 	/***************** 어매성 ************************/
-	/** 환불 테이블도 같이 읽어오기 */
-	/** 7일 전까지 결제 내역 */
-	@Select("select "
-	         + "COUNT(partner_order_id) as order_cnt,"
-	         + "SUM(quantity) as quantity,"
-	         + "SUM(total_amount) as total_amount "
-	         + "from paymentsuccess "
-	         + "where datediff(curdate(),approved_at) <=7 "
-	         + "GROUP BY approved_at "
-	         + "order by approved_at desc;")
+
+	/** 7일 전까지 결제 내역 전체결제내역, 환불 승인된 결제내역:환불금액 */
+	@Select("SELECT date_range.date AS daily_range, "
+			 + "COALESCE(sum(CASE WHEN r.approve = 1 THEN ps.total_amount ELSE 0 END),0) AS refund_status, "
+			 + "COALESCE(SUM(ps.total_amount), 0) AS total_amount, "
+			 + "COALESCE(SUM(ps.quantity), 0) AS quantity, "			
+			 + "COALESCE(count(ps.partner_order_id), 0) AS order_cnt "
+			 + "FROM ( "
+			+ "SELECT DATE_SUB(CURRENT_DATE(), INTERVAL (t*10 + u) DAY) AS date "
+			+ "FROM "
+				+ "(SELECT 0 AS t "
+				+ "UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL "
+				+ "SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9)"
+			+ " AS tens, "
+				+ "(SELECT 0 AS u UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL "
+				+ "SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS units "
+				+ "WHERE DATE_SUB(CURRENT_DATE(), INTERVAL (t*10 + u) DAY) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND CURRENT_DATE() "
+				+ ")"
+			+ " AS date_range "
+			+ "LEFT JOIN paymentSuccess ps ON DATE(ps.approved_at) = date_range.date "
+			+ "left join refund r ON r.partner_order_id = ps.partner_order_id "
+			+ "GROUP BY date_range.date"
+			+ " ORDER BY date_range.date DESC")
 	   public ArrayList<SalesManagementDTO> dailySales(); 
 	   
-	   /** 주간 결제 내역 */
+	   /** 주간 결제 내역 */ 
+	   @Select("SELECT  "
+	   		+ "    CONCAT(weeks.start_of_week, ' - ', weeks.end_of_week) AS pay_date, "
+	   		+ "    COALESCE(SUM(ps.total_amount), 0) AS total_amount, "
+	   		+ "    COALESCE(SUM(CASE WHEN r.approve = 1 THEN ps.total_amount ELSE 0 END), 0) AS refund_status "
+	   		+ "FROM ( "
+	   		+ "    SELECT  "
+	   		+ "        WEEKOFYEAR(date_range.date) AS week_number, "
+	   		+ "        MIN(date_range.date) AS start_of_week, "
+	   		+ "        MAX(date_range.date) AS end_of_week "
+	   		+ "    FROM ( "
+	   		+ "        SELECT DATE_SUB(CONCAT(#{year}, '-', #{month}, '-01'), INTERVAL (t*7 + u) DAY) AS date "
+	   		+ "        FROM ( "
+	   		+ "            SELECT 0 AS t UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 "
+	   		+ "        ) AS tens, "
+	   		+ "        ( "
+	   		+ "            SELECT 0 AS u UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 "
+	   		+ "            UNION ALL SELECT 5 UNION ALL SELECT 6 "
+	   		+ "        ) AS units "
+	   		+ "        WHERE DATE_SUB(CONCAT(#{year}, '-', #{month}, '-01'), INTERVAL (t*7 + u) DAY) BETWEEN CONCAT(#{year}, '-', #{month}, '-01') AND LAST_DAY(CONCAT(#{year}, '-', #{month}, '-01')) "
+	   		+ "    ) AS date_range "
+	   		+ "    GROUP BY WEEKOFYEAR(date_range.date) "
+	   		+ ") AS weeks "
+	   		+ "LEFT JOIN paymentSuccess ps ON WEEKOFYEAR(ps.approved_at) = weeks.week_number "
+	   		+ "LEFT JOIN refund r ON ps.partner_order_id = r.partner_order_id "
+	   		+ "GROUP BY weeks.week_number;")
+	   public ArrayList<SalesManagementDTO> weeklySales(int year, int month);
 	   
-	   /** 월별 결제 내역 */
+	   /** 월별 결제 내역 => 달별 환불금액 가져오는 쿼리 수정하기*/
 	   @Select("SELECT  "
 	         + "    p.year_num AS year, "
 	         + "    m.month_number AS month, "
 	         + "    COALESCE(p.order_num, 0) AS order_cnt, "
 	         + "    COALESCE(SUM(p.quantity), 0) AS quantity, "
-	         + "    COALESCE(SUM(p.total_amount), 0) AS total_amount "
+	         + "    COALESCE(SUM(p.total_amount), 0) AS total_amount, "
+			 + "	COALESCE(sum(CASE WHEN p.approve = 1 THEN p.total_amount ELSE 0 END),0) AS refund_status "
 	         + "FROM ( "
 	         + "    SELECT DISTINCT YEAR(approved_at) AS year_num  "
 	         + "    FROM paymentSuccess "
@@ -84,12 +122,14 @@ public interface AdminMapper {
 	         + ") AS m "
 	         + "LEFT JOIN ( "
 	         + "    SELECT  "
-	         + "        MONTH(approved_at) AS month_number, "
-	         + "        YEAR(approved_at) AS year_num, "
-	         + "        COUNT(partner_order_id) AS order_num, "
-	         + "        SUM(quantity) AS quantity, "
-	         + "        SUM(total_amount) AS total_amount "
-	         + "    FROM paymentSuccess   "
+	         + "        MONTH(ps.approved_at) AS month_number, "
+	         + "        YEAR(ps.approved_at) AS year_num, "
+	         + "        COUNT(ps.partner_order_id) AS order_num, "
+	         + "        SUM(ps.quantity) AS quantity, "
+	         + "        SUM(ps.total_amount) AS total_amount, "
+	         +"			r.approve as approve "		
+	         + "    FROM paymentSuccess ps "
+			 + "	left join refund r ON r.partner_order_id = ps.partner_order_id "
 	         + "    WHERE YEAR(approved_at) = #{year} "
 	         + "    GROUP BY month_number "
 	         + ") AS p ON years.year_num = p.year_num AND m.month_number = p.month_number "
@@ -116,12 +156,12 @@ public interface AdminMapper {
 	   
 	   @Select("SELECT  "
 	         + "  partner_user_id as user_id, "
-	         + "  ranking as ranking, "
-	         + "  month_num as month, "
-	         + "  year_num as year"
+	         + "  ranking, "
+	         + "  total_amount "
 	         + "FROM ( "
 	         + "    SELECT  "
 	         + "        p.partner_user_id, "
+	         + "		sum(total_amount) as total_amount,"
 	         + "        MONTH(approved_at) as month_num, "
 	         + "        year(approved_at) as year_num, "
 	         + "        RANK() OVER (PARTITION by month(p.approved_at) ORDER BY SUM(p.total_amount) DESC) AS ranking "
@@ -130,8 +170,8 @@ public interface AdminMapper {
 	         + "      where not exists ( "
 	         + "         select partner_order_id  "
 	         + "         from refund r "
-	         + "         where r.partner_order_id = p.partner_order_id  "
-	         + "         )"
+	         + "         where r.partner_order_id = p.partner_order_id"
+	         + "				and r.approve != 0)"
 	         + "    GROUP BY  "
 	         + "        p.partner_user_id,month_num "
 	         + "     having year_num = #{year} and month_num=#{month} "
@@ -139,6 +179,23 @@ public interface AdminMapper {
 	         + ") AS ranked_table "
 	         + "where ranking<=3")
 	   public ArrayList<SalesManagementDTO> ranking(int year, int month);
+	   
+	   @Select("  SELECT  "
+	   		+ "        p.partner_user_id as user_id, "
+	   		+ "        p.partner_order_id as order_id, "
+	   		+ "		   p.quantity as quantity, p.total_amount as total_amount,"
+	   		+ "        p.approved_at as pay_date, "
+	   		+ "		   MONTH(p.approved_at) as month,"
+	   		+ "        year(p.approved_at) as year"
+	   		+ "    FROM paymentsuccess p "
+	   		+ "		where not exists (  "
+	   		+ "			select r.partner_order_id   "
+	   		+ "			from refund r  "
+	   		+ "			where r.partner_order_id = p.partner_order_id  "
+	   		+ "			and r.approve != 0  ) "
+	   		+ "     having year = #{year} and month= #{month} "
+	   		+ "    order by month,year desc")
+	   public ArrayList<SalesManagementDTO> paymentList(int year, int month);
 	   
 	   @Select("select "
 	         + "r.partner_order_id as order_id,"
@@ -157,7 +214,29 @@ public interface AdminMapper {
 	         + "where r.approve = #{refundStatus} "
 	         + "order by r.refund_request_date desc")
 	   public ArrayList<SalesManagementDTO> refund(int refundStatus);
+
+	   @Update("UPDATE refund r "
+	   		+ "join paymentsuccess p "
+	   		+ "on r.partner_order_id  = p.partner_order_id "
+	   		+ "SET approve = #{refundStatus},"
+	   		+ "approve_time=sysdate()  "
+	   		+ "where r.partner_order_id=#{orderId}")
+	   int checkRefund(SalesManagementDTO dto);
 	   
+	   @Update("update `member` m  "
+				+ "join paymentsuccess p "
+				+ "on m.id = p.partner_user_id "
+				+ "set m.quantity = m.quantity + ("
+				+ "select p.quantity "
+				+ "from paymentsuccess p "
+				+ "where p.partner_order_id = #{orderId}) "
+				+ "where p.partner_user_id =  #{userId}")
+		int plusQuantity(SalesManagementDTO dto);
+	
+	/************************ 어매성 ************************/
+  
+	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
+
 
 	/** 월별 결제 건수 */
 	@Select("SELECT m.month_number, "
@@ -280,6 +359,7 @@ public interface AdminMapper {
 	
 	@Select("select r.report_no as report_no,"
 			+ " m.id as member_id,"
+
 			+ " m2.id as reported_id ,"
 			+ " r.report_reason as reason"
 			+ " from report r"

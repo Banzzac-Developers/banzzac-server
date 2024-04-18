@@ -1,3 +1,4 @@
+<input type="month" onchange="selectMonth(this.value)" name="selectMonth" id="month" >
 <table class="table table-bordered">
 	<p>주간 매출내역</p>
 	<thead>
@@ -14,22 +15,34 @@
 		</tr>
 	  </thead>
 	  <tbody>
-	    <tr>
-	      <th scope="row">1</th>
-	      <td>Mark</td>
-	      <td>Otto</td>
-	      <td>@mdo</td>
-	    </tr>
-	    <tr>
-	      <th scope="row">2</th>
-	      <td>Jacob</td>
-	      <td>Thornton</td>
-	      <td>@fat</td>
-	    </tr>
-	    <tr>
-	      <th scope="row">3</th>
-	      <td colspan="2">Larry the Bird</td>
-	      <td>@twitter</td>
-	    </tr>
-	  </tbody>
-	</table>
+		<tr	th:each="weekly : ${data}">
+			<td th:text="${weekly.dailyRange}"></td>
+			<td ></td>
+			<td th:text="${weekly.totalAmount}"></td>
+			<td th:text="${weekly.refundStatus}"></td>
+			<td ></td>	
+			<td ></td>	
+		</tr>
+	 </tbody>
+</table>
+<script>
+
+	function selectMonth(selectValue){	
+		var get = selectValue.split("-")
+		var year = get[0];
+		var month = get[1];
+		location.href = "?year="+year+"&month="+month
+	}		
+window.onload = ()=>{
+	const url = new URLSearchParams(window.location.search);
+		if(url.get('year')==null||url.get('month')==null){
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+			document.getElementById("month").value = year	+ "-" + month
+		}else{
+			document.getElementById("month").value = url.get('year') + "-" + url.get('month') 
+		}
+}
+
+</script>

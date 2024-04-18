@@ -16,18 +16,57 @@
 	</tr>
   </thead>
   <tbody>
-    <tr th:each="approve:${data}">
-	  <td th:text="${approveStat.count}"></td>
-      <td th:text="${approve.refundRequestStr}"></td>
-      <td th:text="${approve.userId}"></td>
-      <td th:text="${approve.orderId}"></td>
-	  <td th:text="${approve.quantity}"></td>
-	  <td th:text="${approve.totalAmount}"></td>
-	  <td th:text="${approve.reason}"></td>
+    <tr th:if="${data != null}" th:each="refund:${data}">
+	  <td th:text="${refundStat.count}"></td>
+      <td th:text="${refund.refundRequestStr}"></td>
+      <td th:text="${refund.userId}"></td>
+      <td th:text="${refund.orderId}"></td>
+	  <td th:text="${refund.quantity}"></td>
+	  <td th:text="${refund.totalAmount}"></td>
+	  <td th:text="${refund.reason}"></td>
 	  <td align="center">
-		<input type="button" value="승인"/>
-		<input type="button" value="거절"/>
+		<input type="button" value="승인"	 onclick="approve(this)"/>
+		<input type="button" value="거절" onclick="refuse(this)"/>
 	  </td>
 	</tr>
   </tbody>
 </table>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script th:inline="javascript">
+	var refund = /*[[${data}]]*/ [];
+
+	if(refund.length != 0){
+		var approvePost = {	
+			"orderId" : refund[0].orderId,
+			"userId": refund[0].userId,
+			"refundStatus": 1		
+		};
+		var refusePost = {	
+			"orderId" : refund[0].orderId,
+			"userId": refund[0].userId,
+			"refundStatus": 0
+		};
+	}
+	
+	function approve(button){
+		var row = button.closest('tr')		
+		if(confirm("환불을 승인하시겠습니까?")){
+			axios.post('http://localhost/sales/refund',	approvePost)
+			.then(()=>{
+			row.remove()				
+			})
+		}	
+	}
+	
+	function refuse(button){
+		var row = button.closest('tr')
+		if(confirm("환불을 거절하시겠습니까?")){
+			axios.post('http://localhost/sales/refund',	refusePost)	
+			.then(()=>{
+			row.remove()					
+			})	
+		}	
+	}
+	
+</script>

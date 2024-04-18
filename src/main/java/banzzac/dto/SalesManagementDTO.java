@@ -62,7 +62,7 @@ public class SalesManagementDTO {
 		this.dailyRange = dailyRange;
 		this.dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
 	}
-	
+
 	public void setDailyRangeStr(String dailyRangeStr) {
 		this.dailyRangeStr = dailyRangeStr;
 		try {

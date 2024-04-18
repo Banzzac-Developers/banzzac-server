@@ -52,7 +52,6 @@ public class ProfileController {
 	
 	@PostMapping("status")
 	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto){
-		System.out.println();
 		//dto.setId("session id");
 		if(memMapper.modifyStatus(dto)>=1) {
 			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
