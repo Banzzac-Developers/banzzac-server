@@ -67,8 +67,10 @@ public interface AdminMapper {
 	   
 	   /** 주간 결제 내역 */ 
 	   @Select("SELECT  "
-	   		+ "    CONCAT(weeks.start_of_week, ' - ', weeks.end_of_week) AS pay_date, "
+	   		+ "    CONCAT(weeks.start_of_week, ' - ', weeks.end_of_week) AS week, "
 	   		+ "    COALESCE(SUM(ps.total_amount), 0) AS total_amount, "
+	   		+ "    COALESCE(count(ps.partner_order_id), 0) AS order_id, "
+	   		+ "    COALESCE(SUM(ps.quantity), 0) AS quantity, "
 	   		+ "    COALESCE(SUM(CASE WHEN r.approve = 1 THEN ps.total_amount ELSE 0 END), 0) AS refund_status "
 	   		+ "FROM ( "
 	   		+ "    SELECT  "
@@ -235,29 +237,6 @@ public interface AdminMapper {
 	
 	/************************ 어매성 ************************/
   
-	/** 월별 결제 건수 */
-	@Select("SELECT m.month_number, "
-			+ "       COALESCE(COUNT(p.month_number), 0) AS montlySaleCnt "
-			+ "FROM ("
-			+ "    SELECT 1 AS month_number UNION ALL"
-			+ "    SELECT 2 UNION ALL"
-			+ "    SELECT 3 UNION ALL"
-			+ "    SELECT 4 UNION ALL"
-			+ "    SELECT 5 UNION ALL"
-			+ "    SELECT 6 UNION ALL"
-			+ "    SELECT 7 UNION ALL"
-			+ "    SELECT 8 UNION ALL"
-			+ "    SELECT 9 UNION ALL"
-			+ "    SELECT 10 UNION ALL"
-			+ "    SELECT 11 UNION ALL"
-			+ "    SELECT 12"
-			+ ") AS m "
-			+ "LEFT JOIN ("
-			+ "    SELECT MONTH(approved_at) AS month_number"
-			+ "    FROM paymentsuccess"
-			+ ") AS p ON m.month_number = p.month_number "
-			+ "GROUP BY m.month_number;")
-	public int montlySalesCount(); 
 
 	@Update("UPDATE member SET isGrant = 1 WHERE id = #{id}")
 	public int suspendMember(String id);

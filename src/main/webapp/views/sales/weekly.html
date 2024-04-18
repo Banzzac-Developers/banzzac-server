@@ -16,12 +16,12 @@
 	  </thead>
 	  <tbody>
 		<tr	th:each="weekly : ${data}">
-			<td th:text="${weekly.dailyRange}"></td>
-			<td ></td>
-			<td th:text="${weekly.totalAmount}"></td>
-			<td th:text="${weekly.refundStatus}"></td>
-			<td ></td>	
-			<td ></td>	
+			<td th:text="${weekly.payDateStr}"></td>
+			<td th:text="${weekly.orderId}" ></td>
+			<td th:text="${weekly.quantity}"></td>
+			<td th:text="${#numbers.formatDecimal(weekly.totalAmount,0,'COMMA',-1,'POINT')}"></td>
+			<td th:text="${#numbers.formatDecimal(weekly.refundStatus,0,'COMMA',-1,'POINT')}"></td>
+			<td	th:text="${#numbers.formatDecimal(weekly.totalAmount-weekly.refundStatus,0,'COMMA',-1,'POINT')}"></td>
 		</tr>
 	 </tbody>
 </table>
