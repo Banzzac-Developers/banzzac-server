@@ -1,6 +1,9 @@
 package banzzac.controll;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import banzzac.dto.MemberDTO;
 import banzzac.dto.PageDTO;
@@ -188,20 +193,27 @@ public class MemberManagementController {
 		return "redirect:/management/newMembers";
 	}
 	
+
 	
-	//**기간별 신규회원조회*/
-		@GetMapping("periodMember")
-		public String periodMemberList(Model mm, CommonLayout cl, SelectTitle title) {
-			cl.setFolder("member");
-			cl.setService("periodMember");
-			title.selectTitle("periodMember");
-			
-			ArrayList<MemberDTO> res = mapper.member(pageDTO);
-			mm.addAttribute("periodMemberList", res);
-			
-			return "template";
-		}
+	@GetMapping("periodMember")
+	public String periodMember(Model mm, CommonLayout cl, SelectTitle title) {
+		cl.setFolder("member");
+		cl.setService("periodMember");
+		title.selectTitle("periodMember");
+		
+		System.out.println("periodMember 진입");
+		return "template";
+	}
+
 	
+	//**기간별 신규멤버조회*/
+	@GetMapping("periodMemberReg")
+	public String periodMemberReg(@RequestParam(value="startDate") String startDate, @RequestParam(value="endDate") String endDate, RedirectAttributes redirectAttributes) {
+	    ArrayList<MemberDTO> res = mapper.periodMember(startDate, endDate);
+	    redirectAttributes.addFlashAttribute("member", res);
+	    System.out.println("periodMemberReg 진입");
+	    return "redirect:/management/periodMember";
+	}
 	
 		
 }

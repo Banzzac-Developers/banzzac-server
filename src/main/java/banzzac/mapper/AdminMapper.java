@@ -1,10 +1,12 @@
 package banzzac.mapper;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -283,10 +285,11 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
-	
+
 	//######################################   리쌍훈 끝
 	
-	
+
+    // 성재 시작 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 	//** 일반 멤버 리스트*/
 	@Select("select * from member where isGrant = 1 ")
@@ -312,7 +315,11 @@ public interface AdminMapper {
 	@Delete("delete from member where id = #{id}")
 	public int refuse(String id);
 	
-	
+	//** 기간별 신규멤버조회*/
+	@Select("SELECT * FROM member WHERE date BETWEEN STR_TO_DATE(#{startDate}, '%Y-%m-%d') AND STR_TO_DATE(#{endDate}, '%Y-%m-%d') ")
+	public ArrayList<MemberDTO> periodMember(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+	// 성재 끝 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
 	// 정운만 시작#############################################
 
@@ -393,6 +400,7 @@ public interface AdminMapper {
 	public ArrayList<DashBoardDTO> getWeekPaymentRank();
 	
 	// 정운만 끝 ##############################################
-
+	
+	
 
 }

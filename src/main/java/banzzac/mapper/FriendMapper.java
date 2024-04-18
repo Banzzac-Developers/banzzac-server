@@ -17,7 +17,7 @@ import banzzac.dto.MemberDTO;
 @Mapper
 public interface FriendMapper {
 	//* 친구리스트*/
-	@Select("SELECT m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+	@Select("SELECT f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "
 			+ " JOIN friend f ON m.id = f.friend_id "
 			+ " join dog d on m.id = d.id "
@@ -25,7 +25,7 @@ public interface FriendMapper {
 	List<FriendDTO> list(String id);
 	
 	//* 차단 친구 리스트 */
-	@Select("SELECT m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+	@Select("SELECT f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "
 			+ " JOIN friend f ON m.id = f.friend_id "
 			+ " join dog d on m.id = d.id "
@@ -33,7 +33,7 @@ public interface FriendMapper {
 	List<FriendDTO> blockList(String id);
 	
 	//* 즐겨찾기 친구 리스트*/
-	@Select("SELECT m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+	@Select("SELECT f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "
 			+ " JOIN friend f ON m.id = f.friend_id "
 			+ " join dog d on m.id = d.id "
@@ -41,20 +41,20 @@ public interface FriendMapper {
 	List<FriendDTO> favoriteList(String id);
 	
 	//* 친구차단 */
-	@Update("update friend set block=0 where id=#{id} and friendId={friendId}") //차단
+	@Update("update friend set block=0 where id= #{id} and friend_id= #{friendId}") //차단
 	int friendBlock(FriendDTO dto);
 	
 	//* 친구차단해제 */
-	@Update("update friend set block=1 where id=#{id} and friendId={friendId}") //차단해제
+	@Update("update friend set block=1 where id=#{id} and friend_id= #{friendId}") //차단해제
 	int friendUnBlock(FriendDTO dto);
 	
 	
 	//* 즐겨찾기친구추가 */
-	@Update("update friend set block=2 where id=#{id} and friendId={friendId}") //즐찾
+	@Update("update friend set block=2 where id=#{id} and friend_id= #{friendId}") //즐찾
 	int friendFavorite(FriendDTO dto);
 	
 	//* 즐겨찾기친구해제 */
-	@Update("update friend set block=1 where id=#{id} and friendId={friendId}") //즐찾해제
+	@Update("update friend set block=1 where id=#{id} and friend_id= #{friendId}") //즐찾해제
 	int friendUnFavorite(FriendDTO dto);
 	
 	//*친구삭제*/

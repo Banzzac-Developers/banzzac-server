@@ -21,7 +21,6 @@ public interface LoginMapper {
 	MemberDTO loginId(String id);
 
 	
-	
 
 }
 		

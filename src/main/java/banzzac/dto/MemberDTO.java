@@ -13,9 +13,9 @@ import lombok.Data;
 @Component
 public class MemberDTO {
 
-
 	private int no,gender,age,Temperature,cnt,isGrant, quantity;
 	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage,dateStr;
+
 
 	private Date date;
 	private ArrayList<String> walkingStyle;
@@ -46,7 +46,5 @@ public class MemberDTO {
 		this.dateStr = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
 	}
 	
-	
-	
-	
+
 }
