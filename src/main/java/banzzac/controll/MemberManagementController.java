@@ -103,7 +103,7 @@ public class MemberManagementController {
 		cl.setFolder("member");
 		cl.setService("suspendList");
 		title.selectTitle("suspend");
-		
+		System.out.println("정지 회원 목록");
 		ArrayList<MemberDTO> res = mapper.getSuspendMemberList(pageDTO);
 		mm.addAttribute("suspendList", res);
 		return "template";
@@ -123,7 +123,7 @@ public class MemberManagementController {
 		cl.setFolder("member");
 		cl.setService("withdrawalList");
 		title.selectTitle("withdrawal");
-		
+		System.out.println("탈퇴 회원 목록");
 		ArrayList<MemberDTO> res = mapper.getWithdrawalMemberList(pageDTO);
 		mm.addAttribute("withdrawalList", res);
 		return "template";

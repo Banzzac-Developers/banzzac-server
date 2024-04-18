@@ -38,6 +38,7 @@ public interface AdminMapper {
 	@Select("select count(*) from report")
 	public int getTotalReportCount();
 
+	
 	/***************** 어매성 ************************/
 
 	/** 7일 전까지 결제 내역 전체결제내역, 환불 승인된 결제내역:환불금액 */
@@ -213,7 +214,7 @@ public interface AdminMapper {
 	         + "where r.approve = #{refundStatus} "
 	         + "order by r.refund_request_date desc")
 	   public ArrayList<SalesManagementDTO> refund(int refundStatus);
-	   
+
 	   @Update("UPDATE refund r "
 	   		+ "join paymentsuccess p "
 	   		+ "on r.partner_order_id  = p.partner_order_id "
@@ -235,6 +236,33 @@ public interface AdminMapper {
 	/************************ 어매성 ************************/
   
 	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
+
+
+	/** 월별 결제 건수 */
+	@Select("SELECT m.month_number, "
+			+ "       COALESCE(COUNT(p.month_number), 0) AS montlySaleCnt "
+			+ "FROM ("
+			+ "    SELECT 1 AS month_number UNION ALL"
+			+ "    SELECT 2 UNION ALL"
+			+ "    SELECT 3 UNION ALL"
+			+ "    SELECT 4 UNION ALL"
+			+ "    SELECT 5 UNION ALL"
+			+ "    SELECT 6 UNION ALL"
+			+ "    SELECT 7 UNION ALL"
+			+ "    SELECT 8 UNION ALL"
+			+ "    SELECT 9 UNION ALL"
+			+ "    SELECT 10 UNION ALL"
+			+ "    SELECT 11 UNION ALL"
+			+ "    SELECT 12"
+			+ ") AS m "
+			+ "LEFT JOIN ("
+			+ "    SELECT MONTH(approved_at) AS month_number"
+			+ "    FROM paymentsuccess"
+			+ ") AS p ON m.month_number = p.month_number "
+			+ "GROUP BY m.month_number;")
+	public int montlySalesCount(); 
+
+	@Update("UPDATE member SET isGrant = 1 WHERE id = #{id}")
 	public int suspendMember(String id);
 	
 	@Select("SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
@@ -254,11 +282,11 @@ public interface AdminMapper {
 			+ "WHERE report_no = #{no} ")
 	public int modifyReportStatus(int no);
 	
-	@Select("select * from member where isGrant = 2")
+	@Select("select * from member where isGrant = 1")
 	public ArrayList<MemberDTO> getSuspendMemberList(PageDTO dto);
 	
 	@Update("UPDATE member "
-			+ "SET isGrant = 1 "
+			+ "SET isGrant = 2 "
 			+ "WHERE id = #{id} "
 			+ "ORDER BY date")
 	public int changeSuspendMember(String id);
@@ -275,6 +303,7 @@ public interface AdminMapper {
 	@Select("select * from member where no =#{no}")
 	public MemberDTO memberDetail(int no);
 	
+
 	//** 검수 멤버 리스트*/
 	@Select("select * from member where isGrant = 2 ")
 	public ArrayList<MemberDTO> newmember(PageDTO dto);
@@ -320,23 +349,57 @@ public interface AdminMapper {
 				+ "	(select count(*) from refund where approve = 2) as refund_count")
 	public DashBoardDTO getTodayEvent();
 	
-	@Select("select m.id as member_id, m.nickname as nickname , d.name as dog_name  from member m "
-			+ "join dog d "
-			+ "on d.id = m.id "
-			+ "where Date(date) = curdate() and isGrant = 2 limit 1")
+	@Select(" SELECT m.id AS member_id, m.nickname AS nickname, MAX(d.name) AS dog_name"
+			+ " FROM member m"
+			+ " JOIN dog d ON d.id = m.id"
+			+ " WHERE DATE_FORMAT(`date`, '%Y-%m-%d') = CURDATE() AND m.isGrant = 2"
+			+ " GROUP BY m.id, m.nickname"
+			+ " limit 0,5")
 	public ArrayList<DashBoardDTO> getTodayRegister();
 	
 	@Select("select r.report_no as report_no,"
 			+ " m.id as member_id,"
-			+ " m2.id as reported_id, "
-			+ " r.report_reason as report_reason"
+
+			+ " m2.id as reported_id ,"
+			+ " r.report_reason as reason"
 			+ " from report r"
 			+ " join `member` m "
 			+ " on r.member_no = m.`no` "
 			+ " join `member` m2 "
 			+ " on r.reported_no = m2.`no` "
-			+ " where DATE(r.report_time) = curdate()")
-	public ArrayList<DashBoardDTO> getTodayReport();
+			+ " where r.report_status != 2"
+			+ " order by report_time desc "
+			+ " limit 0,5")
+	public ArrayList<DashBoardDTO> getOutstandingReport();
+	
+	
+	@Select("select r.partner_order_id as partner_order_id,"
+			+ "p.total_amount  as total_amount ,"
+			+ "m.id as member_id,"
+			+ "r.reason as reason "
+			+ " from refund r"
+			+ " join paymentsuccess p "
+			+ " on r.partner_order_id = p.partner_order_id "
+			+ " join `member` m "
+			+ " on m.id = p.partner_user_id "
+			+ " where Date(refund_request_date) = curdate() and approve = 2"
+			+ " limit 0,5")
+	public ArrayList<DashBoardDTO> getTodayRefund();
+	
+	
+	@Select("select sum(p.total_amount) as total_amount, "
+			+ "p.partner_user_id as member_id , "
+			+ "m.nickname as nickname "
+			+ "from paymentsuccess p "
+			+ "join `member` m "
+			+ "on p.partner_user_id = m.id "
+			+ "where p.approved_at  >= date_sub(curdate(),interval 1 week) "
+			+ "group by partner_user_id "
+			+ "order by total_amount desc "
+			+ "limit 0,5")
+	public ArrayList<DashBoardDTO> getWeekPaymentRank();
+	
 	// 정운만 끝 ##############################################
+
 
 }

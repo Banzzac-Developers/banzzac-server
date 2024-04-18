@@ -13,7 +13,10 @@ spring:
     url : jdbc:mariadb://localhost:3306/banzzac_db
     username : banzzac
     password : banzzac00
-   
+  
+  devtools :
+    livereload :
+      enalbed : true 
 
   servlet:
     multipart:

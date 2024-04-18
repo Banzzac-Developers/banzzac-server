@@ -16,7 +16,7 @@ public class SalesManagementDTO {
 	private int refundStatus, orderId;
 	private String reason, userId, tid;
 	private Date refundRequest, refundApprove, payDate;
-	private String refundRequestStr, refundApproveStr, payDateStr;
+	private String refundRequestStr, refundApproveStr, payDateStr,dailyRangeStr;
 	private int ranking;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -54,6 +54,19 @@ public class SalesManagementDTO {
 		this.payDateStr = payDateStr;
 		try {
 			this.payDate = sdf.parse(payDateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	public void setDailyRange(Date dailyRange) {
+		this.dailyRange = dailyRange;
+		this.dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
+	}
+
+	public void setDailyRangeStr(String dailyRangeStr) {
+		this.dailyRangeStr = dailyRangeStr;
+		try {
+			this.dailyRange = new SimpleDateFormat("yyyy-MM-dd").parse(dailyRangeStr);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
