@@ -288,15 +288,12 @@ public interface AdminMapper {
 	@Select("select * from member where isGrant = 0")
 	public ArrayList<MemberDTO> getWithdrawalMemberList(PageDTO dto);
 	
-<<<<<<< Updated upstream
-	
+
 	//######################################   리쌍훈 끝
 	
-	
 
-=======
     // 성재 시작 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
->>>>>>> Stashed changes
+
 	//** 일반 멤버 리스트*/
 	@Select("select * from member where isGrant = 1 ")
 	public ArrayList<MemberDTO> member(PageDTO dto);

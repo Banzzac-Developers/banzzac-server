@@ -13,14 +13,9 @@ import lombok.Data;
 @Component
 public class MemberDTO {
 
-
-<<<<<<< Updated upstream
 	private int no,gender,age,Temperature,cnt,isGrant, quantity;
 	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage,dateStr;
-=======
-	private int no,age,Temperature,cnt,isGrant,gender, quantity;
-	private String id,pwd,img,walkingStyleStr,nickname,phone,statusMessage;
->>>>>>> Stashed changes
+
 
 	private Date date;
 	private ArrayList<String> walkingStyle;
@@ -51,10 +46,5 @@ public class MemberDTO {
 		this.dateStr = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
 	}
 	
-	
-	
-<<<<<<< Updated upstream
-	
-=======
->>>>>>> Stashed changes
+
 }
