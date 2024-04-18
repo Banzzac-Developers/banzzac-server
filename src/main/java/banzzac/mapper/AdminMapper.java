@@ -235,9 +235,6 @@ public interface AdminMapper {
 	
 	/************************ 어매성 ************************/
   
-	@Update("UPDATE member SET isGrant = 2 WHERE id = #{id}")
-
-
 	/** 월별 결제 건수 */
 	@Select("SELECT m.month_number, "
 			+ "       COALESCE(COUNT(p.month_number), 0) AS montlySaleCnt "
