@@ -16,7 +16,7 @@
 	  </thead>
 	  <tbody>
 	    <tr th:each="daily : ${data}">
-	      <td th:text="${daily.dailyRange}"></td>
+	      <td th:text="${daily.dailyRangeStr}"></td>
 		  <td th:text="${daily.orderCnt}"></td>
 		  <td th:text="${daily.quantity}"></td>	
 		  <td th:text="${daily.totalAmount}"></td>	    
@@ -33,7 +33,7 @@
 	   var myChart = new Chart(ctx, {
 	     type: 'bar',
 	     data: {
-	       labels: sales.map((data)=>data.dailyRange),
+	       labels: sales.map((data)=>data.dailyRangeStr),
 	       datasets: [{
 	         label: '순매출',
 	         data: sales.map((data)=>(data.totalAmount - data.refundStatus)),
