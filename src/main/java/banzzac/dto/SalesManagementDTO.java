@@ -59,20 +59,4 @@ public class SalesManagementDTO {
 		}
 	}
 	
-	
-	
-	
-	
-	
-	public String getDailyRangeStr() {
-		String dailyRangeStr = new SimpleDateFormat("yyyy-MM-dd").format(dailyRange);
-		return dailyRangeStr;
-	}
-	
-	/*
-	 * public void daily(){ LocalDate today = LocalDate.now(); ArrayList<LocalDate>
-	 * sevenDays = new ArrayList<>(); for (int i = 0; i < 7; i++) { LocalDate
-	 * dateBefore = today.minusDays(i); sevenDays.add(dateBefore); } this.dailyRange
-	 * = sevenDays; }
-	 */
 }

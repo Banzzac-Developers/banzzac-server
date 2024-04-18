@@ -1,0 +1,55 @@
+<input type="month" onchange="selectMonth(this.value)" name="selectMonth" id="month" >
+<p class="salesTitle">회원 랭킹</p>	
+<div th:each="ranking:${userRanking}">
+	<h3 th:text="${ranking.userId}"></h3>
+	<p th:text="${ranking.ranking + '등'}"></p>
+	<p th:text="${ranking.totalAmount}"></p>
+</div>
+<p class="salesTitle">결제 회원 리스트</p>	
+<table class="table table-bordered">	  
+<thead>
+    <tr>
+		<th scope="col" rowspan="2"></th> 
+		<th scope="col" rowspan="2">회원 ID</th>
+		<th scope="col" colspan="3">결제완료 주문</th>
+		<th scope="col" rowspan="2">결제일</th>
+    </tr>
+	<tr>
+		<th scope="col">주문번호</th>	 
+		<th scope="col">구매 수량</th>	
+		<th scope="col">구매 금액</th> 
+	</tr>
+  </thead>
+  <tbody>
+	<tr	th:each="payment:${paymentList}">
+		<td th:text="${paymentStat.count}"></td>
+		<td th:text="${payment.userId}"></td>
+		<td th:text="${payment.orderId}"></td>
+		<td th:text="${payment.quantity}"></td>
+		<td th:text="${payment.totalAmount}"></td>
+		<td th:text="${payment.payDateStr}"></td>
+    </tr>
+  </tbody>
+</table>
+<script>
+
+	function selectMonth(selectValue){	
+		var get = selectValue.split("-")
+		var year = get[0];
+		var month = get[1];
+		location.href = "?year="+year+"&month="+month
+	}		
+window.onload = ()=>{
+	const url = new URLSearchParams(window.location.search);
+		if(url.get('year')==null||url.get('month')==null){
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+			document.getElementById("month").value = year	+ "-" + month
+		}else{
+			document.getElementById("month").value = url.get('year') + "-" + url.get('month') 
+		}
+
+}
+	
+</script>
