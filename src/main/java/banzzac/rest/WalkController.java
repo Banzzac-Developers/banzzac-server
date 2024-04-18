@@ -31,8 +31,9 @@ public class WalkController {
 		dto.setId("example3@example.com");
 		dto.setNo(3);
 		dto.setDate(new Date());
-		session.setAttribute("banzzacMember", dto);
+		session.setAttribute("member", dto);
 		System.out.println("세션 설정" + dto + ", " + session.getAttribute("banzzacMember"));
+		
 		
 		return CommonResponse.success(dto);
 		
