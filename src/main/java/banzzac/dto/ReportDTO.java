@@ -9,10 +9,7 @@ import lombok.Data;
 @Data
 @Component
 public class ReportDTO {
-	
 	private int reportNo;
-	private int memberNo;
-	private int reportedNo;
 	private String reportReason;
 	private Date reportTime;
 	private int reportStatus;
