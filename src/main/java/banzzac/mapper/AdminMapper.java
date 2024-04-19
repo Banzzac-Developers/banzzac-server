@@ -224,10 +224,8 @@ public interface AdminMapper {
 	
 	// 신고 받은 회원 리스트 가져오기
 	@Select(" <script>"
-			+ "SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
+			+ "SELECT r.* "
 			+ "FROM report r "
-			+ "JOIN member m1 ON r.member_no = m1.no "
-			+ "JOIN member m2 ON r.reported_no = m2.no "
 			+ "ORDER BY r.report_status, r.report_time DESC "
 			+ " <if test='searchNo != null' >"
 			+ " limit #{searchNo}, #{listCnt} "
@@ -243,10 +241,8 @@ public interface AdminMapper {
 	public int getTotalReportCount();
 	
 	// 신고 회원 정보 상세보기
-	@Select("SELECT r.*, m1.id AS member_id, m2.id AS reported_id "
-			+ "FROM report r "
-			+ "JOIN member m1 ON r.member_no = m1.no "
-			+ "JOIN member m2 ON r.reported_no = m2.no "
+	@Select("SELECT * "
+			+ "FROM report "
 			+ "where report_no = #{no} ")
 	public ReportDTO reportDetail(int no);
 	

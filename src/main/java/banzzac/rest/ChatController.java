@@ -11,11 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import banzzac.dto.ChatDTO;
 import banzzac.dto.ChatroomDTO;
+import banzzac.dto.ReportDTO;
 import banzzac.mapper.ChatMapper;
+import banzzac.mapper.MemberMapper;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -40,6 +44,9 @@ public class ChatController {
 	@Resource
 	ChatMapper mapper;
 	
+	@Resource
+	MemberMapper memMapper;
+	
 //	// "/app/chat/rooms/{roomId}/send"로 메시지가 전송되면 이 메소드가 호출됩니다.
 //    @MessageMapping("/chat/rooms/{roomId}/send")
 //    // "/topic/public/rooms/{roomId}"로 메시지를 broadcast합니다.
@@ -61,7 +68,7 @@ public class ChatController {
     @SendTo("/topic/public")
     public ChatDTO sendMessage(@Payload ChatDTO dto, @PathVariable String roomId) {
         mapper.insertChat(dto); // 메시지 저장
-        mapper.changeLastMessage(dto);
+        mapper.changeLastMessage(dto);	// 채팅방 최신 상태 변경
         System.out.println("받은거냐?"+dto);
         return dto;
     }
@@ -99,13 +106,11 @@ public class ChatController {
 		
 	}
 	
-	
-	@PostMapping("send")
-	public ChatDTO insertChat(@RequestBody ChatDTO dto) {
-		System.out.println("insertChat : "+dto);
-		mapper.insertChat(dto);
-	      
-		return dto;
+	@GetMapping("report/{oppId}")
+	public void reportUser(@RequestBody ReportDTO dto) {
+		//dto.setMemberId(session.getAttribute("userInfo").getId());
+		//dto.setReportedId(oppId);
+		memMapper.reportMember(dto);
 	}
 
 	
