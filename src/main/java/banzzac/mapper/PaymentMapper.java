@@ -42,21 +42,21 @@ public interface PaymentMapper {
 	
 	/** 결제 처음 요청 시 db에 추가 */
 	@Insert("insert into paymentSuccess "
-			+ "(partner_order_id,partner_user_id,quantity,total_amount) "
+			+ "(partner_order_id,partner_user_id,quantity,total_amount,tid) "
 			+ "values "
-			+ "(#{partnerOrderId},#{partnerUserId},#{quantity},#{totalAmount})")
+			+ "(#{partnerOrderId},#{partnerUserId},#{quantity},#{totalAmount},#{tid})")
 	int insertPayment(PaymentSuccessDTO dto);
 	
 	
 	/** 결제 성공 시 db 추가 로 update */
 	@Update("update paymentSuccess set "
-			+ "tid=#{tid}, aid=#{aid}, approved_at=#{approvedAt}, payment_method_type=#{paymentMethodType}"
+			+ "tid=#{tid}, aid=#{aid}, approved_at=sysdate(), payment_method_type=#{paymentMethodType}"
 			+ "where partner_order_id = #{partnerOrderId}")
-	int paySuccess(String tid, String aid, String paymentMethodType, Date approvedAt, int partnerOrderId);
+	int paySuccess(String tid, String aid, Date approvedAt, String paymentMethodType, int partnerOrderId);
 	
 	
 	/** 카카오에 결제 승인에 필요한 값 select */
-	@Select("select partner_order_id,partner_user_id from paymentSuccess where partner_order_id = #{partnerOrderId}")
+	@Select("select partner_order_id,partner_user_id,tid from paymentSuccess where partner_order_id = #{partnerOrderId}")
 	PaymentSuccessDTO detail(int partnerOrderId);
 	
 	

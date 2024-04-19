@@ -61,15 +61,18 @@ public class ProfileController {
 		return CommonResponse.error(HttpStatus.BAD_REQUEST,"StatusMessage Modify Failed", "상태메시지 수정 실패");
 	}
 	
-	@PostMapping("/withdraw/{id}")
+	@PostMapping("/{id}/withdraw")
 	ResponseEntity<CommonResponse<Object>> withdrawMember(@PathVariable String id, @RequestBody MemberDTO dto){
+		dto.setId(id);
+		System.out.println(dto);
 		if(memMapper.withdrawMember(dto)>=1) {
 			System.out.println("탈퇴성공 main페이지로 redirect");
 			// session 지우기 -> 로그인 불가하게
-			URI uri = URI.create("http://localhost:5173"); 
+			URI uri = URI.create("http://localhost:5173/search"); 
 			
 			return ResponseEntity.status(302).location(uri).build();
 		}else {
+			System.out.println("탈퇴 실패");
 			return CommonResponse.error(HttpStatus.BAD_REQUEST,"Member Withdraw Failed","탈퇴 실패");
 		}
 	}

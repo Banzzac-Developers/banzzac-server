@@ -51,12 +51,15 @@ public class PayController {
 		 		break;
 		 	}
 		 }
-		
+		paymentSuccessDto.setPartnerUserId("zkdlwjsxm@example.com");
+		paymentSuccessDto.setPartnerOrderId(orderId);
+		 
 		HttpHeaders headers = new HttpHeaders(); 
 		RestTemplate restTemplate = new RestTemplate();
 		 		
 	    headers.set("Authorization", "SECRET_KEY DEV363D27AC1786201E1E1E880CD565F7F19A499"); // secret key 숨기기
 		headers.set("Content-Type", "application/json"); //jason 형태로 보내기
+		
 		
 		// kakao 에 요청할 Body
 		Map<String, String> params = new HashMap<>(); //key-value 형태로 저장
@@ -68,23 +71,23 @@ public class PayController {
 		params.put("total_amount", paymentSuccessDto.getTotalAmount()+"");
 		params.put("tax_free_amount", "0");
 		params.put("approval_url", "http://localhost/api/payment/success/"+orderId+"");	//결제 승인 url
-		params.put("cancel_url", "http://localhost/api/payment/cancel"+orderId+"");		//결제 취소 시 보여질 페이지 -> 주문페이지
-		params.put("fail_url", "http://localhost/api/payment/fail"+orderId+"");		//결제 실패 시 보여질 페이지 -> 주문페이지
+		params.put("cancel_url", "http://localhost/api/payment/cancel/"+orderId+"");		//결제 취소 시 보여질 페이지 -> 주문페이지
+		params.put("fail_url", "http://localhost/api/payment/fail/"+orderId+"");		//결제 실패 시 보여질 페이지 -> 주문페이지
 					
 		// Header + Body
 		HttpEntity<Map<String, String>> transform = new HttpEntity<>(params, headers);
 		
 		// kakao 로 준비 요청하기 -> PayInfoApprove.class : response로 받아올 class
 		payInfoApprove = restTemplate.postForObject("https://open-api.kakaopay.com/online/v1/payment/ready", transform, PayInfoApprove.class);
+		paymentSuccessDto.setTid(payInfoApprove.getTid());
 		
-		if(payInfoApprove != null) {
-			paymentSuccessDto.setPartnerOrderId(orderId);
-			mapper.insertPayment(paymentSuccessDto);
-			return CommonResponse.success(payInfoApprove);
+		if(payInfoApprove != null && mapper.insertPayment(paymentSuccessDto)>=1) {
+			System.out.println("카카오결제 url요청");
+
+			return CommonResponse.success(payInfoApprove);	
 		}else {
 			return CommonResponse.error(HttpStatus.BAD_REQUEST, "Pay Request Failed", "결제 요청 실패");
 		}
-
 	}
 	
 	 
@@ -100,15 +103,14 @@ public class PayController {
 		headers.set("Content-Type", "application/json"); //jason 형태로 보내기
 		
 		PaymentSuccessDTO dto = mapper.detail(partnerOrderId);
-		
+		System.out.println("1111111111");
 		Map<String, String> params = new HashMap<>(); 
 		params.put("cid", "TC0ONETIME");
 		params.put("tid", dto.getTid());
 		params.put("pg_token",pgToken);
 		params.put("partner_order_id", dto.getPartnerOrderId()+"");
 		params.put("partner_user_id", dto.getPartnerUserId());
-
-
+	
 		HttpEntity<Map<String, String>> transform = new HttpEntity<>(params, headers);
 		
 		// 결제 승인 요청 + 결제 성공 정보 받아오기
@@ -116,9 +118,10 @@ public class PayController {
 		
 		if(paySuccessInfo != null) {
 			// 결제 성공 return 값 -> 결제성공 table update
-			mapper.paySuccess(paySuccessInfo.getTid(),paySuccessInfo.getAid(),paySuccessInfo.getPayment_method_type(),paySuccessInfo.getApproved_at(),partnerOrderId);
+			mapper.paySuccess(paySuccessInfo.getTid(),paySuccessInfo.getAid(),paySuccessInfo.getApproved_at(),paySuccessInfo.getPayment_method_type(),partnerOrderId);
 			// 결제 성공 후 매칭권 갯수 변경
 			mapper.modifyMatchingQuantity(dto);
+			System.out.println(paySuccessInfo.getApproved_at());
 			
 			// 결제 성공 후 redirect 페이지
 			String address = "http://localhost:5173/profile";
@@ -127,7 +130,7 @@ public class PayController {
 			return ResponseEntity.status(302).location(uri).build();
 			
 		}else {
-			return CommonResponse.error(HttpStatus.BAD_REQUEST,"Pay Success Failed","결제 성공 에러");
+			return CommonResponse.error(HttpStatus.BAD_REQUEST, "Pay Approve Failed", "결제 승인 실패");
 		}
 
 	 }
@@ -141,7 +144,7 @@ public class PayController {
 		mapper.delete(dto);
 
 		// 결제 실패, 취소 후 redirect 페이지
-		String address = "http://localhost:5173";
+		String address = "http://localhost:5173/payment";
 		URI uri = URI.create(address);
 
 		return ResponseEntity.status(302).location(uri).build();
