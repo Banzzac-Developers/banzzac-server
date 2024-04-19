@@ -28,19 +28,19 @@ public class LoginController {
 	
 	@GetMapping("oauth2/code/kakao")
 	public RedirectView kakaoLogin(@RequestParam String code, HttpSession session, MemberDTO dto) {
-		System.out.println("11111111------------");
+		
 		RedirectView redirectView = new RedirectView();
 		
 		KakaoApi kakaoApi = new KakaoApi();
-		System.out.println("11111111111111111222222222222");
+		
 		String accessToken = kakaoApi.getAccessToken(code);
 		System.out.println("accessToken:"+accessToken);
-		System.out.println("11111111111111111222222222222333333333333333333");
+	
 		KakaoProfile userInfo = kakaoApi.getUserInfo(accessToken);
 		
 		System.out.println(userInfo);
 		
-		System.out.println("222222222222-----------------------");
+
 		
 		System.out.println(dto);
 		
@@ -128,6 +128,5 @@ public class LoginController {
 			return "비밀번호를 찾을수없습니다.";
 		}
 	}
-	
-	
+
 }

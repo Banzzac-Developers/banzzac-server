@@ -17,15 +17,15 @@ import banzzac.dto.MemberDTO;
 @Mapper
 public interface FriendMapper {
 	//* 친구리스트*/
-	@Select("SELECT f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "
 			+ " JOIN friend f ON m.id = f.friend_id "
 			+ " join dog d on m.id = d.id "
-			+ " WHERE f.id = #{id} AND (f.block = 1 OR f.block = 2) ")
+			+ " WHERE f.id = #{id} AND (f.block = 1) ")
 	List<FriendDTO> list(String id);
 	
 	//* 차단 친구 리스트 */
-	@Select("SELECT f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "
 			+ " JOIN friend f ON m.id = f.friend_id "
 			+ " join dog d on m.id = d.id "
@@ -33,7 +33,7 @@ public interface FriendMapper {
 	List<FriendDTO> blockList(String id);
 	
 	//* 즐겨찾기 친구 리스트*/
-	@Select("SELECT f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
+	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "
 			+ " JOIN friend f ON m.id = f.friend_id "
 			+ " join dog d on m.id = d.id "

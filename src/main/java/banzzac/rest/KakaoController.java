@@ -33,11 +33,11 @@ public class KakaoController {
         params.add("client_id", "d1c29661caeadbbfdf7dfb03de5a298a");
         params.add("redirect_uri", "http://localhost/api/oauth2/kakao"); //등록한 redirect uri
         params.add("code", code); 
-        System.out.println("2번끝"+params);
+       
 
         // 3. header + body
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, httpHeaders);
-        System.out.println("3333333333333333333333333333"+httpEntity);
+    
         // 4. http 요청하기
         RestTemplate restTemplate = new RestTemplate();
        
@@ -48,7 +48,7 @@ public class KakaoController {
                 Object.class
         );
 
-        System.out.println("response = " + response.getBody());
+        
 
         return "kakao";
     }
