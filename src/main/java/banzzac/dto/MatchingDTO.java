@@ -14,8 +14,8 @@ public class MatchingDTO {
 	//화면에서 받아온 조건들 ==> 디비에서 결과값 추출용
 	private Integer no;
 	private String memberId;
-	private ArrayList<String> walkingStyle;
 	private String walkingStyleStr;
+	private ArrayList<String> walkingStyle;
 	private Integer ageRangeStart;
 	private Integer ageRangeEnd;
 	private Integer gender;
@@ -31,12 +31,17 @@ public class MatchingDTO {
 	
 	
 	public void setWalkingStyle(ArrayList<String> walkingStyle) {
+		System.out.println("walkStyle = "+walkingStyle);
 		this.walkingStyle = walkingStyle;
 		this.walkingStyleStr = String.join(",", walkingStyle);
+		System.out.println("walkingStyleStr 2 = "+this.walkingStyleStr);
 	}
 	public void setWalkingStyleStr(String walkingStyleStr) {
-		this.walkingStyleStr = walkingStyleStr;
-		this.walkingStyle = new ArrayList<>(Arrays.asList(walkingStyleStr.split(",")));
+		if(walkingStyleStr != null && !walkingStyleStr.equals("")) {
+			System.out.println("walkingStyleStr = "+walkingStyleStr);
+			this.walkingStyleStr = walkingStyleStr;
+			this.walkingStyle = new ArrayList<>(Arrays.asList(walkingStyleStr.split(",")));
+		}
 	}
 	
 	
