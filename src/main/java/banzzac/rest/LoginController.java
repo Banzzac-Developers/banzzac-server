@@ -1,5 +1,7 @@
 package banzzac.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,11 +82,16 @@ public class LoginController {
 		
 		System.out.println("userId:"+userId);
 		if(userId==null) {
-			
-			redirectView.setUrl("http://localhost:5173/signup/user?nickname="+newUserId.getNickname()+"&phone="+newUserId.getPhone()+"&id="+newUserId.getId()+"&gender="+newUserId.getGender());
-			redirectView.addStaticAttribute("userInfo", newUserId);
+			System.out.println(" 어디로 오는가 ");
+			try {
+				redirectView.setUrl("http://localhost:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return redirectView;
 		}else {
+			System.out.println(" 어디로 가는가 ");
 			session.setAttribute("member", userId);
 			redirectView.setUrl("http://localhost:5173/friends");
 			return redirectView;

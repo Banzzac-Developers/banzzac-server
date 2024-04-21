@@ -27,10 +27,10 @@ public class ChatroomDTO {
 	private Date lastMessageSendtime;
 	private Set<WebSocketSession> sessions = new HashSet<>();
 	
-	   public String getLastMessageSendtimeStr() {
-		   SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-	      return sdf.format(lastMessageSendtime);
-	   }
+//	   public String getLastMessageSendtimeStr() {
+//		   SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+//	      return sdf.format(lastMessageSendtime);
+//	   }
 	   
 //	   public void setLastMessageSendtimeStr(String lastMessageSendtimeStr) {
 //	      try {

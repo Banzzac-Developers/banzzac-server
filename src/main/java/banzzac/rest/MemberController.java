@@ -35,10 +35,10 @@ public class MemberController {
 	//*회원가입레그*/
 	@PostMapping("createMember")
 	ResponseEntity<CommonResponse<MemberDTO>> createMemberReg(@RequestBody MemberDTO dto) {
-		
-		mapper.createMember(dto);
 		System.out.println("createMemberReg 진입");
 		System.out.println(dto);
+		
+		mapper.createMember(dto);
 		return CommonResponse.success(dto);
 	}
 	

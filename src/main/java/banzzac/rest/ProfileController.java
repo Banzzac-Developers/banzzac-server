@@ -18,6 +18,7 @@ import banzzac.mapper.DogMapper;
 import banzzac.mapper.MemberMapper;
 import banzzac.utill.CommonResponse;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 
 
 @RestController
@@ -51,8 +52,9 @@ public class ProfileController {
 	}
 	
 	@PostMapping("status")
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto){
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto, HttpSession session){
 		//dto.setId("session id");
+		System.out.println("스테이터스 세션 값 확인 : "+(MemberDTO)session.getAttribute("member"));
 		if(memMapper.modifyStatus(dto)>=1) {
 			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
 			System.out.println("상태메세지 수정 성공" + dto.getStatusMessage());
