@@ -79,7 +79,7 @@ public class ChatController {
 		System.out.println("채팅내용 뿌려주기"+chatroomNo);
 		mapper.changeIsRead(userId, chatroomNo);
 		ArrayList<ChatDTO> res = mapper.getChatList(chatroomNo);
-		
+		System.out.println("리스트 "+res);
 		return res;
 	}
 	

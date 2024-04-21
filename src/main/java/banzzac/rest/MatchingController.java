@@ -29,6 +29,7 @@ public class MatchingController {
 	@GetMapping("condition")
 	public MatchingDTO getCondition(HttpSession session, MatchingDTO dto) {
 		MemberDTO info = (MemberDTO)session.getAttribute("member");
+		System.out.println("session 값 있냐"+info);
 		dto.setNo(1);
 		System.out.println("Get Condition dto : "+dto);
 		MatchingDTO res = mapper.showMatchingCondition(dto);
