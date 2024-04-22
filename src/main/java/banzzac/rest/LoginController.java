@@ -2,6 +2,7 @@ package banzzac.rest;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.net.http.HttpResponse;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,8 @@ import banzzac.mapper.LoginMapper;
 import banzzac.utill.KakaoApi;
 import banzzac.utill.KakaoProfile;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -29,7 +32,7 @@ public class LoginController {
 	
 	
 	@GetMapping("oauth2/code/kakao")
-	public RedirectView kakaoLogin(@RequestParam String code, HttpSession session, MemberDTO dto) {
+	public RedirectView kakaoLogin(@RequestParam String code, HttpSession session, HttpServletResponse  response , MemberDTO dto) {
 		
 		RedirectView redirectView = new RedirectView();
 		
@@ -45,14 +48,12 @@ public class LoginController {
 		
 		dto.setId(userInfo.getEmail());
 		
-		//로그인 성공 시 보여줄 페이지는 friends 이고, 실패 시 미가입자인 것이니 회원가입페이지로 이동, 비밀번호가 틀렸으면 다시 login Page로 이동시켜주십시오.
 		System.out.println("dto.id:"+dto.getId());
 		
 		
 		
 		MemberDTO userId = (MemberDTO) mapper.loginId(dto.getId());
-		System.out.println("userId:ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ"+userId);
-	    MemberDTO newUserId = new MemberDTO();
+		MemberDTO newUserId = new MemberDTO();
 	    newUserId.setId(userInfo.getEmail());
 	    newUserId.setNickname(userInfo.getNickname());
 	    newUserId.setPhone("0"+userInfo.getPhoneNumber().substring("+82 ".length()));
@@ -63,25 +64,30 @@ public class LoginController {
 	    }
 	    
 	    
-	    
-	    
-	    System.out.println("newUserIdㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ:"+newUserId);
-		
-		System.out.println("userId:"+userId);
 		if(userId==null) {
 
-			System.out.println(" 어디로 오는가 ");
+			System.out.println(" 회원 가입 창으로 ");
 			try {
-				redirectView.setUrl("http://192.168.63.60:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
+				redirectView.setUrl("http://localhost:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return redirectView;
 		}else {
-			System.out.println(" 어디로 가는가 ");
+			System.out.println(" 로그인 성공 후 보여질 화면으로  " + userId);
+
+			
 			session.setAttribute("member", userId);
-			redirectView.setUrl("http://192.168.63.60:5173/friends");
+			
+			Cookie cookie = new Cookie("JSESSIONID", session.getId());
+	        cookie.setPath("/");
+	        cookie.setMaxAge(60*60*60);
+	        cookie.setHttpOnly(true); // JavaScript에서 쿠키를 읽을 수 없도록 설정
+	        response.addCookie(cookie);
+	        System.out.println("세션 아이디 : "+session.getId());
+	        
+			redirectView.setUrl("http://localhost:5173/profile");
 			return redirectView;
 		}
 		
