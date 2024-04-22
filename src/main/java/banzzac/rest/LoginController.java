@@ -51,7 +51,7 @@ public class LoginController {
 		
 		
 		MemberDTO userId = (MemberDTO) mapper.loginId(dto.getId());
-		
+		System.out.println("userId:ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ"+userId);
 	    MemberDTO newUserId = new MemberDTO();
 	    newUserId.setId(userInfo.getEmail());
 	    newUserId.setNickname(userInfo.getNickname());
@@ -69,6 +69,7 @@ public class LoginController {
 		
 		System.out.println("userId:"+userId);
 		if(userId==null) {
+
 			System.out.println(" 어디로 오는가 ");
 			try {
 				redirectView.setUrl("http://192.168.63.60:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
