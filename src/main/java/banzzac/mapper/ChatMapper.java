@@ -100,4 +100,10 @@ public interface ChatMapper {
 			+ "    chatroom_no = #{no} ")
 	int outChatroom(String id, int no);
 	
+	@Select("select * from chatroom where chatroom_no = #{chatroomNo}")
+	ChatroomDTO getChatroomMember(int chatroomNo);
+	
+	@Update("update friend set block = 0 where id = #{memberId} and friend_id = #{oppId}")
+	int blockUser(String memberId, String oppId);
+	
 }
