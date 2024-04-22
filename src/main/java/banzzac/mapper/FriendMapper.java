@@ -4,7 +4,6 @@ package banzzac.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
@@ -16,53 +15,71 @@ import banzzac.dto.MemberDTO;
 
 @Mapper
 public interface FriendMapper {
-	//* 친구리스트*/
-	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
-			+ " FROM member m "
-			+ " JOIN friend f ON m.id = f.friend_id "
-			+ " join dog d on m.id = d.id "
-			+ " WHERE f.id = #{id} AND (f.block = 1) ")
+
+//    	//* 친구리스트*/
+	@Select("SELECT "
+	        + "    f.id, "
+	        + "    f.friend_id, "
+	        + "    f.block, "
+	        + "    m.nickname AS m_nickname, "
+	        + "    m.img AS m_img, "
+	        + "    m.status_message AS m_status_message, "
+	        + "    MIN(d.name) AS dog_name, "  
+	        + "    MIN(d.img) AS dog_img "
+	        + "FROM "
+	        + "    member m "
+	        + "JOIN "
+	        + "    friend f ON m.id = f.friend_id "
+	        + "JOIN "
+	        + "    dog d ON m.id = d.id "
+	        + "WHERE "
+	        + "    f.id = #{id} AND (f.block = 1) "
+	        + "GROUP BY "
+	        + "    f.id, f.friend_id, f.block, m.nickname, m.img, m.status_message")
 	List<FriendDTO> list(String id);
 	
-	
-    
-  
-//    	//* 친구리스트*/
-//	@Select("SELECT "
-//	        + "    f.id, "
-//	        + "    f.friend_id, "
-//	        + "    f.block, "
-//	        + "    m.nickname AS m_nickname, "
-//	        + "    m.img AS m_img, "
-//	        + "    m.status_message AS m_status_message, "
-//	        + "    GROUP_CONCAT(d.name SEPARATOR ', ') AS dog_names, "
-//	        + "    GROUP_CONCAT(d.img SEPARATOR ', ') AS dog_imgs "
-//	        + "FROM "
-//	        + "    member m "
-//	        + "JOIN "
-//	        + "    friend f ON m.id = f.friend_id "
-//	        + "JOIN "
-//	        + "    dog d ON m.id = d.id "
-//	        + "WHERE "
-//	        + "    f.id = #{id} AND (f.block = 1) "
-//	        + "GROUP BY "
-//	        + "    f.id, f.friend_id, f.block, m.nickname, m.img, m.status_message")
-//	List<FriendDTO> list(String id);
-	
 	//* 차단 친구 리스트 */
-	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
-			+ " FROM member m "
-			+ " JOIN friend f ON m.id = f.friend_id "
-			+ " join dog d on m.id = d.id "
-			+ " WHERE f.id = #{id} AND f.block = 0 ")
+	@Select("SELECT "
+	        + "    f.id, "
+	        + "    f.friend_id, "
+	        + "    f.block, "
+	        + "    m.nickname AS m_nickname, "
+	        + "    m.img AS m_img, "
+	        + "    m.status_message AS m_status_message, "
+	        + "    MIN(d.name) AS dog_name, "  
+	        + "    MIN(d.img) AS dog_img " 
+	        + "FROM "
+	        + "    member m "
+	        + "JOIN "
+	        + "    friend f ON m.id = f.friend_id "
+	        + "JOIN "
+	        + "    dog d ON m.id = d.id "
+	        + "WHERE "
+	        + "    f.id = #{id} AND f.block = 0 "
+	        + "GROUP BY "
+	        + "    f.id, f.friend_id, f.block, m.nickname, m.img, m.status_message")
 	List<FriendDTO> blockList(String id);
 	
 	//* 즐겨찾기 친구 리스트*/
-	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
-			+ " FROM member m "
-			+ " JOIN friend f ON m.id = f.friend_id "
-			+ " join dog d on m.id = d.id "
-			+ " WHERE f.id = #{id} AND f.block = 2 ")
+	@Select("SELECT "
+	        + "    f.id, "
+	        + "    f.friend_id, "
+	        + "    f.block, "
+	        + "    m.nickname AS m_nickname, "
+	        + "    m.img AS m_img, "
+	        + "    m.status_message AS m_status_message, "
+	        + "    MIN(d.name) AS dog_name, "  
+	        + "    MIN(d.img) AS dog_img "  
+	        + "FROM "
+	        + "    member m "
+	        + "JOIN "
+	        + "    friend f ON m.id = f.friend_id "
+	        + "JOIN "
+	        + "    dog d ON m.id = d.id "
+	        + "WHERE "
+	        + "    f.id = #{id} AND f.block = 2 "
+	        + "GROUP BY "
+	        + "    f.id, f.friend_id, f.block, m.nickname, m.img, m.status_message")
 	List<FriendDTO> favoriteList(String id);
 	
 	//* 친구차단 */
