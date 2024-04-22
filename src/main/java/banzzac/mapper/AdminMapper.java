@@ -45,35 +45,58 @@ public interface AdminMapper {
 			+ " AS date_range "
 			+ "LEFT JOIN paymentSuccess ps ON DATE(ps.approved_at) = date_range.date "
 			+ "left join refund r ON r.partner_order_id = ps.partner_order_id "
-			+ "GROUP BY date_range.date"
-			+ " ORDER BY date_range.date DESC")
+			+ "GROUP BY date_range.date "
+			+ "ORDER BY date_range.date DESC")
 	   public ArrayList<SalesManagementDTO> dailySales(); 
 	   
 	   /** 주간 결제 내역 */ 
-	   @Select("SELECT "
-	   		+ "    week_number as ranking,"
-	   		+ "     COALESCE(count(ps.partner_order_id), 0) AS order_cnt,"
-	   		+ "     COALESCE(SUM(ps.quantity), 0) AS quantity,"
-	   		+ "    COALESCE(SUM(ps.total_amount), 0) AS total_amount,"
-	   		+ "    COALESCE(SUM(CASE WHEN r.approve = 1 THEN ps.total_amount ELSE 0 END), 0) AS refund_status "
-	   		+ "FROM ("
-	   		+ "    SELECT "
-	   		+ "        DATE_FORMAT(date_range.date, '%Y-%m-%d') AS date,"
-	   		+ "        FLOOR((DAYOFMONTH(date_range.date) - 1) / 7) + 1 AS week_number "
-	   		+ "    FROM ("
-	   		+ "        SELECT "
-	   		+ "            ADDDATE(LAST_DAY(SUBDATE(CONCAT(#{year}, '-', #{month}, '-01'), INTERVAL 1 MONTH)), INTERVAL (units.u * 7 + tens.t) DAY) AS date "
-	   		+ "        FROM"
-	   		+ "            (SELECT 0 AS t UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) AS tens, "
-	   		+ "            (SELECT 0 AS u UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4) AS units "
-	   		+ "        WHERE "
-	   		+ "            ADDDATE(LAST_DAY(SUBDATE(CONCAT(#{year}, '-', #{month}, '-01'), INTERVAL 1 MONTH)), INTERVAL (units.u * 7 + tens.t) DAY) BETWEEN "
-	   		+ "                DATE_FORMAT(CONCAT(#{year}, '-', #{month}, '-01'), '%Y-%m-01') AND LAST_DAY(CONCAT(#{year}, '-', #{month}, '-01'))"
-	   		+ "    ) AS date_range"
-	   		+ ") AS weeks "
-	   		+ "LEFT JOIN paymentSuccess ps ON DATE(ps.approved_at) = weeks.date "
-	   		+ "LEFT JOIN refund r ON ps.partner_order_id = r.partner_order_id "
-	   		+ "GROUP BY week_number")
+	   @Select("WITH RECURSIVE date_range AS ( "
+	   		+ "  SELECT  "
+	   		+ "    DATE(CONCAT(#{year}, '-', #{month}, '-01')) AS date, "
+	   		+ "    YEAR(CONCAT(#{year}, '-', #{month}, '-01')) AS year, "
+	   		+ "    MONTH(CONCAT(#{year}, '-', #{month}, '-01')) AS month, "
+	   		+ "    WEEK(CONCAT(#{year}, '-', #{month}, '-01')) AS week_number "
+	   		+ "  UNION ALL "
+	   		+ "  SELECT  "
+	   		+ "    DATE_ADD(date, INTERVAL 1 DAY), "
+	   		+ "    YEAR(DATE_ADD(date, INTERVAL 1 DAY)), "
+	   		+ "    MONTH(DATE_ADD(date, INTERVAL 1 DAY)), "
+	   		+ "    WEEK(DATE_ADD(date, INTERVAL 1 DAY)) "
+	   		+ "  FROM date_range "
+	   		+ "  WHERE  "
+	   		+ "    DATE_ADD(date, INTERVAL 1 DAY) < CONCAT(#{year}, '-', #{month}, '-01') + INTERVAL 1 MONTH "
+	   		+ "), "
+	   		+ "payment_info AS ( "
+	   		+ "  SELECT  "
+	   		+ "    WEEK(p.approved_at) AS week_number,  "
+	   		+ "    COALESCE(COUNT(p.partner_order_id), 0) AS order_cnt, "
+	   		+ "    COALESCE(SUM(p.quantity), 0) AS quantity, "
+	   		+ "    COALESCE(SUM(p.total_amount), 0) AS total_amount, "
+	   		+ "    COALESCE(SUM(CASE WHEN r.approve = 1 THEN p.total_amount ELSE 0 END), 0) AS refund_status "
+	   		+ "  FROM  "
+	   		+ "    paymentsuccess p  "
+	   		+ "  LEFT JOIN  "
+	   		+ "    refund r ON p.partner_order_id = r.partner_order_id "
+	   		+ "  WHERE  "
+	   		+ "    YEAR(p.approved_at) = #{year} "
+	   		+ "    AND MONTH(p.approved_at) = #{month} "
+	   		+ "  GROUP BY  "
+	   		+ "    WEEK(p.approved_at) "
+	   		+ ") "
+	   		+ "SELECT  "
+	   		+ "  dr.week_number as ranking, "
+	   		+ "  COALESCE(pi.order_cnt, 0) AS order_cnt, "
+	   		+ "  COALESCE(pi.quantity, 0) AS quantity, "
+	   		+ "  COALESCE(pi.total_amount, 0) AS total_amount, "
+	   		+ "  COALESCE(pi.refund_status, 0) AS refund_status "
+	   		+ "FROM  "
+	   		+ "  date_range dr "
+	   		+ "LEFT JOIN  "
+	   		+ "  payment_info pi ON dr.week_number = pi.week_number "
+	   		+ "group by  dr.year, dr.month, dr.week_number "
+	   		+ "ORDER BY  "
+	   		+ "  dr.year, dr.month, dr.week_number; "
+	   		+ "  ")
 	   public ArrayList<SalesManagementDTO> weeklySales(int year, int month);
 	   
 	   /** 월별 결제 내역 => 달별 환불금액 가져오는 쿼리 수정하기*/
@@ -177,7 +200,7 @@ public interface AdminMapper {
 	   		+ "			where r.partner_order_id = p.partner_order_id  "
 	   		+ "			and r.approve != 0  ) "
 	   		+ "     having year = #{year} and month= #{month} "
-	   		+ "    order by month,year desc")
+	   		+ "    order by pay_date desc")
 	   public ArrayList<SalesManagementDTO> paymentList(int year, int month);
 	   
 	   @Select("select "
@@ -202,9 +225,14 @@ public interface AdminMapper {
 	   		+ "join paymentsuccess p "
 	   		+ "on r.partner_order_id  = p.partner_order_id "
 	   		+ "SET approve = #{refundStatus},"
-	   		+ "approve_time=sysdate()  "
+	        + "approve_time = CASE "
+	        + "  WHEN #{refundStatus} = 0 THEN sysdate() "
+	        + "  WHEN #{refundStatus} = 1 THEN #{refundApprove} "
+	        + "END "
 	   		+ "where r.partner_order_id=#{orderId}")
 	   int checkRefund(SalesManagementDTO dto);
+	   
+
 	   
 	   @Update("update `member` m  "
 				+ "join paymentsuccess p "

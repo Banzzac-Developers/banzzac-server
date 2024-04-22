@@ -1,12 +1,12 @@
 <canvas id="myChart" style="width: 100%; height: 40vh"></canvas>
-<select name="selectedYear" id = "year" onchange="select()">
+<select name="selectedYear" id = "year" onchange="select()" class="selectYear">
        <option th:each="selectYear : ${year}" 
                th:value="${selectYear.year}" 
                th:text="${selectYear.year}"
 			   th:selected="${selectYear.year} == ${selectedYear}">
        </option>
 </select>
-<p>월별 매출내역</p>	
+<p class="semiTitle">월별 매출내역</p>	
 <table class="table table-bordered">	  
 	<thead>
 	    <tr>

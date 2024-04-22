@@ -39,7 +39,7 @@ public interface MemberMapper {
 	/** 상태 메시지 수정 */
 	@Update("update `member` "
 			+ "set status_message = #{statusMessage} "
-			+ "where id = 'zkdlwjsxm@example.com'")
+			+ "where id = #{id}")
 	int modifyStatus(MemberDTO dto);
 	
 
