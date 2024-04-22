@@ -17,7 +17,7 @@ public interface LoginMapper {
 	@Select("select pwd from member where id=#{id} and phone=#{phone}")
 	String searchPw(String phone,String id);
 	//**로그인*/
-	@Select("select id,nickname,img,isGrant,gender from member where id=#{id}")
+	@Select("select no,id,nickname,img,isGrant,gender from member where id=#{id}")
 	MemberDTO loginId(String id);
 
 	

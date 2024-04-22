@@ -30,7 +30,7 @@ public class MatchingController {
 	public MatchingDTO getCondition(HttpSession session, MatchingDTO dto) {
 		MemberDTO info = (MemberDTO)session.getAttribute("member");
 		System.out.println("session 값 있냐"+info);
-		dto.setNo(1);
+		dto.setNo(info.getNo());
 		System.out.println("Get Condition dto : "+dto);
 		MatchingDTO res = mapper.showMatchingCondition(dto);
 		System.out.println("Get Condition res : "+res);
@@ -40,7 +40,7 @@ public class MatchingController {
 	@PostMapping("condition")
 	public ResponseEntity<CommonResponse<Integer>> updateCondition(HttpSession session, @RequestBody MatchingDTO dto) {
 		MemberDTO info = (MemberDTO)session.getAttribute("member");
-		dto.setNo(1);
+		dto.setNo(info.getNo());
 		System.out.println("post Condition dto : "+dto);
 		int res = mapper.updateMatchingCondition(dto);
 		if( res >= 1){

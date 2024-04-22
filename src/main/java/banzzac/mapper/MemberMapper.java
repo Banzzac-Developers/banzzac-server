@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -19,6 +20,7 @@ public interface MemberMapper {
 	@Insert("insert into member "
 			+"(id,pwd,gender,age,img,walking_style,nickname,phone) values "
 			+"(#{id},#{pwd},#{gender},#{age},#{img},#{walkingStyleStr},#{nickname},#{phone})")
+	@Options(useGeneratedKeys=true, keyProperty="no")
 	int createMember(MemberDTO dto);
  
 	

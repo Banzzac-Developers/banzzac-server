@@ -30,7 +30,7 @@ public class KakaoApi {
 	
 //	private final String kakaoApiKey = "e09ad0168c41380f4ce7f8565f79f0cd";//운만
 	private final String kakaoApiKey = "d1c29661caeadbbfdf7dfb03de5a298a";//성재
-	private final String kakaoRedirectUri = "http://192.168.63.23/api/login/oauth2/code/kakao";
+	private final String kakaoRedirectUri = "http://localhost/api/login/oauth2/code/kakao";
 
 	
 	
