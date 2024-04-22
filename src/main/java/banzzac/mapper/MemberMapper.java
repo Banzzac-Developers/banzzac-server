@@ -16,8 +16,8 @@ public interface MemberMapper {
 	
 	
 	/** 신규 회원가입*/
-	@Insert("insert into member"
-			+"(id,pwd,gender,age,img,walking_style,nickname,phone)values "
+	@Insert("insert into member "
+			+"(id,pwd,gender,age,img,walking_style,nickname,phone) values "
 			+"(#{id},#{pwd},#{gender},#{age},#{img},#{walkingStyleStr},#{nickname},#{phone})")
 	int createMember(MemberDTO dto);
  
