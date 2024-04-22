@@ -56,7 +56,8 @@ public class MemberManagementController {
 	
 	/** Service 인터페이스를 상속받아서 Implement를 만들고 그 안에서 비즈니스 로직을 작성하신 후 결과 값을 Return 해주시면 됩니다
 	 * */
-	//리스트
+	
+	/*****신고 회원 목록 보기*****/
 	@GetMapping("report")
 	public String getReportMemberList(Model mm, CommonLayout cl, SelectTitle title) {
 		cl.setFolder("report");
@@ -70,6 +71,7 @@ public class MemberManagementController {
 		return "template";
 	}
 	
+	/*****신고 상세보기*****/
 	@GetMapping("reportDetail/{no}")
 	public String reportDetail(Model mm, CommonLayout cl, SelectTitle title, @PathVariable int no) {
 		cl.setFolder("report");
@@ -83,6 +85,7 @@ public class MemberManagementController {
 		return "template";
 	}
 	
+	/*****신고 관리자 답변 추가 *****/
 	@PostMapping("reportDetail/modify/{no}")
 	public String modifyReportDetail(@ModelAttribute ReportDTO dto, @PathVariable int no) {
 		dto.setReportNo(no);
@@ -92,7 +95,7 @@ public class MemberManagementController {
 		return "redirect:/management/reportDetail/"+dto.getReportNo();
 	}
 	
-	
+	/*****신고된 유저 정지*****/
 	@GetMapping("reportDetail/suspend/{id}/{no}")
 	public String suspendMember(@PathVariable String id, @PathVariable int no) {
 		System.out.println("유저 정지하기" + id);
@@ -103,6 +106,7 @@ public class MemberManagementController {
 		return "redirect:/management/report";
 	}
 	
+	/*****정지 회원 목록*****/
 	@GetMapping("suspend")
 	public String suspendMemberList(Model mm, CommonLayout cl, SelectTitle title) {
 		cl.setFolder("member");
@@ -114,6 +118,7 @@ public class MemberManagementController {
 		return "template";
 	}
 	
+	/*****유저 정지 해제하기*****/
 	@GetMapping("changeSuspend/{id}")
 	public String changeSuspend(@PathVariable String id) {
 		System.out.println("유저 정지해제" + id);
@@ -123,6 +128,7 @@ public class MemberManagementController {
 		return "redirect:/management/suspend";
 	}
 	
+	/*****탈퇴 회원 목록*****/
 	@GetMapping("withdrawal")
 	public String withdrawalMemberList(Model mm, CommonLayout cl, SelectTitle title) {
 		cl.setFolder("member");

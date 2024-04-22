@@ -1,7 +1,7 @@
-<input type="month" onchange="selectMonth(this.value)" name="selectMonth" id="month" >
 <canvas id="myChart" style="width: 100%; height: 40vh"></canvas>
+<input type="month" onchange="selectMonth(this.value)" name="selectMonth" id="month" min="2023-01" class="inputDate">
+<p class="semiTitle">주간 매출내역</p>
 <table class="table table-bordered">
-	<p>주간 매출내역</p>
 	<thead>
 	    <tr>
 	      <th scope="col" rowspan="2">주차</th>
@@ -17,7 +17,7 @@
 	  </thead>
 	  <tbody>
 		<tr	th:each="weekly : ${data}">
-			<td th:text="${weekly.ranking}"></td>
+			<td th:text="${weeklyStat.count}"></td>
 			<td th:text="${weekly.orderCnt}" ></td>
 			<td th:text="${weekly.quantity}"></td>
 			<td th:text="${#numbers.formatDecimal(weekly.totalAmount,0,'COMMA',-1,'POINT')}"></td>

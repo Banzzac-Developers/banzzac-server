@@ -16,8 +16,8 @@ public interface MemberMapper {
 	
 	
 	/** 신규 회원가입*/
-	@Insert("insert into member"
-			+"(id,pwd,gender,age,img,walking_style,nickname,phone)values "
+	@Insert("insert into member "
+			+"(id,pwd,gender,age,img,walking_style,nickname,phone) values "
 			+"(#{id},#{pwd},#{gender},#{age},#{img},#{walkingStyleStr},#{nickname},#{phone})")
 	int createMember(MemberDTO dto);
  
@@ -39,7 +39,7 @@ public interface MemberMapper {
 	/** 상태 메시지 수정 */
 	@Update("update `member` "
 			+ "set status_message = #{statusMessage} "
-			+ "where id = 'zkdlwjsxm@example.com'")
+			+ "where id = #{id}")
 	int modifyStatus(MemberDTO dto);
 	
 
@@ -59,9 +59,9 @@ public interface MemberMapper {
 	 * */
 	
 	@Insert("INSERT INTO report"
-			+ " (member_no, reported_no, report_reason)"
+			+ " (member_id, reported_id, report_reason)"
 			+ " VALUES"
-			+ " (#{memberNo},#{reportedNo},#{reportReason})")
+			+ " (#{memberId},#{reportedId},#{reportReason})")
 	public int reportMember(ReportDTO dto);
 
 	

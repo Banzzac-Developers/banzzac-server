@@ -1,7 +1,8 @@
 package banzzac.utill;
 
 public enum MessageType {
-	CHAT,
-    JOIN,
-    LEAVE
+	chat,
+    join,
+    leave,
+    promise
 }

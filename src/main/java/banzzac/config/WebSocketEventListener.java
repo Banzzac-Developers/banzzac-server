@@ -54,7 +54,7 @@ public class WebSocketEventListener {
             ChatDTO chatMessage = new ChatDTO();
             
             //2. 메세지 타입 : 떠남
-            chatMessage.setType(MessageType.LEAVE);
+            chatMessage.setType(MessageType.leave);
             
             // 3. 보내는 사람 : 현재 유저
             chatMessage.setSenderId(username);

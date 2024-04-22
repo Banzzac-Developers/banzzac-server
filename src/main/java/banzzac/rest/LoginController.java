@@ -1,5 +1,7 @@
 package banzzac.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,24 +39,11 @@ public class LoginController {
 		System.out.println("accessToken:"+accessToken);
 	
 		KakaoProfile userInfo = kakaoApi.getUserInfo(accessToken);
-		
-		System.out.println(userInfo);
-		
 
 		
 		System.out.println(dto);
 		
 		dto.setId(userInfo.getEmail());
-		
-		System.out.println(userInfo.getEmail());
-		//뽑아올 수 있는 값들
-		System.out.println("email : "+ userInfo.getEmail());
-		System.out.println("nickname : "+ userInfo.getNickname());
-		System.out.println("getGender : "+ userInfo.getGender());
-		System.out.println("getPhoneNumber : "+ userInfo.getPhoneNumber());
-		
-		
-		
 		
 		//로그인 성공 시 보여줄 페이지는 friends 이고, 실패 시 미가입자인 것이니 회원가입페이지로 이동, 비밀번호가 틀렸으면 다시 login Page로 이동시켜주십시오.
 		System.out.println("dto.id:"+dto.getId());
@@ -80,13 +69,19 @@ public class LoginController {
 		
 		System.out.println("userId:"+userId);
 		if(userId==null) {
-			
-			redirectView.setUrl("http://localhost:5173/signup/user?nickname"+newUserId.getNickname()+"&phone="+newUserId.getPhone()+"&id="+newUserId.getId()+"&gender="+newUserId.getGender());
-			redirectView.addStaticAttribute("userInfo", newUserId);
+
+			System.out.println(" 어디로 오는가 ");
+			try {
+				redirectView.setUrl("http://192.168.63.60:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return redirectView;
 		}else {
+			System.out.println(" 어디로 가는가 ");
 			session.setAttribute("member", userId);
-			redirectView.setUrl("http://localhost:5173/friends");
+			redirectView.setUrl("http://192.168.63.60:5173/friends");
 			return redirectView;
 		}
 		

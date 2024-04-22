@@ -1,6 +1,11 @@
 server:
   port: 80
-
+  servlet:
+    session:
+      cookie:
+        name: SESSIONID # 세션 쿠키 이름 설정
+        http-only: false # 자바스크립트에서 쿠키 접근 금지
+        path: / # 세션 쿠키의 경로 설정  
 spring:
   thymeleaf:
     prefix : /views/
@@ -40,4 +45,4 @@ kakao:
 #  path:
 #    upload-images : '경로설정'
 
-        
+      
