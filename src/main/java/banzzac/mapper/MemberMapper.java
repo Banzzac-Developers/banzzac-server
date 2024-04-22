@@ -61,7 +61,7 @@ public interface MemberMapper {
 	@Insert("INSERT INTO report"
 			+ " (member_id, reported_id, report_reason)"
 			+ " VALUES"
-			+ " (#{memberNo},#{reportedNo},#{reportReason})")
+			+ " (#{memberId},#{reportedId},#{reportReason})")
 	public int reportMember(ReportDTO dto);
 
 	
