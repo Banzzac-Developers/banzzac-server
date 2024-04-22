@@ -24,6 +24,31 @@ public interface FriendMapper {
 			+ " WHERE f.id = #{id} AND (f.block = 1) ")
 	List<FriendDTO> list(String id);
 	
+	
+    
+  
+//    	//* 친구리스트*/
+//	@Select("SELECT "
+//	        + "    f.id, "
+//	        + "    f.friend_id, "
+//	        + "    f.block, "
+//	        + "    m.nickname AS m_nickname, "
+//	        + "    m.img AS m_img, "
+//	        + "    m.status_message AS m_status_message, "
+//	        + "    GROUP_CONCAT(d.name SEPARATOR ', ') AS dog_names, "
+//	        + "    GROUP_CONCAT(d.img SEPARATOR ', ') AS dog_imgs "
+//	        + "FROM "
+//	        + "    member m "
+//	        + "JOIN "
+//	        + "    friend f ON m.id = f.friend_id "
+//	        + "JOIN "
+//	        + "    dog d ON m.id = d.id "
+//	        + "WHERE "
+//	        + "    f.id = #{id} AND (f.block = 1) "
+//	        + "GROUP BY "
+//	        + "    f.id, f.friend_id, f.block, m.nickname, m.img, m.status_message")
+//	List<FriendDTO> list(String id);
+	
 	//* 차단 친구 리스트 */
 	@Select("SELECT f.id, f.friend_id,f.block, m.nickname as m_nickname,m.img as m_img,m.status_message as m_status_mesaage,d.img as dog_img, d.name as dog_name"
 			+ " FROM member m "

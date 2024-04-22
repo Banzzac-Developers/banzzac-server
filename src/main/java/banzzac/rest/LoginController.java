@@ -62,7 +62,7 @@ public class LoginController {
 		
 		
 		MemberDTO userId = (MemberDTO) mapper.loginId(dto.getId());
-		
+		System.out.println("userId:ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ"+userId);
 	    MemberDTO newUserId = new MemberDTO();
 	    newUserId.setId(userInfo.getEmail());
 	    newUserId.setNickname(userInfo.getNickname());
@@ -81,7 +81,7 @@ public class LoginController {
 		System.out.println("userId:"+userId);
 		if(userId==null) {
 			
-			redirectView.setUrl("http://localhost:5173/signup/user?nickname="+newUserId.getNickname()+"&phone="+newUserId.getPhone()+"&id="+newUserId.getId()+"&gender="+newUserId.getGender());
+			redirectView.setUrl("http://localhost:5173/signup/user?nickname"+newUserId.getNickname()+"&phone="+newUserId.getPhone()+"&id="+newUserId.getId()+"&gender="+newUserId.getGender());
 			redirectView.addStaticAttribute("userInfo", newUserId);
 			return redirectView;
 		}else {

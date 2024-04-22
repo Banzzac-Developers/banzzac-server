@@ -22,7 +22,7 @@ public interface DogMapper {
 	
 	
 	/** 내 반려견 전체 리스트 불러오기  -> id = sessionID */
-	@Select("select * from dog where id = 'zkdlwjsxm@example.com'")
+	@Select("select * from dog where id = #{id}")
 	ArrayList<DogDTO> list(DogDTO dto);
 	
 	

@@ -27,22 +27,25 @@ public class FriendController {
 	/** 친구리스트*/
 	@GetMapping("list/{id}")
 	public List<FriendDTO> friendList(@PathVariable String id,HttpSession session) {
-//		System.out.println("session : "+(MemberDTO)session.getAttribute("member")); 운만세션확인
-		List<FriendDTO> res = mapper.list(id);
+
+		MemberDTO dto = (MemberDTO)session.getAttribute("member");
+		List<FriendDTO> res = mapper.list(dto.getId());
 		return res;
 	}
 	
 	/** 차단친구리스트*/
 	@GetMapping("blockList/{id}")
-	public List<FriendDTO> friendblockList(@PathVariable String id) {
-		List<FriendDTO> res = mapper.blockList(id);
+	public List<FriendDTO> friendblockList(@PathVariable String id,HttpSession session) {
+		MemberDTO dto = (MemberDTO)session.getAttribute("member");
+		List<FriendDTO> res = mapper.blockList(dto.getId());
 		return res;
 	}
 	
 	/** 즐겨찾기 친구리스트*/
 	@GetMapping("favoriteList/{id}")
-	public List<FriendDTO> favoriteList(@PathVariable String id) {
-		List<FriendDTO> res = mapper.favoriteList(id);
+	public List<FriendDTO> favoriteList(@PathVariable String id,HttpSession session) {
+		MemberDTO dto = (MemberDTO)session.getAttribute("member");
+		List<FriendDTO> res = mapper.favoriteList(dto.getId());
 		return res;
 	}
 	
@@ -83,6 +86,7 @@ public class FriendController {
 	Object friendFavorite(FriendDTO dto,@PathVariable String id,@PathVariable String friendId) {
 		System.out.println("왔냐"+dto);
 		mapper.friendFavorite(dto);
+		System.out.println(id);
 		return mapper.list(id);
 	}
 	
