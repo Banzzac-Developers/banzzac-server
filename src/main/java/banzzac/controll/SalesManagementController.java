@@ -1,8 +1,12 @@
 package banzzac.controll;
 
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 import banzzac.dto.PageDTO;
 import banzzac.dto.SalesManagementDTO;
 import banzzac.mapper.AdminMapper;
+import banzzac.payment.PayCancelInfo;
 import banzzac.utill.CommonLayout;
 import banzzac.utill.SelectTitle;
 import jakarta.annotation.Resource;
@@ -124,11 +130,20 @@ public class SalesManagementController {
 		cl.setFolder(folder);
 		cl.setService("refundList");
 		title.selectTitle(cl.getService());
-		int res = mapper.checkRefund(dto);
 		
-		System.out.println(dto.getUserId());
+		System.out.println(dto.getTid()+" "+dto.getTotalAmount());
+		
+		// 승인 + tid 값을 받았을 경우 -> 카카오에환불 신청
+		if(dto.getRanking()==1 && dto.getTid()!=null) { 
+			Date cancelDate =  requestRefund(dto.getTid(),dto.getTotalAmount());
+			if(cancelDate!=null) {
+				dto.setRefundApprove(cancelDate);
+				mapper.checkRefund(dto);
+			}
+		}
+				
 		// 환불 상태 변경 완료 + 거절을 클릭할 시에 member테이블의 quantity 다시 더해주기
-		if(res>=1 && dto.getRanking()==0) { 
+		if(mapper.checkRefund(dto)>=1 && dto.getRanking()==0) { 
 			mapper.plusQuantity(dto);
 		} 
 		return "template";
@@ -157,6 +172,32 @@ public class SalesManagementController {
 		mm.addAttribute("data",mapper.refund(0));
 		
 		return "template";
+	}
+	
+	private PayCancelInfo payCancelInfo;
+	
+	public Date requestRefund(String tid, int cancelAmount){
+		
+		System.out.println("카카오페이 환불 신청");
+		
+		HttpHeaders headers = new HttpHeaders(); 
+		RestTemplate restTemplate = new RestTemplate();
+		 		
+	    headers.set("Authorization", "SECRET_KEY DEV363D27AC1786201E1E1E880CD565F7F19A499"); // secret key 숨기기
+		headers.set("Content-Type", "application/json"); //jason 형태로 보내기
+		
+		Map<String, String> params = new HashMap<>(); 
+		params.put("cid", "TC0ONETIME");
+		params.put("tid", tid);
+		params.put("cancel_amount", cancelAmount+"");
+		params.put("tax_free_amount", "0");
+		
+		HttpEntity<Map<String, String>> transform = new HttpEntity<>(params, headers);
+		payCancelInfo = restTemplate.postForObject("https://open-api.kakaopay.com/online/v1/payment/cancel ", transform, PayCancelInfo.class);
+		
+		System.out.println(payCancelInfo);
+		
+		return payCancelInfo.getCanceled_at();	
 	}
 	
 }

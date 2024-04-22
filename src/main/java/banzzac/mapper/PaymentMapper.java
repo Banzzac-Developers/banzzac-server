@@ -6,6 +6,7 @@ import java.util.Date;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -19,10 +20,15 @@ public interface PaymentMapper {
 	/** 내가 결제한 리스트 -> 세션아이디 넣기 */
 	@Select("select "
 			+ "partner_order_id,payment_method_type,quantity,total_amount,approved_at "
-			+ "from paymentSuccess "
-			+ "where partner_user_id=#{partnerUserId} "
+			+ "from paymentSuccess p "
+			+ "where partner_user_id= #{partnerUserId} "
+			+ "	   AND NOT EXISTS ("
+			+ "    	SELECT 1"
+			+ "    	FROM refund r"
+			+ "    	WHERE r.partner_order_id = p.partner_order_id"
+			+ "		AND r.approve !=0 )"
 			+ "order by approved_at desc")
-	ArrayList<PaymentSuccessDTO> myPayList(String partnerUserId);
+	ArrayList<PaymentSuccessDTO> myPayList(PaymentSuccessDTO dto);
 	
 	/** 결제 시 매칭권 갯수 변경
 	 * 보유하고 있던 매칭권 수 + 구매한 매칭권 수 */
@@ -75,11 +81,12 @@ public interface PaymentMapper {
 			+ "    WHERE DATEDIFF(sysdate(), p.approved_at) <= 7 "
 			+ "    AND p.partner_user_id = 'zkdlwjsxm@example.com' "
 			+ "    AND m.quantity >= p.quantity  "
+			+ "	   AND p.partner_order_id = #{partnerOrderId} "
 			+ "	   AND NOT EXISTS ("
 			+ "    	SELECT #{partnerOrderId}"
 			+ "    	FROM refund r"
 			+ "    	WHERE r.partner_order_id = p.partner_order_id)")
-	int insertRefund(RefundDTO dto);
+	int insertRefund(RefundDTO refundDTO);
 	
 	/** 환불 신청 시 member 테이블의 quantity 수량 빼기 */
 	@Update("update `member` m  "
@@ -91,8 +98,8 @@ public interface PaymentMapper {
 			+ "join refund r "
 			+ "on p.partner_order_id = r.partner_order_id "
 			+ "where r.partner_order_id = #{partnerOrderId}) "
-			+ "where p.partner_user_id =  'zkdlwjsxm@example.com'")
-	int minusQuantity(RefundDTO dto);
+			+ "where p.partner_user_id =  #{partnerUserId}")
+	int minusQuantity(PaymentSuccessDTO dto);
 	
 	
 	/** 환불 사유 수정 : 환불 대기 중인 건에 한해 */
@@ -102,9 +109,9 @@ public interface PaymentMapper {
 			+ "set r.reason = #{reason} "
 			+ "where "
 			+ "r.partner_order_id = #{partnerOrderId} && "
-			+ "p.partner_user_id = 'zkdlwjsxm@example.com' && "
+			+ "p.partner_user_id = #{partnerUserId} && "
 			+ "r.approve = 2")
-	int modifyRefund(RefundDTO dto);
+	int modifyRefund(RefundDTO refundDTO, @Param("partnerUserId") String partnerUserId);
 	
 	
 	/** 내가 신청한 환불 리스트 */
@@ -114,9 +121,9 @@ public interface PaymentMapper {
 			+ "join paymentsuccess p "
 			+ "on r.partner_order_id = p.partner_order_id "
 			+ "where "
-			+ "p.partner_user_id = 'zkdlwjsxm@example.com'"
+			+ "p.partner_user_id = #{partnerUserId} "
 			+ "order by r.refund_request_date desc" )
-	ArrayList<RefundDTO> myRefundList(RefundDTO dto);
+	ArrayList<RefundDTO> myRefundList(String partnerUserId);
 
 	
 	/** 환불 취소 */
@@ -130,6 +137,6 @@ public interface PaymentMapper {
 			+ "select p.quantity "
 			+ "from paymentsuccess p "
 			+ "where p.partner_order_id = #{partnerOrderId}) "
-			+ "where p.partner_user_id =  'zkdlwjsxm@example.com'")
+			+ "where p.partner_user_id =  #{partnerUserId}")
 	int plusQuantity(PaymentSuccessDTO dto);
 }
