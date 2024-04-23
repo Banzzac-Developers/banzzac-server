@@ -45,6 +45,7 @@ public class MemberDTO {
 		this.date = date;
 		this.dateStr = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
 	}
+
 	
 
 }

@@ -35,7 +35,6 @@ public class KakaoApi {
 	
 	
 	public String getAccessToken(String code) {
-		System.out.println("222222222222222222222222222222222222222222222222");
 		 String accessToken = "";
 		 String refreshToken = "";
 		 String reqUrl = "https://kauth.kakao.com/oauth/token";
@@ -47,7 +46,6 @@ public class KakaoApi {
 		        //필수 헤더 세팅
 		        conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 		        conn.setDoOutput(true); //OutputStream으로 POST 데이터를 넘겨주겠다는 옵션.
-		        System.out.println("33333333333333333333333333333333333");
 		        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 		        StringBuilder sb = new StringBuilder();
 		       
@@ -56,10 +54,8 @@ public class KakaoApi {
 		        sb.append("&client_id=").append(kakaoApiKey);
 		        sb.append("&redirect_uri=").append(kakaoRedirectUri);
 		        sb.append("&code=").append(code);
-		        System.out.println("4444444444444444444444444444444444");
 		        bw.write(sb.toString());
 		        bw.flush();
-		        System.out.println("555555555555555555555555555555555");
 		        int responseCode = conn.getResponseCode();
 		        log.info("[KakaoApi.getAccessToken] responseCode = {}", responseCode);
 
@@ -76,8 +72,6 @@ public class KakaoApi {
 		            responseSb.append(line);
 		        }
 		        String result = responseSb.toString();
-		        log.info("responseBody = {}", result);
-		        System.out.println("666666666666666666666666666666666");
 		        JsonParser parser = new JsonParser();
 		        JsonElement element = parser.parse(result);
 		        accessToken = element.getAsJsonObject().get("access_token").getAsString();

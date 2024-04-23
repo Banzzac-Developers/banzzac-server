@@ -1,13 +1,13 @@
-<input type="month" onchange="selectMonth(this.value)" name="selectMonth" id="month" >
-<p class="salesTitle">회원 랭킹</p>	
+
 <div class="payRank">
 	<div class="rankWrap" th:each="ranking:${userRanking}" >
 		<div th:text="${ranking.ranking + '등'}" class="ranking"></div>
-		<div th:text="${ranking.userId}"></div>	
+		<div th:text="${ranking.userId}" class="rankingId"></div>	
 		<div th:text="${#numbers.formatDecimal(ranking.totalAmount,0,'COMMA',-1,'POINT')+ '원'}"></div>
 	</div>
 </div>
-<p class="salesTitle">결제 회원 리스트</p>	
+<input type="month" onchange="selectMonth(this.value)" name="selectMonth" id="month" class="inputDate">
+<p class="salesTitle">💸결제회원리스트</p>	
 <table class="table table-bordered">	  
 <thead>
     <tr>

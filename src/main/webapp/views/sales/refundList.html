@@ -40,7 +40,9 @@
 		var approvePost = {	
 			"orderId" : refund[0].orderId,
 			"userId": refund[0].userId,
-			"refundStatus": 1		
+			"refundStatus": 1,
+			"tid": refund[0].tid,
+			"totalAmount" : refund[0].totalAmount
 		};
 		var refusePost = {	
 			"orderId" : refund[0].orderId,

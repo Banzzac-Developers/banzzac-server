@@ -18,12 +18,13 @@ import banzzac.mapper.DogMapper;
 import banzzac.mapper.MemberMapper;
 import banzzac.utill.CommonResponse;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 
 
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
-/** url id : session id로 바꾸기  */
+
 	@Resource
 	MemberMapper memMapper;
 	
@@ -31,16 +32,21 @@ public class ProfileController {
 	DogMapper dogMapper;
 	
 	
-	@GetMapping("{id}")
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> myProfile(@PathVariable String id, MemberDTO dto){
-		System.out.println("myProfile");
+	@GetMapping()
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> myProfile(MemberDTO dto,HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		
+		//dto.setId("zkdlwjsxm@example.com");
+		System.out.println("myProfile" + myId);
+		dto.setId(myId.getId());
 		return CommonResponse.success(memMapper.memberInfo(dto));
 	}
 
 
-	@PostMapping("{id}")
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyMyProfile(@PathVariable String id, @RequestBody MemberDTO dto) {	
-		dto.setId(id);
+	@PostMapping()
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyMyProfile(@RequestBody MemberDTO dto,HttpSession session) {	
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
 		if(memMapper.modifyMember(dto)>=1) {
 			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
 			System.out.println("myProfile 수정 성공" + res);
@@ -51,8 +57,10 @@ public class ProfileController {
 	}
 	
 	@PostMapping("status")
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto){
-		//dto.setId("session id");
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto,HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
+		dto.setId(myId.getId());
 		if(memMapper.modifyStatus(dto)>=1) {
 			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
 			System.out.println("상태메세지 수정 성공" + dto.getStatusMessage());
@@ -61,30 +69,51 @@ public class ProfileController {
 		return CommonResponse.error(HttpStatus.BAD_REQUEST,"StatusMessage Modify Failed", "상태메시지 수정 실패");
 	}
 	
-	@PostMapping("/withdraw/{id}")
-	ResponseEntity<CommonResponse<Object>> withdrawMember(@PathVariable String id, @RequestBody MemberDTO dto){
+	@GetMapping("logout")
+	ResponseEntity<CommonResponse<Object>> logout(HttpSession session){
+		session.invalidate();
+		if(session.getAttribute("member")==null) {
+			URI uri = URI.create("http://localhost:5173/login"); 
+			return ResponseEntity.status(302).location(uri).build();
+		}else {
+			return CommonResponse.error(HttpStatus.BAD_REQUEST,"Member Logout Failed","로그아웃 실패");
+		}		
+	}
+	
+	@PostMapping("withdraw")
+	ResponseEntity<CommonResponse<Object>> withdrawMember(@RequestBody MemberDTO dto,HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
+		dto.setId(myId.getId());
+		System.out.println(dto);
 		if(memMapper.withdrawMember(dto)>=1) {
 			System.out.println("탈퇴성공 main페이지로 redirect");
-			// session 지우기 -> 로그인 불가하게
-			URI uri = URI.create("http://localhost:5173"); 
+			session.invalidate();
+			URI uri = URI.create("http://localhost:5173/login"); 
 			
 			return ResponseEntity.status(302).location(uri).build();
 		}else {
+			System.out.println("탈퇴 실패");
 			return CommonResponse.error(HttpStatus.BAD_REQUEST,"Member Withdraw Failed","탈퇴 실패");
 		}
 	}
 	
-	@GetMapping("dog/{id}")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> dogList(DogDTO dto){
+	@GetMapping("dog")
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> dogList(DogDTO dto, HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
+		dto.setId(myId.getId());
 		ArrayList<DogDTO> res = dogMapper.list(dto);
 		System.out.println("반려견 전체 리스트"+res);
 		return CommonResponse.success(res);
 	}
 
 		
-	@PostMapping("dog/{id}")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> addDog(@RequestBody DogDTO dto, @PathVariable String id){
-		dto.setId(id);	
+	@PostMapping("dog")
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> addDog(@RequestBody DogDTO dto,HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
+		dto.setId(myId.getId());
 		DogDTO res = dogMapper.checkDog(dto);
 		
 		if(res==null) {
@@ -95,9 +124,11 @@ public class ProfileController {
 		}	
 	}
 
-	@PostMapping("dog/{id}/{name}")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> modifyDog(@RequestBody DogDTO dto, @PathVariable String id, @PathVariable String name){
-		dto.setId(id);
+	@PostMapping("dog/{name}")
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> modifyDog(@RequestBody DogDTO dto, @PathVariable String name,HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
+		dto.setId(myId.getId());
 		dto.setName(name);
 		System.out.println("반려견 수정");
 		if (dogMapper.modifyDog(dto)>=1) {			
@@ -107,8 +138,11 @@ public class ProfileController {
 		}
 	}
 
-	@GetMapping("dog/{id}/delete/{name}")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> deleteDog(DogDTO dto, @PathVariable String id){
+	@GetMapping("dog/delete/{name}")
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> deleteDog(DogDTO dto,HttpSession session){
+		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		//dto.setId("zkdlwjsxm@example.com");
+		dto.setId(myId.getId());
 		System.out.println("반려견 삭제" + dto);
 		if(dogMapper.deleteDog(dto)>=1) {
 			return CommonResponse.success(dogMapper.list(dto));

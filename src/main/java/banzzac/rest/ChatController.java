@@ -1,6 +1,7 @@
 package banzzac.rest;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -11,11 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import banzzac.dto.ChatDTO;
 import banzzac.dto.ChatroomDTO;
+import banzzac.dto.MemberDTO;
+import banzzac.dto.ReportDTO;
 import banzzac.mapper.ChatMapper;
+import banzzac.mapper.MemberMapper;
 import jakarta.annotation.Resource;
+import jakarta.security.auth.message.callback.PrivateKeyCallback.Request;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -40,6 +48,9 @@ public class ChatController {
 	@Resource
 	ChatMapper mapper;
 	
+	@Resource
+	MemberMapper memMapper;
+	
 //	// "/app/chat/rooms/{roomId}/send"로 메시지가 전송되면 이 메소드가 호출됩니다.
 //    @MessageMapping("/chat/rooms/{roomId}/send")
 //    // "/topic/public/rooms/{roomId}"로 메시지를 broadcast합니다.
@@ -61,7 +72,7 @@ public class ChatController {
     @SendTo("/topic/public")
     public ChatDTO sendMessage(@Payload ChatDTO dto, @PathVariable String roomId) {
         mapper.insertChat(dto); // 메시지 저장
-        mapper.changeLastMessage(dto);
+        mapper.changeLastMessage(dto);	// 채팅방 최신 상태 변경
         System.out.println("받은거냐?"+dto);
         return dto;
     }
@@ -72,15 +83,20 @@ public class ChatController {
 		System.out.println("채팅내용 뿌려주기"+chatroomNo);
 		mapper.changeIsRead(userId, chatroomNo);
 		ArrayList<ChatDTO> res = mapper.getChatList(chatroomNo);
-		
+		System.out.println("리스트 "+res);
 		return res;
 	}
 	
 	@GetMapping("{userId}")
-	ArrayList<ChatroomDTO> chatroomList(@PathVariable String userId){	//HttpSession session 멤버변수로 받아서 session.getAttribute("user").getId
+	ArrayList<ChatroomDTO> chatroomList(@PathVariable String userId, HttpSession session){	//HttpSession session 멤버변수로 받아서 session.getAttribute("user").getId
 		
 		ArrayList<ChatroomDTO> res = mapper.getChatroomList(userId);
 		System.out.println("채팅방 목록 뿌려주기");
+		
+		MemberDTO userDTO = new MemberDTO();
+		userDTO.setId("zkdlwjsxm@example.com");
+		
+		session.setAttribute("userId", userDTO);
 		return res;
 	}
 	
@@ -99,13 +115,25 @@ public class ChatController {
 		
 	}
 	
+	@PostMapping("report/{chatroomNo}")
+	public void reportUser(@RequestBody ReportDTO dto, @PathVariable int chatroomNo) {
+		System.out.println("신고하기" + chatroomNo);
+		memMapper.reportMember(dto);
+		mapper.outChatroom(dto.getMemberId(), chatroomNo);
+	}
 	
-	@PostMapping("send")
-	public ChatDTO insertChat(@RequestBody ChatDTO dto) {
-		System.out.println("insertChat : "+dto);
-		mapper.insertChat(dto);
-	      
-		return dto;
+	@GetMapping("block/{oppId}/{chatroomNo}")
+	public void blockUser(@PathVariable String oppId,@PathVariable int chatroomNo) {
+		ChatroomDTO dto = mapper.getChatroomMember(chatroomNo);
+		String memberId = "";
+		if(dto.getRoomMember1().equals(oppId)) {
+			memberId = dto.getRoomMember2();
+		}else {
+			memberId = dto.getRoomMember1();
+		}
+		mapper.blockUser(memberId,oppId);
+		mapper.outChatroom(memberId, chatroomNo);
+		
 	}
 
 	

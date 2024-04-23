@@ -27,7 +27,16 @@ public interface MatchingMapper {
 	/**회원이 산책 조건을 설정할 때 불러올 값입니다.
 	 * no = 회원 넘버
 	 * */
-	@Select("select style as walking_style_str, no, dog_nature as dog_nature_str, size, amount_of_activity, want_matching from matching_conditions where no = #{no}")
+	@Select("select"
+			+ " style as walking_style_str,"
+			+ " no,"
+			+ " dog_nature as dog_nature_str,"
+			+ " size, amount_of_activity,"
+			+ " want_matching,"
+			+ " gender,"
+			+ " age_range_start,"
+			+ " age_range_end "
+			+ " from matching_conditions where no = #{no}")
 	public MatchingDTO showMatchingCondition(MatchingDTO dto);
 	
 	
@@ -35,11 +44,11 @@ public interface MatchingMapper {
 	 * no = 회원 넘버
 	 * */
 	@Update("Update matching_conditions set"
-			+ "stlye = #{style},"
+			+ " style = #{walkingStyleStr},"
 			+ " age_range_start = #{ageRangeStart},"
 			+ " age_range_end=#{ageRangeEnd},"
 			+ " gender=#{gender},"
-			+ " gender=#{size},"
+			+ " size=#{size},"
 			+ " dog_nature=#{dogNatureStr},"
 			+ " amount_of_activity=#{amountOfActivity},"
 			+ " want_matching=#{wantMatching} where no=#{no}")
