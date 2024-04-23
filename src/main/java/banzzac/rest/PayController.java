@@ -168,8 +168,11 @@ public class PayController {
 	 @PostMapping("refund/insert")
 	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> insertRefund(@RequestBody RefundDTO dto,PaymentSuccessDTO payDto,HttpSession session){		
 		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		 System.out.println(dto);
-		 if(mapper.insertRefund(dto)>=1) {
+		 System.out.println("환불 신청 "+dto);
+		 payDto.setPartnerOrderId(dto.getPartnerOrderId());
+		 payDto.setPartnerUserId("zkdlwjsxm@example.com"); //sessionId
+		 
+		 if(mapper.insertRefund(dto.getPartnerOrderId(),dto.getReason(), "zkdlwjsxm@example.com")>=1) {
 			mapper.minusQuantity(payDto);
 			 System.out.println("환불신청 성공"+dto);
 			 return CommonResponse.success(mapper.myRefundList("zkdlwjsxm@example.com"));
@@ -210,8 +213,10 @@ public class PayController {
 	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> cancelRefund(RefundDTO dto,PaymentSuccessDTO pdto, @PathVariable String partnerOrderId,HttpSession session){
 		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
 		 System.out.println("환불 취소");
-		 System.out.println("refund : "+dto);
-		 System.out.println("payOK : "+pdto);
+
+		 pdto.setPartnerOrderId(dto.getPartnerOrderId());
+		 pdto.setPartnerUserId("zkdlwjsxm@example.com");
+		 
 		 if(mapper.cancelRefund(dto)>=1) {
 			 mapper.plusQuantity(pdto);
 			 return CommonResponse.success(mapper.myRefundList("zkdlwjsxm@example.com"));
