@@ -43,6 +43,7 @@ public class FriendController {
 	/** 즐겨찾기 친구리스트*/
 	@GetMapping("favoriteList")
 	public List<FriendDTO> favoriteList(HttpSession session) {
+
 		MemberDTO dto = (MemberDTO)session.getAttribute("member");
 		List<FriendDTO> res = mapper.favoriteList(dto.getId());
 		return res;
@@ -105,15 +106,5 @@ public class FriendController {
 		mapper.friendUnFavorite(dto);
 		return mapper.list(memDTO.getId());
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }
