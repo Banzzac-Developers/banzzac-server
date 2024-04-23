@@ -39,7 +39,7 @@ public class FriendController {
 		List<FriendDTO> res = mapper.blockList(dto.getId());
 		return res;
 	}
-	
+		
 	/** 즐겨찾기 친구리스트*/
 	@GetMapping("favoriteList")
 	public List<FriendDTO> favoriteList(HttpSession session) {
