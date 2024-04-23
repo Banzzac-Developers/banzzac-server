@@ -54,9 +54,9 @@ public class PayController {
 		 	}
 		 }
 		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		
+		System.out.println("My Id Session : "+myId);
 		paymentSuccessDto.setPartnerOrderId(orderId);
-		paymentSuccessDto.setPartnerUserId("zkdlwjsxm@example.com");
+		paymentSuccessDto.setPartnerUserId("5l6l@naver.com");
 		 
 		HttpHeaders headers = new HttpHeaders(); 
 		RestTemplate restTemplate = new RestTemplate();
@@ -159,7 +159,7 @@ public class PayController {
 	 public ResponseEntity<CommonResponse<ArrayList<PaymentSuccessDTO>>> payList(PaymentSuccessDTO dto,HttpSession session){
 		System.out.println("결제 내역 : 환불신청건 제외");
 		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		dto.setPartnerUserId("zkdlwjsxm@example.com");
+		dto.setPartnerUserId("5l6l@naver.com");
 
 		return CommonResponse.success(mapper.myPayList(dto));
 	 }
@@ -172,7 +172,7 @@ public class PayController {
 		 if(mapper.insertRefund(dto)>=1) {
 			mapper.minusQuantity(payDto);
 			 System.out.println("환불신청 성공"+dto);
-			 return CommonResponse.success(mapper.myRefundList("zkdlwjsxm@example.com"));
+			 return CommonResponse.success(mapper.myRefundList("5l6l@naver.com"));
 		 }else {
 			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Insert Failed", "환불 신청 실패");
 		 }
@@ -183,7 +183,8 @@ public class PayController {
 	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> myRefundList(RefundDTO dto,HttpSession session){
 		 System.out.println("환불 신청 내역 ");
 		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		 ArrayList<RefundDTO> res = mapper.myRefundList("zkdlwjsxm@example.com");
+		 //ArrayList<RefundDTO> res = mapper.myRefundList("5l6l@naver.com");
+		 ArrayList<RefundDTO> res = mapper.myRefundList("5l6l@naver.com");
 		 System.out.println(res);
 		 return CommonResponse.success(res);
 	 }
@@ -195,8 +196,8 @@ public class PayController {
 		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
 		 if(dto.getApprove()==2) {
 			 System.out.println("승인 대기 중");
-			if(mapper.modifyRefund(dto,"zkdlwjsxm@example.com")>=1) {
-				return CommonResponse.success(mapper.myRefundList("zkdlwjsxm@example.com"));
+			if(mapper.modifyRefund(dto,"5l6l@naver.com")>=1) {
+				return CommonResponse.success(mapper.myRefundList("5l6l@naver.com"));
 			}else {
 				return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Reason Modify Failed", "환불사유 수정 실패");
 			} 
@@ -214,7 +215,7 @@ public class PayController {
 		 System.out.println("payOK : "+pdto);
 		 if(mapper.cancelRefund(dto)>=1) {
 			 mapper.plusQuantity(pdto);
-			 return CommonResponse.success(mapper.myRefundList("zkdlwjsxm@example.com"));
+			 return CommonResponse.success(mapper.myRefundList("5l6l@naver.com"));
 		 }else {
 			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Cancel Failed", "환불 취소 실패");
 		 }
