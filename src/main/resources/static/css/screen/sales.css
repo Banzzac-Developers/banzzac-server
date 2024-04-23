@@ -1,40 +1,50 @@
 @charset "UTF-8";
 
-.payRank{
+.salesWrap {
+	padding-top: 30px;
+}
+
+.payRank {
 	display: flex;
 	justify-content: space-evenly;
 	padding: 3% 0 4%;
 }
-.rankWrap{
+
+.rankWrap {
 	width: 180px;
 	height: 90px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
-	border-top:3px solid rgb(0, 0, 64);
+	border-top: 3px solid rgb(0, 0, 64);
 	font-size: medium;
-	
+
 }
-.ranking{
+
+.ranking {
 	width: 100%;
 	font-weight: bold;
 	background-color: rgb(238, 238, 238);
 	text-align: center;
 }
-.rankingId{
+
+.rankingId {
 	font-size: small;
 	line-height: 30px;
 }
-.semiTitle{
+
+.semiTitle {
 	font-weight: 600;
 }
-.inputDate{
+
+.inputDate {
 	width: 150px;
 	text-align: center;
 	margin: 10px 0;
 }
-.selectYear{
+
+.selectYear {
 	width: 80px;
 	text-align: center;
 	margin: 10px 0;

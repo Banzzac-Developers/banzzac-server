@@ -25,8 +25,7 @@ public interface PaymentMapper {
 			+ "	   AND NOT EXISTS ("
 			+ "    	SELECT 1"
 			+ "    	FROM refund r"
-			+ "    	WHERE r.partner_order_id = p.partner_order_id"
-			+ "		AND r.approve !=0 )"
+			+ "    	WHERE r.partner_order_id = p.partner_order_id )"
 			+ "order by approved_at desc")
 	ArrayList<PaymentSuccessDTO> myPayList(PaymentSuccessDTO dto);
 	
@@ -79,14 +78,14 @@ public interface PaymentMapper {
 			+ "    JOIN `member`  m "
 			+ "    on p.partner_user_id = m.id "
 			+ "    WHERE DATEDIFF(sysdate(), p.approved_at) <= 7 "
-			+ "    AND p.partner_user_id = 'zkdlwjsxm@example.com' "
+			+ "    AND p.partner_user_id = #{partnerUserId} "
 			+ "    AND m.quantity >= p.quantity  "
 			+ "	   AND p.partner_order_id = #{partnerOrderId} "
 			+ "	   AND NOT EXISTS ("
 			+ "    	SELECT #{partnerOrderId}"
 			+ "    	FROM refund r"
 			+ "    	WHERE r.partner_order_id = p.partner_order_id)")
-	int insertRefund(RefundDTO refundDTO);
+	int insertRefund(int partnerOrderId, String reason, @Param("partnerUserId") String partnerUserId);
 	
 	/** 환불 신청 시 member 테이블의 quantity 수량 빼기 */
 	@Update("update `member` m  "
