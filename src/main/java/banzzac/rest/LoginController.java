@@ -88,6 +88,7 @@ public class LoginController {
 	        System.out.println("세션 아이디 : "+session.getId());
 	        
 			redirectView.setUrl("http://localhost:5173/profile");
+
 			return redirectView;
 		}
 		
