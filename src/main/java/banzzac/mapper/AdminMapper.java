@@ -388,7 +388,7 @@ public interface AdminMapper {
 			+ " r.report_reason as reason"
 			+ " from report r"
 			+ " join `member` m "
-			+ " on r.member_no = m.`no` "
+			+ " on r.member_id = m.id "
 			+ " join `member` m2 "
 			+ " on r.reported_no = m2.`no` "
 			+ " where r.report_status != 2"

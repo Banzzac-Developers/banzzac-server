@@ -82,21 +82,17 @@ public class ChatController {
 	ArrayList<ChatDTO> chatList(@PathVariable String userId, @PathVariable int chatroomNo) {
 		System.out.println("채팅내용 뿌려주기"+chatroomNo);
 		mapper.changeIsRead(userId, chatroomNo);
-		ArrayList<ChatDTO> res = mapper.getChatList(chatroomNo);
+		ArrayList<ChatDTO> res = mapper.getChatList(chatroomNo); 
 		System.out.println("리스트 "+res);
 		return res;
 	}
 	
-	@GetMapping("{userId}")
-	ArrayList<ChatroomDTO> chatroomList(@PathVariable String userId, HttpSession session){	//HttpSession session 멤버변수로 받아서 session.getAttribute("user").getId
-		
+	@GetMapping("/{userId}")
+	ArrayList<ChatroomDTO> chatroomList(@PathVariable String userId){	//HttpSession session 멤버변수로 받아서 session.getAttribute("user").getId
+		//MemberDTO sessionDTO = (MemberDTO)session.getAttribute("member");
 		ArrayList<ChatroomDTO> res = mapper.getChatroomList(userId);
 		System.out.println("채팅방 목록 뿌려주기");
 		
-		MemberDTO userDTO = new MemberDTO();
-		userDTO.setId("zkdlwjsxm@example.com");
-		
-		session.setAttribute("userId", userDTO);
 		return res;
 	}
 	
