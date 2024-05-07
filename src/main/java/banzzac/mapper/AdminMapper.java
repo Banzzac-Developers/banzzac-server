@@ -390,7 +390,7 @@ public interface AdminMapper {
 			+ " join `member` m "
 			+ " on r.member_id = m.id "
 			+ " join `member` m2 "
-			+ " on r.reported_no = m2.`no` "
+			+ " on r.reported_id = m2.`id` "
 			+ " where r.report_status != 2"
 			+ " order by report_time desc "
 			+ " limit 0,5")

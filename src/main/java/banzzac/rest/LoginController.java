@@ -2,18 +2,31 @@ package banzzac.rest;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.net.http.HttpResponse;
-import java.util.Map;
 
+import javax.security.auth.login.LoginException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import banzzac.dto.MemberDTO;
+import banzzac.jwt.JwtToken;
+import banzzac.jwt.JwtTokenProvider;
+import banzzac.jwt.LoginDTO;
+import banzzac.jwt.LoginServiceImpl;
+import banzzac.jwt.MemberDetail;
 import banzzac.mapper.LoginMapper;
 import banzzac.utill.KakaoApi;
 import banzzac.utill.KakaoProfile;
@@ -29,6 +42,12 @@ public class LoginController {
 	
 	@Resource
 	LoginMapper mapper;
+	
+	@Resource
+	LoginServiceImpl loginServiceImpl;
+	
+	@Resource
+	JwtTokenProvider jwtTokenProvider;
 	
 	
 	@GetMapping("oauth2/code/kakao")
@@ -130,5 +149,29 @@ public class LoginController {
 			return "비밀번호를 찾을수없습니다.";
 		}
 	}
+	
+	
+	/** 직접 로그인
+	 * checkLogin으로 먼저 해당 아이디와 비밀번호가 있는지 확인 한 후에 없으면 Excaption으로 해당 값이 없다는 것을 확인
+	 * 있다면 진행,
+	 *  loadUserByUsername 으로 authentication 값을 반환 받고 그 값으러
+	 *  JWT 토큰, 재발급 토큰을 만든 후에 Front에 넘겨준다.*/
+	@PostMapping("")
+	public ResponseEntity<?> login(@RequestBody LoginDTO info) {
+		try {
+			loginServiceImpl.checkLoin(info.getId(), info.getPwd());
+			UserDetails userDetails  = loginServiceImpl.loadUserByUsername(info.getId());
+			
+			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+			
+			JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
+			
+			System.out.println("JWT 토큰 생성 후 발급 : "+ jwtToken);
+			return ResponseEntity.ok(jwtToken);
+		} catch (LoginException e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+		}
+	}
+	
 
 }
