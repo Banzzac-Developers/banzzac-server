@@ -25,6 +25,7 @@ public class SecurityConfig{
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    	
         return httpSecurity
                 // REST API이므로 basic auth 및 csrf 보안을 사용하지 않음
                 .httpBasic(basic ->basic.disable())
@@ -35,10 +36,10 @@ public class SecurityConfig{
                 // 해당 API에 대해서는 모든 요청을 허가한다, 회원가입 API와 Login API를 추가했다. 추후에는 직접 회원 가입하는 URL도 추가해야할 듯 싶다.
                 .requestMatchers("/api/login","/api/member/createMember","/api/member/createDog","/api/login/oauth2/code/kakao").permitAll()
                 // USER 권한이 있어야 요청할 수 있음,
-                .requestMatchers("/api/**").hasAnyRole("3","4")
-                .requestMatchers("/dashboard").hasAnyRole("4","6","7")
-                .requestMatchers("/management/**").hasAnyRole("4","6","7")
-                .requestMatchers("/sales/**").hasAnyRole("4","6","7")
+                .requestMatchers("/api/**").hasAnyRole("USER","ADMIN")
+                .requestMatchers("/dashboard").hasAnyRole("ADMIN")
+                .requestMatchers("/management/**").hasAnyRole("ADMIN")
+                .requestMatchers("/sales/**").hasAnyRole("ADMIN")
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
                 .anyRequest().authenticated())
                 // JWT 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행

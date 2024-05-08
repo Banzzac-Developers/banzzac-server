@@ -46,18 +46,26 @@ public class JwtTokenProvider {
 
 	 // Member 정보를 가지고 AccessToken, RefreshToken을 생성하는 메서드
     public JwtToken generateToken(Authentication authentication) {
+    	//캐스팅
+    	MemberDetail details =(MemberDetail)authentication.getPrincipal(); 
+    	
+    	
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
+       
         long now = (new Date()).getTime();
-
+        
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + tokenValidMillSecond);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
+                .claim("nickname", details.getNickname())
+                .claim("img", details.getImg())
+                .claim("id", details.getId())
+                .claim("no", details.getNo())
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
@@ -80,20 +88,26 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String accessToken) {
         // Jwt 토큰 복호화
         Claims claims = parseClaims(accessToken);
-
         if (claims.get("auth") == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
+        
         // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get("auth").toString().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        // 클레임에서 권한 정보를 추출합니다.
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get("auth").toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
 
-        // UserDetails 객체를 만들어서 Authentication return
-        // UserDetails: interface, User: UserDetails를 구현한 class
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        // UserDetails 객체를 만들어서 Authentication 객체를 생성합니다.
+        MemberDetail principal = new MemberDetail(claims.getSubject(), "", authorities);
+        principal.setId(claims.get("id",String.class));
+        principal.setNickname(claims.get("nickname",String.class));
+        principal.setImg(claims.get("img",String.class));
+        principal.setNo(claims.get("no",Integer.class));
+        
+        return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
     }
     
     

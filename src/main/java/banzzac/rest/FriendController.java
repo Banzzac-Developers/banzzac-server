@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import banzzac.dto.FriendDTO;
 import banzzac.dto.MemberDTO;
+import banzzac.jwt.MemberDetail;
 import banzzac.mapper.FriendMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
@@ -26,8 +28,8 @@ public class FriendController {
 	
 	/** 친구리스트*/
 	@GetMapping("list")
-	public List<FriendDTO> friendList(HttpSession session) {
-		MemberDTO dto = (MemberDTO)session.getAttribute("member");
+	public List<FriendDTO> friendList(Authentication auth) {
+		MemberDetail dto = (MemberDetail)auth.getPrincipal();
 		List<FriendDTO> res = mapper.list(dto.getId());
 		return res;
 	}
@@ -42,9 +44,9 @@ public class FriendController {
 		
 	/** 즐겨찾기 친구리스트*/
 	@GetMapping("favoriteList")
-	public List<FriendDTO> favoriteList(HttpSession session) {
-
-		MemberDTO dto = (MemberDTO)session.getAttribute("member");
+	public List<FriendDTO> favoriteList(Authentication auth) {
+		MemberDetail dto = (MemberDetail)auth.getPrincipal();
+		
 		List<FriendDTO> res = mapper.favoriteList(dto.getId());
 		return res;
 	}
@@ -89,9 +91,9 @@ public class FriendController {
 	
 	/** 친구즐겨찾기 추가  */
 	@GetMapping("friendFavorite/{friendId}")
-	Object friendFavorite(FriendDTO dto, @PathVariable String friendId, HttpSession session) {
+	Object friendFavorite(FriendDTO dto, @PathVariable String friendId, Authentication auth) {
 		
-		MemberDTO memDTO = (MemberDTO)session.getAttribute("member");
+		MemberDetail memDTO = (MemberDetail)auth.getPrincipal();
 		dto.setId(memDTO.getId());
 		mapper.friendFavorite(dto);	
 		
