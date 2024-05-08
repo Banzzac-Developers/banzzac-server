@@ -35,15 +35,29 @@ public class LoginServiceImpl implements UserDetailsService {
 	            // user가 null인 경우 예외 발생
 	            throw new UsernameNotFoundException("회원을 찾을 수 없습니다.");
 	     }
-		
+		String grant = "";
 	
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		 
-		authorities.add(new SimpleGrantedAuthority(member.getIsGrant()+""));
+		
+		if(member.getIsGrant() > 3) {
+			grant = "ROLE_ADMIN";
+		}else if(member.getIsGrant() == 3) {
+			grant = "ROLE_USER";
+		}else if(member.getIsGrant() == 2) {
+			grant = "ROLE_WAITER";
+		}else if(member.getIsGrant() == 1) {
+			grant = "ROLE_RETIRE";
+		}else if(member.getIsGrant() == 0) {
+			grant = "ROLE_BLACKLIST";
+		}
+		
+		authorities.add(new SimpleGrantedAuthority(grant));
 		
 		MemberDetail user = new MemberDetail(member.getId(),member.getPwd(),authorities);
 		
 		user.setImg(member.getImg());
+		user.setId(member.getId());
+		user.setIsGrant(member.getIsGrant());
 		user.setIsGrant(member.getIsGrant());
 		user.setNickname(member.getNickname());
 		user.setNo(member.getNo());

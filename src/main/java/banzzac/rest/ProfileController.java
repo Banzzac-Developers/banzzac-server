@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import banzzac.dto.DogDTO;
 import banzzac.dto.MemberDTO;
+import banzzac.jwt.MemberDetail;
 import banzzac.mapper.DogMapper;
 import banzzac.mapper.MemberMapper;
 import banzzac.utill.CommonResponse;
@@ -33,8 +35,8 @@ public class ProfileController {
 	
 	
 	@GetMapping()
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> myProfile(MemberDTO dto,HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> myProfile(MemberDTO dto,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		
 		//dto.setId("zkdlwjsxm@example.com");
 		System.out.println("myProfile" + myId);
@@ -99,8 +101,8 @@ public class ProfileController {
 	}
 	
 	@GetMapping("dog")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> dogList(DogDTO dto, HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> dogList(DogDTO dto, Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		//dto.setId("zkdlwjsxm@example.com");
 		dto.setId(myId.getId());
 		ArrayList<DogDTO> res = dogMapper.list(dto);

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -161,12 +162,12 @@ public class LoginController {
 		try {
 			loginServiceImpl.checkLoin(info.getId(), info.getPwd());
 			UserDetails userDetails  = loginServiceImpl.loadUserByUsername(info.getId());
-			
+		
 			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-			
+		
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 			JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 			
-			System.out.println("JWT 토큰 생성 후 발급 : "+ jwtToken);
 			return ResponseEntity.ok(jwtToken);
 		} catch (LoginException e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
