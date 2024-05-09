@@ -4,11 +4,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import banzzac.jwt.JwtAuthenticationFilter;
 import banzzac.jwt.JwtTokenProvider;
@@ -22,6 +26,7 @@ public class SecurityConfig{
 	/** JWT Provider를 제공하는 JwtAuthenticationFilter에 등록하기 위하여 멤버 변수로 추가한다.
 	 * JwtAuthenticationFilter는 JWT 코드 내에서 해당 코드가 유효한지 판단한다. */
 	private final JwtTokenProvider jwtTokenProvider;
+	//private final LogoutHandler logoutHandler;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -46,9 +51,11 @@ public class SecurityConfig{
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
     }
 
+
     @Bean
     PasswordEncoder passwordEncoder() {
         // BCrypt Encoder 사용
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
 }

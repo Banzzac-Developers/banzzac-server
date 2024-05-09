@@ -20,7 +20,6 @@ import banzzac.mapper.DogMapper;
 import banzzac.mapper.MemberMapper;
 import banzzac.utill.CommonResponse;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpSession;
 
 
 @RestController
@@ -38,7 +37,6 @@ public class ProfileController {
 	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> myProfile(MemberDTO dto,Authentication auth){
 		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		
-		//dto.setId("zkdlwjsxm@example.com");
 		System.out.println("myProfile" + myId);
 		dto.setId(myId.getId());
 		return CommonResponse.success(memMapper.memberInfo(dto));
@@ -46,9 +44,9 @@ public class ProfileController {
 
 
 	@PostMapping()
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyMyProfile(@RequestBody MemberDTO dto,HttpSession session) {	
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		//dto.setId("zkdlwjsxm@example.com");
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyMyProfile(@RequestBody MemberDTO dto,Authentication auth) {	
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
+		dto.setId(myId.getId());
 		if(memMapper.modifyMember(dto)>=1) {
 			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
 			System.out.println("myProfile 수정 성공" + res);
@@ -59,9 +57,8 @@ public class ProfileController {
 	}
 	
 	@PostMapping("status")
-	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto,HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		//dto.setId("zkdlwjsxm@example.com");
+	ResponseEntity<CommonResponse<ArrayList<MemberDTO>>> modifyStatus(@RequestBody MemberDTO dto,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		dto.setId(myId.getId());
 		if(memMapper.modifyStatus(dto)>=1) {
 			ArrayList<MemberDTO> res = memMapper.memberInfo(dto);
@@ -72,25 +69,19 @@ public class ProfileController {
 	}
 	
 	@GetMapping("logout")
-	ResponseEntity<CommonResponse<Object>> logout(HttpSession session){
-		session.invalidate();
-		if(session.getAttribute("member")==null) {
-			URI uri = URI.create("http://localhost:5173/login"); 
-			return ResponseEntity.status(302).location(uri).build();
-		}else {
-			return CommonResponse.error(HttpStatus.BAD_REQUEST,"Member Logout Failed","로그아웃 실패");
-		}		
+	ResponseEntity<CommonResponse<Object>> logout(){
+		// 로그아웃 시 react 에서 token 지우기
+		URI uri = URI.create("http://localhost:5173/login"); 
+		return ResponseEntity.status(302).location(uri).build();			
 	}
 	
 	@PostMapping("withdraw")
-	ResponseEntity<CommonResponse<Object>> withdrawMember(@RequestBody MemberDTO dto,HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		//dto.setId("zkdlwjsxm@example.com");
+	ResponseEntity<CommonResponse<Object>> withdrawMember(@RequestBody MemberDTO dto,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		dto.setId(myId.getId());
 		System.out.println(dto);
 		if(memMapper.withdrawMember(dto)>=1) {
 			System.out.println("탈퇴성공 main페이지로 redirect");
-			session.invalidate();
 			URI uri = URI.create("http://localhost:5173/login"); 
 			
 			return ResponseEntity.status(302).location(uri).build();
@@ -103,7 +94,6 @@ public class ProfileController {
 	@GetMapping("dog")
 	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> dogList(DogDTO dto, Authentication auth){
 		MemberDetail myId = (MemberDetail)auth.getPrincipal();
-		//dto.setId("zkdlwjsxm@example.com");
 		dto.setId(myId.getId());
 		ArrayList<DogDTO> res = dogMapper.list(dto);
 		System.out.println("반려견 전체 리스트"+res);
@@ -112,9 +102,8 @@ public class ProfileController {
 
 		
 	@PostMapping("dog")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> addDog(@RequestBody DogDTO dto,HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		//dto.setId("zkdlwjsxm@example.com");
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> addDog(@RequestBody DogDTO dto,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		dto.setId(myId.getId());
 		DogDTO res = dogMapper.checkDog(dto);
 		
@@ -127,9 +116,8 @@ public class ProfileController {
 	}
 
 	@PostMapping("dog/{name}")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> modifyDog(@RequestBody DogDTO dto, @PathVariable String name,HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		//dto.setId("zkdlwjsxm@example.com");
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> modifyDog(@RequestBody DogDTO dto, @PathVariable String name,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		dto.setId(myId.getId());
 		dto.setName(name);
 		System.out.println("반려견 수정");
@@ -141,9 +129,8 @@ public class ProfileController {
 	}
 
 	@GetMapping("dog/delete/{name}")
-	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> deleteDog(DogDTO dto,HttpSession session){
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		//dto.setId("zkdlwjsxm@example.com");
+	ResponseEntity<CommonResponse<ArrayList<DogDTO>>> deleteDog(DogDTO dto,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		dto.setId(myId.getId());
 		System.out.println("반려견 삭제" + dto);
 		if(dogMapper.deleteDog(dto)>=1) {

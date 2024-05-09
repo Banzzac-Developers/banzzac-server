@@ -2,6 +2,7 @@ package banzzac.rest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +44,7 @@ public class MemberController {
 		System.out.println("createMemberReg 진입");
 		
 		System.out.println(dto);
-		
+	
 		mapper.createMember(dto);
 		MatchingDTO matchingDTO = new MatchingDTO();
 		matchingDTO.setNo(dto.getNo());

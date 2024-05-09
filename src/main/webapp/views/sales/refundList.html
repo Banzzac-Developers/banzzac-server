@@ -8,7 +8,8 @@
 				<th scope="col" rowspan="2">회원 ID</th>
 				<th scope="col" colspan="3">환불신청 주문</th>
 				<th scope="col" rowspan="2">환불 신청 사유</th>
-				<th scope="col" rowspan="2"></th>
+				<th scope="col" rowspan="2">수락</th>
+				<th scope="col" rowspan="2">거절</th>
 			</tr>
 			<tr>
 				<th scope="col">주문번호</th>
@@ -25,10 +26,8 @@
 				<td th:text="${refund.quantity}"></td>
 				<td th:text="${refund.totalAmount}"></td>
 				<td th:text="${refund.reason}"></td>
-				<td align="center">
-					<input type="button" value="승인" onclick="approve(this)" />
-					<input type="button" value="거절" onclick="refuse(this)" />
-				</td>
+				<td align="center"><input type="button" value="승인" onclick="approve(this)" /></td>					
+				<td align="center"><input type="button" value="거절" onclick="refuse(this)" /></td>
 			</tr>
 		</tbody>
 	</table>
