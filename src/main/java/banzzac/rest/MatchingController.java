@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import banzzac.dto.MatchingDTO;
 import banzzac.dto.MemberDTO;
+import banzzac.jwt.MemberDetail;
 import banzzac.mapper.MatchingMapper;
 import banzzac.utill.CommonResponse;
 import jakarta.annotation.Resource;
@@ -27,8 +29,8 @@ public class MatchingController {
 	private MatchingMapper mapper;
 	
 	@GetMapping("condition")
-	public MatchingDTO getCondition(HttpSession session, MatchingDTO dto) {
-		MemberDTO info = (MemberDTO)session.getAttribute("member");
+	public MatchingDTO getCondition(Authentication auth, MatchingDTO dto) {
+		MemberDetail info = (MemberDetail)auth.getPrincipal();
 		System.out.println("session 값 있냐"+info);
 		dto.setNo(info.getNo());
 		System.out.println("Get Condition info : "+info);
@@ -38,8 +40,8 @@ public class MatchingController {
 	}
 	
 	@PostMapping("condition")
-	public ResponseEntity<CommonResponse<Integer>> updateCondition(HttpSession session, @RequestBody MatchingDTO dto) {
-		MemberDTO info = (MemberDTO)session.getAttribute("member");
+	public ResponseEntity<CommonResponse<Integer>> updateCondition(Authentication auth, @RequestBody MatchingDTO dto) {
+		MemberDetail info = (MemberDetail)auth.getPrincipal();
 		dto.setNo(info.getNo());
 		System.out.println("post Condition info : "+info);
 		int res = mapper.updateMatchingCondition(dto);

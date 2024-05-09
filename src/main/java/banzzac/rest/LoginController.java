@@ -59,56 +59,37 @@ public class LoginController {
 		KakaoApi kakaoApi = new KakaoApi();
 		
 		String accessToken = kakaoApi.getAccessToken(code);
-		System.out.println("accessToken:"+accessToken);
-	
 		KakaoProfile userInfo = kakaoApi.getUserInfo(accessToken);
+		dto.setId(userInfo.getEmail());
 
 		
-		System.out.println(dto);
-		
-		dto.setId(userInfo.getEmail());
-		
-		System.out.println("dto.id:"+dto.getId());
-		
-		
-		
 		MemberDTO userId = (MemberDTO) mapper.loginId(dto.getId());
-		MemberDTO newUserId = new MemberDTO();
-	    newUserId.setId(userInfo.getEmail());
-	    newUserId.setNickname(userInfo.getNickname());
-	    newUserId.setPhone("0"+userInfo.getPhoneNumber().substring("+82 ".length()));
-	    if(userInfo.getGender().equals("male")) {
-	    	newUserId.setGender(1);
-	    }else {
-	    	newUserId.setGender(2);
-	    }
 	    
 	    
 		if(userId==null) {
-
+			MemberDTO newUserId = new MemberDTO();
+		    newUserId.setId(userInfo.getEmail());
+		    newUserId.setNickname(userInfo.getNickname());
+		    newUserId.setPhone("0"+userInfo.getPhoneNumber().substring("+82 ".length()));
+		    
+		    if(userInfo.getGender().equals("male")) {
+		    	newUserId.setGender(1);
+		    }else {
+		    	newUserId.setGender(2);
+		    }
+		    
 			System.out.println(" 회원 가입 창으로 ");
 			try {
 				redirectView.setUrl("http://localhost:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return redirectView;
 		}else {
-			System.out.println(" 로그인 성공 후 보여질 화면으로  " + userId);
-
+			System.out.println(" 기존 유저 ");
+			loginServiceImpl.handleJwtToken(userId.getId(), jwtTokenProvider, response);
 			
-			session.setAttribute("member", userId);
-			
-			Cookie cookie = new Cookie("JSESSIONID", session.getId());
-	        cookie.setPath("/");
-	        cookie.setMaxAge(60*60*60);
-	        cookie.setHttpOnly(true); // JavaScript에서 쿠키를 읽을 수 없도록 설정
-	        response.addCookie(cookie);
-	        System.out.println("세션 아이디 : "+session.getId());
-	        
-			redirectView.setUrl("http://localhost:5173/profile");
-
+			redirectView.setUrl("http://localhost:5173/search");
 			return redirectView;
 		}
 		
@@ -158,17 +139,14 @@ public class LoginController {
 	 *  loadUserByUsername 으로 authentication 값을 반환 받고 그 값으러
 	 *  JWT 토큰, 재발급 토큰을 만든 후에 Front에 넘겨준다.*/
 	@PostMapping("")
-	public ResponseEntity<?> login(@RequestBody LoginDTO info) {
+	public ResponseEntity<?> login(@RequestBody LoginDTO info, HttpServletResponse response) {
 		try {
 			loginServiceImpl.checkLoin(info.getId(), info.getPwd());
-			UserDetails userDetails  = loginServiceImpl.loadUserByUsername(info.getId());
-		
-			Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-		
-			SecurityContextHolder.getContext().setAuthentication(authentication);
-			JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 			
-			return ResponseEntity.ok(jwtToken);
+			
+			loginServiceImpl.handleJwtToken(info.getId(), jwtTokenProvider, response);
+			
+			return ResponseEntity.ok("Login Ok");
 		} catch (LoginException e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
 		}
