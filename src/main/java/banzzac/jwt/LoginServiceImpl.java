@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.security.auth.login.LoginException;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import banzzac.dto.MemberDTO;
 import banzzac.mapper.LoginMapper;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 
@@ -81,6 +86,23 @@ public class LoginServiceImpl implements UserDetailsService {
     }
 
 	
+	public void handleJwtToken(String userId ,JwtTokenProvider jwtTokenProvider, HttpServletResponse  response) {
+		
+		UserDetails userDetails  = loadUserByUsername(userId);
+		Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+	
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
+		
+		response.setHeader("Authorization", "Bearer " + jwtToken.getAccessToken());
+		response.setStatus(HttpServletResponse.SC_OK);
+		Cookie cookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        cookie.setPath("/");
+        cookie.setHttpOnly(true); // HTTP Only로 설정
+        cookie.setMaxAge(1000 * 60 * 60 * 24 * 3); // 쿠키의 유효 기간 설정 (초 단위)
+        response.addCookie(cookie);
+        
+	}
 	
 	
 }
