@@ -9,6 +9,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import banzzac.dto.MemberDTO;
 import banzzac.dto.PaymentSuccessDTO;
 import banzzac.dto.RefundDTO;
+import banzzac.jwt.MemberDetail;
 import banzzac.mapper.PaymentMapper;
 import banzzac.payment.PayInfoApprove;
 import banzzac.payment.PaySuccessInfo;
@@ -28,6 +31,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/payment")
@@ -41,7 +45,7 @@ public class PayController {
 	private int orderId;
 	
 	@PostMapping("ready")
-	public ResponseEntity<CommonResponse<Object>> readyToPay(@RequestBody PaymentSuccessDTO paymentSuccessDto,HttpSession session){
+	public ResponseEntity<CommonResponse<Object>> readyToPay(@RequestBody PaymentSuccessDTO paymentSuccessDto,Authentication auth){
 		System.out.println("카카오페이 결제 준비 요청");	
 		 
 		 orderId = (int) (Math.random() * Integer.MAX_VALUE);
@@ -53,10 +57,10 @@ public class PayController {
 		 		break;
 		 	}
 		 }
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		System.out.println("My Id Session : "+myId);
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
+		System.out.println("My Id : "+myId);
 		paymentSuccessDto.setPartnerOrderId(orderId);
-		paymentSuccessDto.setPartnerUserId("5l6l@naver.com");
+		paymentSuccessDto.setPartnerUserId(myId.getId());
 		 
 		HttpHeaders headers = new HttpHeaders(); 
 		RestTemplate restTemplate = new RestTemplate();
@@ -144,7 +148,7 @@ public class PayController {
 	 public ResponseEntity<Object> payFail(PaymentSuccessDTO dto){
 		 System.out.println("결제 요청 실패 or 취소");
 		
-		 // db에서 삭제하기
+		// db에서 삭제하기
 		mapper.delete(dto);
 
 		// 결제 실패, 취소 후 redirect 페이지
@@ -156,26 +160,26 @@ public class PayController {
 	 
 	 /** 결제 내역 보기 */
 	 @GetMapping()
-	 public ResponseEntity<CommonResponse<ArrayList<PaymentSuccessDTO>>> payList(PaymentSuccessDTO dto,HttpSession session){
+	 public ResponseEntity<CommonResponse<ArrayList<PaymentSuccessDTO>>> payList(PaymentSuccessDTO dto,Authentication auth){
 		System.out.println("결제 내역 : 환불신청건 제외");
-		MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		dto.setPartnerUserId("5l6l@naver.com");
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
+		dto.setPartnerUserId(myId.getId());
 
 		return CommonResponse.success(mapper.myPayList(dto));
 	 }
 
 	 /** 환불 신청 */
 	 @PostMapping("refund/insert")
-	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> insertRefund(@RequestBody RefundDTO dto,PaymentSuccessDTO payDto,HttpSession session){		
-		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> insertRefund(@RequestBody RefundDTO dto,PaymentSuccessDTO payDto,Authentication auth){		
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		 System.out.println("환불 신청 "+dto);
 		 payDto.setPartnerOrderId(dto.getPartnerOrderId());
-		 payDto.setPartnerUserId("zkdlwjsxm@example.com"); //sessionId
+		 payDto.setPartnerUserId(myId.getId());
 		 
-		 if(mapper.insertRefund(dto.getPartnerOrderId(),dto.getReason(), "zkdlwjsxm@example.com")>=1) {
+		 if(mapper.insertRefund(dto.getPartnerOrderId(),dto.getReason(), myId.getId())>=1) {
 			mapper.minusQuantity(payDto);
 			 System.out.println("환불신청 성공"+dto);
-			 return CommonResponse.success(mapper.myRefundList("5l6l@naver.com"));
+			 return CommonResponse.success(mapper.myRefundList(myId.getId()));
 		 }else {
 			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Insert Failed", "환불 신청 실패");
 		 }
@@ -183,24 +187,23 @@ public class PayController {
 	 
 	 /** 환불 신청 내역 */
 	 @GetMapping("refund")
-	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> myRefundList(RefundDTO dto,HttpSession session){
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> myRefundList(RefundDTO dto,Authentication auth){
 		 System.out.println("환불 신청 내역 ");
-		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
-		 //ArrayList<RefundDTO> res = mapper.myRefundList("5l6l@naver.com");
-		 ArrayList<RefundDTO> res = mapper.myRefundList("5l6l@naver.com");
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
+		 ArrayList<RefundDTO> res = mapper.myRefundList(myId.getId());
 		 System.out.println(res);
 		 return CommonResponse.success(res);
 	 }
  
 	 /** 환불 신청 사유 수정 */
 	 @PostMapping("refund")
-	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> modifyRefund(@RequestBody RefundDTO dto,HttpSession session){
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> modifyRefund(@RequestBody RefundDTO dto,Authentication auth){
 		 System.out.println("환불 사유 수정");
-		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		 if(dto.getApprove()==2) {
 			 System.out.println("승인 대기 중");
-			if(mapper.modifyRefund(dto,"5l6l@naver.com")>=1) {
-				return CommonResponse.success(mapper.myRefundList("5l6l@naver.com"));
+			if(mapper.modifyRefund(dto,myId.getId())>=1) {
+				return CommonResponse.success(mapper.myRefundList(myId.getId()));
 			}else {
 				return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Reason Modify Failed", "환불사유 수정 실패");
 			} 
@@ -211,16 +214,16 @@ public class PayController {
 	 
 	 /** 환불 취소 */
 	 @GetMapping("refund/cancel/{partnerOrderId}")
-	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> cancelRefund(RefundDTO dto,PaymentSuccessDTO pdto, @PathVariable String partnerOrderId,HttpSession session){
-		 MemberDTO myId = (MemberDTO)session.getAttribute("member");
+	 public ResponseEntity<CommonResponse<ArrayList<RefundDTO>>> cancelRefund(RefundDTO dto,PaymentSuccessDTO pdto, @PathVariable String partnerOrderId,Authentication auth){
+		MemberDetail myId = (MemberDetail)auth.getPrincipal();
 		 System.out.println("환불 취소");
 
 		 pdto.setPartnerOrderId(dto.getPartnerOrderId());
-		 pdto.setPartnerUserId("zkdlwjsxm@example.com");
+		 pdto.setPartnerUserId(myId.getId());
 		 
 		 if(mapper.cancelRefund(dto)>=1) {
 			 mapper.plusQuantity(pdto);
-			 return CommonResponse.success(mapper.myRefundList("5l6l@naver.com"));
+			 return CommonResponse.success(mapper.myRefundList(myId.getId()));
 		 }else {
 			 return CommonResponse.error(HttpStatus.BAD_REQUEST, "Refund Cancel Failed", "환불 취소 실패");
 		 }
