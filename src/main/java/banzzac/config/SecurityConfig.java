@@ -39,16 +39,16 @@ public class SecurityConfig{
                 .sessionManagement(management ->management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests ->requests
                 // 해당 API에 대해서는 모든 요청을 허가한다, 회원가입 API와 Login API를 추가했다. 추후에는 직접 회원 가입하는 URL도 추가해야할 듯 싶다.
-                .requestMatchers("/**","/api/login","/api/member/createMember","/api/member/createDog","/api/login/oauth2/code/kakao").permitAll()
+                .requestMatchers("/api/login","/api/member/createMember","/api/member/createDog","/api/login/oauth2/code/kakao").permitAll()
                 // USER 권한이 있어야 요청할 수 있음,
                 .requestMatchers("/api/**").hasAnyRole("USER","ADMIN")
                 .requestMatchers("/dashboard").hasAnyRole("ADMIN")
                 .requestMatchers("/management/**").hasAnyRole("ADMIN")
                 .requestMatchers("/sales/**").hasAnyRole("ADMIN")
                 // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
-                .anyRequest().authenticated()).build();
+                .anyRequest().authenticated())
                 // JWT 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
-                //.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class).build();
     }
 
 

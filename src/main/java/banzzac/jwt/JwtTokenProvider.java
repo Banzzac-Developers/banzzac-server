@@ -114,6 +114,8 @@ public class JwtTokenProvider {
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) {
         try {
+        	
+        	System.out.println("Validation Token "+ token);
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
