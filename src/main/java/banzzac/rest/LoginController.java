@@ -35,9 +35,11 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.log4j.Log4j2;
 
 
 @RestController
+@Log4j2
 @RequestMapping("/api/login")
 public class LoginController {
 	
@@ -78,7 +80,7 @@ public class LoginController {
 		    	newUserId.setGender(2);
 		    }
 		    
-			System.out.println(" 회원 가입 창으로 ");
+		    log.info(" 회원 가입 창으로 ");
 			try {
 				redirectView.setUrl("http://localhost:5173/signup/user?nickname="+URLEncoder.encode(newUserId.getNickname(), "UTF-8")+"&phone="+newUserId.getPhone()+"&id="+URLEncoder.encode(newUserId.getId(), "UTF-8")+"&gender="+newUserId.getGender());
 			} catch (UnsupportedEncodingException e) {
@@ -86,7 +88,7 @@ public class LoginController {
 			}
 			return redirectView;
 		}else {
-			System.out.println(" 기존 유저 ");
+			log.info(" 기존 유저 ");
 			loginServiceImpl.handleJwtToken(userId.getId(), jwtTokenProvider, response);
 			
 			redirectView.setUrl("http://localhost:5173/search");

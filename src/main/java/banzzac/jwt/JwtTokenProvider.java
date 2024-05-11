@@ -11,8 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import banzzac.mapper.MemberMapper;
@@ -25,6 +23,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 
 @Component
@@ -35,7 +34,7 @@ public class JwtTokenProvider {
 	private MemberMapper memberMapper;
 	
 	private final Key secretKey;
-	private final long tokenValidMillSecond = 1000L * 60 * 60 * 6;
+	private final long tokenValidMillSecond = 1000L * 5;
 	private final long tokenValidRefresh = 1000L * 60 * 60 * 24 * 3;
 	
 	
@@ -112,10 +111,8 @@ public class JwtTokenProvider {
     
     
     // 토큰 정보를 검증하는 메서드
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, HttpServletResponse response) {
         try {
-        	
-        	System.out.println("Validation Token "+ token);
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
@@ -125,11 +122,17 @@ public class JwtTokenProvider {
             log.info("잘못된 토큰 서명입니다", e);
         } catch (ExpiredJwtException e) {
             log.info("만료된 토큰입니다", e);
+            
+            response.setStatus(401);
+            log.info("만료된 토큰의 Response", response);
         } catch (UnsupportedJwtException e) {
             log.info("잘못된 토큰입니다", e);
         } catch (IllegalArgumentException e) {
             log.info("잘못된 토큰입니다", e);
         }
+        
+        
+        
         return false;
     }
     
