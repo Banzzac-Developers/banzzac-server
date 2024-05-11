@@ -30,6 +30,7 @@ public class FriendController {
 	@GetMapping("list")
 	public List<FriendDTO> friendList(Authentication auth) {
 		MemberDetail dto = (MemberDetail)auth.getPrincipal();
+		System.out.println("principal dto : " + dto);
 		List<FriendDTO> res = mapper.list(dto.getId());
 		return res;
 	}

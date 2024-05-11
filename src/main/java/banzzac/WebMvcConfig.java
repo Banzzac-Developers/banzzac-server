@@ -13,7 +13,7 @@ public class WebMvcConfig implements WebMvcConfigurer{
 		registry.addMapping("/api/**").allowedOrigins("http://localhost:5173","http://192.168.219.60:5173")
 		.allowedMethods("GET", "POST")
         .allowedHeaders("Authorization", "Content-Type")	
-        .exposedHeaders("Custom-Header")
+        .exposedHeaders("Custom-Header","Authorization")
         .allowCredentials(true)
         .maxAge(3600);
 		
